@@ -1,0 +1,28 @@
+{
+  "name": "seven-gravity-gateway",
+  "private": false,
+  "version": "1.0.0",
+  "description": "Seven Gravity Gateway",
+  "homepage": "http://7platform.com",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha test --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@phabricator.nsoft.ba/diffusion/GG/seven-gravity-gateway.git"
+  },
+  "keywords": [
+    "nsoft",
+    "seven",
+    "platform",
+    "gravity",
+    "gateway"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.nsoft.ba"
+  },
+  "author": "Ivan Pandzic",
+  "license": "UNLICENSED"
+}
