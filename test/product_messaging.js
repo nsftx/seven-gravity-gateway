@@ -1,4 +1,4 @@
-var gateway = require('../src/messages/product'),
+var gateway = require('../src/messaging/product'),
     assert = require('assert'),
     dom = require('jsdom-global')();
 
