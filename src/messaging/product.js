@@ -1,6 +1,6 @@
 module.exports = {
 
-    notifyPlatform: function(data, domain) {
+    sendMessage: function(data, domain) {
         domain = domain || '*';
 
         window.parent.postMessage(data, domain);

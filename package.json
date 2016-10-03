@@ -7,7 +7,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "mocha test --recursive"
+    "test": "istanbul cover _mocha test --recursive"
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,11 @@
     "registry": "https://npm.nsoft.ba"
   },
   "author": "Ivan Pandzic",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "istanbul": "^0.4.5",
+    "jsdom": "9.6.0",
+    "jsdom-global": "2.1.0",
+    "mocha": "^3.1.0"
+  }
 }
