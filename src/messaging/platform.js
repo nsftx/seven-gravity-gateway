@@ -1,6 +1,6 @@
 module.exports = {
 
-    notifyProduct : function(productFrame, data, domain) {
+    sendMessage : function(productFrame, data, domain) {
         domain = domain || '*';
 
         if(!productFrame.contentWindow) {
