@@ -23,7 +23,7 @@ PubSub.prototype.checkNamespaceActions = function(action) {
 PubSub.prototype.subscribe = function(data) {
     if(data.action && typeof data.callback === 'function') {
         this.topics[data.action] = data.callback;
-        return true
+        return true;
     } else {
         return false;
     }
@@ -41,7 +41,7 @@ PubSub.prototype.unsubscribe = function(data) {
 PubSub.prototype.publish = function(data) {
     var topicAction = this.checkNamespaceActions(data.action);
 
-    if(!Boolean(topicAction) || this.groupId != data.groupId) {
+    if(!Boolean(topicAction) || this.groupId !== data.groupId) {
         return false;
     } else {
         topicAction(data);
