@@ -4,13 +4,13 @@ function PubSub(groupId) {
 }
 
 PubSub.prototype.checkNamespaceActions = function(action) {
-    var found = this.topic.hasOwnProperty(action),
+    var found = this.topics.hasOwnProperty(action),
         domainSeparator = action.lastIndexOf('.');
 
     while(!found && domainSeparator !== -1) {
         action = action.substr(0, domainSeparator);
         domainSeparator = action.lastIndexOf('.');
-        found = this.topic.hasOwnProperty(action);
+        found = this.topics.hasOwnProperty(action);
     }
 
     if(found) {
