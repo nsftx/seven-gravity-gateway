@@ -41,7 +41,7 @@ PubSub.prototype.unsubscribe = function(data) {
 PubSub.prototype.publish = function(data) {
     var topicAction = this.checkNamespaceActions(data.action);
 
-    if(!topicAction || this.groupId != data.groupId) {
+    if(!Boolean(topicAction) || this.groupId != data.groupId) {
         return false;
     } else {
         topicAction(data);
