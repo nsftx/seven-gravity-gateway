@@ -11,9 +11,9 @@ var PlatformGateway = (function() {
         this.groupId = 'default';
         this.msgOrigin = 'platform';
 
-        window.addEventListener('message', function (data) {
-            if(data.origin !== this.msgOrigin) {
-                this.pubSub.publish(data);
+        window.addEventListener('message', function (event) {
+            if(event.data.origin !== this.msgOrigin) {
+                this.pubSub.publish(event.data);
             }
         }.bind(this));
     }

@@ -11,9 +11,9 @@ var ProductGateway = (function(){
         this.groupId = groupId;
         this.msgOrigin = 'product';
 
-        window.addEventListener('message', function (data) {
-            if(data.groupId === this.groupId && data.origin !== this.msgOrigin) {
-                this.pubSub.publish(data);
+        window.addEventListener('message', function (event) {
+            if(event.data.groupId === this.groupId && event.data.origin !== this.msgOrigin) {
+                this.pubSub.publish(event.data);
             }
         }.bind(this));
     }
