@@ -5,7 +5,8 @@
   "description": "Seven Gravity Gateway",
   "homepage": "http://7platform.com",
   "scripts": {
-    "test": "istanbul cover _mocha test --recursive"
+    "test": "mocha test --recursive",
+    "coverage" : "istanbul cover _mocha test -- --recursive"
   },
   "repository": {
     "type": "git",
