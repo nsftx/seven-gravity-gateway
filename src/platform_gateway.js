@@ -12,7 +12,7 @@ var PlatformGateway = (function() {
         this.msgOrigin = 'platform';
 
         window.addEventListener('message', function (data) {
-            if(data.origin != this.msgOrigin) {
+            if(data.origin !== this.msgOrigin) {
                 this.pubSub.publish(data);
             }
         }.bind(this));
@@ -39,13 +39,13 @@ var PlatformGateway = (function() {
     return {
         getInstance : function() {
             if(!instantiated) {
-                instantiated= true;
+                instantiated = true;
                 return new Gateway();
             } else {
                 return false;
             }
         }
-    }
+    };
 
 })();
 

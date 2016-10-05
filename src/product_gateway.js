@@ -12,7 +12,7 @@ var ProductGateway = (function(){
         this.msgOrigin = 'product';
 
         window.addEventListener('message', function (data) {
-            if(data.groupId == this.groupId && data.origin != this.msgOrigin) {
+            if(data.groupId === this.groupId && data.origin !== this.msgOrigin) {
                 this.pubSub.publish(data);
             }
         }.bind(this));
@@ -47,7 +47,7 @@ var ProductGateway = (function(){
                 return false;
             }
         }
-    }
+    };
 })();
 
 module.exports = ProductGateway;
