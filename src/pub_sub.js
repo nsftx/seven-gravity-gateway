@@ -1,5 +1,4 @@
-function PubSub(groupId) {
-    this.groupId = groupId;
+function PubSub() {
     this.topics = {};
 }
 
@@ -41,7 +40,7 @@ PubSub.prototype.unsubscribe = function(data) {
 PubSub.prototype.publish = function(data) {
     var topicAction = this.checkNamespaceActions(data.action);
 
-    if(!Boolean(topicAction) || this.groupId !== data.groupId) {
+    if(!Boolean(topicAction)) {
         return false;
     } else {
         topicAction(data);
