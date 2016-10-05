@@ -69,6 +69,8 @@ Gateway.subscribe({
 })
 ```
 
+It is possible to use namespaced subscriptions. e.g. If one of the products subscribes to !!betslip!! action with proper callback, events 'betslip.add', 'betslip.remove' will trigger the !!betslip!! callback.
+
 ==Message exchange==
 
 Product -> Platfrom
