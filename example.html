@@ -1,0 +1,62 @@
+<html>
+<body>
+
+    <div id="Prematch">
+
+    </div>
+
+    <script src="dist/product_gateway.js"></script>
+    <script src="dist/product_gateway.js"></script>
+    <script src="dist/platform_gateway.js"></script>
+
+    <script>
+        var ProductGateway = require('product_gateway');
+        var PlatformGateway = require('platform_gateway');
+
+        var LiveBettingGateway = ProductGateway.getInstance('LiveBetting');
+        LiveBettingGateway.subscribe({
+            action: 'betslip.add',
+            callback : function() {
+                console.info('LiveBetting - callback triggered')
+            }
+        });
+
+        var PrematchGateway = ProductGateway.getInstance('Prematch');
+        PrematchGateway.subscribe({
+            action: 'betslip.add',
+            callback : function() {
+                console.info('Prematch - callback triggered')
+            }
+        });
+
+        var GravityGateway = PlatformGateway.getInstance();
+        GravityGateway.subscribe({
+            action: 'betslip.add',
+            callback : function(data) {
+                console.info('Betslip add action is called from', data.groupId);
+            }
+        });
+    </script>
+
+    <script>
+        LiveBettingGateway.sendMessage({
+            action: 'betslip.add'
+        });
+
+        setTimeout(function() {
+            PrematchGateway.sendMessage({
+                action: 'betslip.add'
+            });
+        }, 1000);
+
+
+        setTimeout(function() {
+            var PrematchFrame = document.getElementById('Prematch');
+            GravityGateway.sendMessage(PrematchFrame, {
+                action: 'betslip.add',
+                groupId : 'Prematch'
+            });
+        }, 2000);
+    </script>
+</body>
+</html>
