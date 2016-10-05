@@ -12,7 +12,7 @@ Seven Gravity Gateway component consists of 2 files:
  - platform_gateway
  - product_gateway
 
-To use this component in web browser load it from dist directory in node_modules:
+To use this component in web browser load it from !!dist!! directory in !!node_modules!!:
 
 
 == Load module ==
@@ -34,14 +34,26 @@ var productGateway = require('product_gateway');
 
 =Usage=
 
-Required modules will return constructor. To instantiate gateway, module should be called with !!new!! keyword, passing the !!groupId!! property to constructor:
+==Product gateway==
+
+To instantiate gateway, module should be called with !!getInstance!! method.
 
 ```
 lang=javascript
-var Gateway = new productGateway('LiveBetting');
+var Gateway = productGateway.getInstance($groupId);
 ```
 
-IMPORTANT: !!groupId!! flag is mandatory for product gateway component an its value must be an ID of the game.
+IMPORTANT: !!groupId!! param is mandatory for product gateway component an its value must be an ID of the game.
+
+== Platfrom gateway==
+
+
+```
+lang=javascript
+var Gateway = platformGateway.getInstance();
+```
+
+NOTE: Gateway per product/platforms are singleton and !!getInstance!! should be called only once, otherwise return value of !!getInstance!! will be !!false!!.
 
 ==Subscription==
 
@@ -56,11 +68,6 @@ Gateway.subscribe({
     callback: function
 })
 ```
-
-
-|Name|Description|Type|Required|
-|action|Action name|string|Y|
-|callback|Callback function|function|Y|
 
 ==Message exchange==
 
