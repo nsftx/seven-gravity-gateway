@@ -1,0 +1,25 @@
+<html>
+<body>
+    <h3>Prematch iframe</h3>
+    <div id="Prematch">
+        <script src="../dist/product_gateway.js"></script>
+        <script>
+            var ProductGateway = require('product_gateway');
+            var PrematchGateway = ProductGateway({groupId: 'Prematch', allowedOrigins : ['null']}); <!--origin = null - files run locally -->
+
+            PrematchGateway.subscribe({
+                action: 'betslip.add',
+                callback : function() {
+                    console.info('Prematch - callback triggered')
+                }
+            });
+
+            setTimeout(function() {
+                PrematchGateway.sendMessage({
+                    action: 'betslip.add'
+                });
+            }, 1000);
+        </script>
+    </div>
+</body>
+</html>
