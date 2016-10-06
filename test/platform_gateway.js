@@ -2,14 +2,15 @@ var PlatformGateway = require('../src/platform_gateway'),
     assert = require('assert');
 
 describe('Testing platform gateway instantiation', function() {
+    var instance;
+
     it('Should return instance', function() {
-        var instance = PlatformGateway.getInstance();
+        instance = PlatformGateway();
         assert.equal(typeof instance, 'object');
     });
 
-    it('Instantiation should fail', function() {
-        var instance = PlatformGateway.getInstance();
-        assert.equal(instance, false);
+    it('Instantiation should return existing instance', function() {
+        assert.strictEqual(PlatformGateway(), 1);
     });
 
 });

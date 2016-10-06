@@ -2,23 +2,25 @@ var ProductGateway = require('../src/product_gateway'),
     assert = require('assert');
 
 describe('Testing product gateway instantiation', function() {
+    var LiveBettingGateway,
+        LuckySixGateway;
+
     it('Should return instance', function() {
-        var instance = ProductGateway.getInstance('LiveBetting');
-        assert.equal(typeof instance, 'object');
+        LiveBettingGateway = ProductGateway('LiveBetting');
+        assert.equal(typeof LiveBettingGateway, 'object');
     });
 
     it('Should return instance', function() {
-        var instance = ProductGateway.getInstance('LuckySix');
-        assert.equal(typeof instance, 'object');
+        LuckySixGateway = ProductGateway('LuckySix');
+        assert.equal(typeof LuckySixGateway, 'object');
+    });
+
+    it('Instantiation should return existing instance', function() {
+        assert.strictEqual(ProductGateway('LiveBetting'), LiveBettingGateway);
     });
 
     it('Instantiation should fail', function() {
-        var instance = ProductGateway.getInstance('LiveBetting');
-        assert.equal(instance, false);
-    });
-
-    it('Instantiation should fail', function() {
-        var instance = ProductGateway.getInstance();
+        var instance = ProductGateway();
         assert.equal(instance, false);
     });
 });

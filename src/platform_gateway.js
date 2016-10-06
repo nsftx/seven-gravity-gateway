@@ -1,52 +1,39 @@
 var platform = require('./messaging/platform'),
     PubSub = require('./pub_sub');
 
-// Gateway must be singleton
-var PlatformGateway = (function() {
+var GatewayInstance;
+    
+function Gateway() {
+    this.pubSub = new PubSub();
+    this.groupId = 'default';
+    this.msgOrigin = 'platform';
 
-    var instantiated = false;
-
-    function Gateway() {
-        this.pubSub = new PubSub();
-        this.groupId = 'default';
-        this.msgOrigin = 'platform';
-
-        window.addEventListener('message', function (event) {
-            if(event.data.origin !== this.msgOrigin) {
-                this.pubSub.publish(event.data);
-            }
-        }.bind(this));
-    }
-
-    Gateway.prototype.subscribe = function(data) {
-        this.pubSub.subscribe(data);
-    };
-
-    Gateway.prototype.unsubscribe = function(data) {
-        this.pubSub.unsubscribe(data);
-    };
-
-    Gateway.prototype.clearSubscriptions = function() {
-        this.pubSub.clearSubscriptions();
-    };
-
-    Gateway.prototype.sendMessage = function(productFrame, data, origin) {
-        //Attach sender origin to data
-        data.origin = this.msgOrigin;
-        platform.sendMessage(productFrame, data, origin);
-    };
-
-    return {
-        getInstance : function() {
-            if(!instantiated) {
-                instantiated = true;
-                return new Gateway();
-            } else {
-                return false;
-            }
+    window.addEventListener('message', function (event) {
+        if(event.data.msgOrigin !== this.msgOrigin) {
+            this.pubSub.publish(event.data);
         }
-    };
+    }.bind(this));
+}
 
-})();
+Gateway.prototype.subscribe = function(data) {
+    this.pubSub.subscribe(data);
+};
 
-module.exports = PlatformGateway;
+Gateway.prototype.unsubscribe = function(data) {
+    this.pubSub.unsubscribe(data);
+};
+
+Gateway.prototype.clearSubscriptions = function() {
+    this.pubSub.clearSubscriptions();
+};
+
+Gateway.prototype.sendMessage = function(productFrame, data, origin) {
+    //Attach sender origin to data
+    data.msgOrigin = this.msgOrigin;
+    platform.sendMessage(productFrame, data, origin);
+};
+
+module.exports = function() {
+    // Gateway must be singleton
+    return GatewayInstance ? GatewayInstance : GatewayInstance = new Gateway();
+};
