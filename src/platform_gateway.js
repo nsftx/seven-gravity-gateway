@@ -17,7 +17,7 @@ function Gateway(config) {
         // For Chrome, the origin property is in the event.originalEvent object.
         var origin = event.origin || event.originalEvent.origin;
 
-        if(this.allowedOrigins != '*' && this.allowedOrigins.indexOf(origin) == -1) {
+        if(this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(origin) === -1) {
             return false;
         }
 
