@@ -12,6 +12,7 @@ function Gateway(groupId) {
     this.msgOrigin = 'product';
 
     window.addEventListener('message', function (event) {
+        // Listen only to platform messages and messages intended to specific groupId
         if(event.data.groupId === this.groupId && event.data.msgOrigin !== this.msgOrigin) {
             this.pubSub.publish(event.data);
         }

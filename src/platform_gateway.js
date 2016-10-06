@@ -9,6 +9,7 @@ function Gateway() {
     this.msgOrigin = 'platform';
 
     window.addEventListener('message', function (event) {
+        // Listen only to non-platform messages
         if(event.data.msgOrigin !== this.msgOrigin) {
             this.pubSub.publish(event.data);
         }
