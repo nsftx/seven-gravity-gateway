@@ -1,7 +1,7 @@
 <html>
 <body>
     <!--Platform-->
-    <script src="dist/platform_gateway.js"></script>
+    <script src="../dist/platform_gateway.js"></script>
     <script>
         var PlatformGateway = require('platform_gateway');
         var GravityGateway = PlatformGateway();
@@ -25,7 +25,7 @@
 
     <!--Live-->
     <div id="Live">
-        <script src="dist/product_gateway.js"></script>
+        <script src="../dist/product_gateway.js"></script>
         <script>
             var ProductGateway = require('product_gateway');
 
@@ -46,7 +46,7 @@
 
     <!--Prematch-->
     <div id="Prematch">
-        <script src="dist/product_gateway.js"></script>
+        <script src="../dist/product_gateway.js"></script>
         <script>
             var ProductGateway = require('product_gateway');
             var PrematchGateway = ProductGateway({groupId: 'Prematch', allowedOrigins : ['null']}); <!--origin = null - files run locally -->

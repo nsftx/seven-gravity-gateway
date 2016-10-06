@@ -1,0 +1,30 @@
+<html>
+<body>
+<!--Platform-->
+<script src="../dist/platform_gateway.js"></script>
+<script>
+    var PlatformGateway = require('platform_gateway');
+    var GravityGateway = PlatformGateway();
+
+    GravityGateway.subscribe({
+        action: 'betslip.add',
+        callback : function(data) {
+            console.info('Betslip add action is called from', data.groupId);
+        }
+    });
+
+    setTimeout(function() {
+        var PrematchFrame = document.getElementById('Prematch');
+        GravityGateway.sendMessage(PrematchFrame, {
+            action: 'betslip.add',
+            groupId : 'Prematch'
+        });
+    }, 2000);
+</script>
+<!--end of platform-->
+
+<iframe src="prematch_iframe.html" id="Prematch">
+
+</iframe>
+</body>
+</html>
