@@ -34,26 +34,33 @@ var productGateway = require('product_gateway');
 
 =Usage=
 
-==Product gateway==
+Component is initialized by calling the module and passing the proper config object.
 
-To instantiate gateway, module should be called with !!getInstance!! method.
+==Product gateway==
 
 ```
 lang=javascript
-var Gateway = productGateway.getInstance($groupId);
+var Gateway = productGateway({groupId : $groupId, allowedOrigins : []});
 ```
+Config:
+|Name|Description|Type|Required|
+|groupId|Product id|string|Y|
+|allowedOrigins|Array of allowed URIs|array|N|
 
-IMPORTANT: !!groupId!! param is mandatory for product gateway component an its value must be an ID of the game.
+IMPORTANT: !!groupId!! param is mandatory for product gateway component an its value must be an ID of the product.
 
 == Platfrom gateway==
 
-
 ```
 lang=javascript
-var Gateway = platformGateway.getInstance();
+var Gateway = platformGateway({allowedOrigins : []});
 ```
 
-NOTE: Gateway per product/platforms are singleton and !!getInstance!! should be called only once, otherwise return value of !!getInstance!! will be !!false!!.
+Config:
+|Name|Description|Type|Required|
+|allowedOrigins|Array of allowed URIs|array|N|
+
+!!allowedOrigins!! param contains array of URI's which are allowed to exchange messages with gateway. If obeyed default value will be set to '*'. This prop is not required by Product and Platform gateway, but it's highly recommend.
 
 ==Subscription==
 
@@ -79,7 +86,7 @@ Product -> Platfrom
 lang=javascript
 Gateway.sendMessage({
     action : 'betslip.add',
-})
+}, origin)
 ```
 
 Platform -> Product
@@ -89,7 +96,7 @@ lang=javascript
 Gateway.sendMessage(gameFrame, {
     action : 'betslip.add',
     groupId : 'LiveBetting'
-})
+}, origin)
 ```
 
 IMPORTANT: !!groupId!! prop must be an ID of game to which message is dispatched
