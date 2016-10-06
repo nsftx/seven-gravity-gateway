@@ -6,7 +6,7 @@ describe('Testing product gateway instantiation', function() {
         LuckySixGateway;
 
     it('Should return instance', function() {
-        LiveBettingGateway = ProductGateway({groupId : 'LiveBetting'});
+        LiveBettingGateway = ProductGateway({groupId : 'LiveBetting', allowedOrigins : ['http://www.nsoft.ba']});
         assert.equal(typeof LiveBettingGateway, 'object');
     });
 
