@@ -6,17 +6,17 @@ describe('Testing product gateway instantiation', function() {
         LuckySixGateway;
 
     it('Should return instance', function() {
-        LiveBettingGateway = ProductGateway('LiveBetting');
+        LiveBettingGateway = ProductGateway({groupId : 'LiveBetting'});
         assert.equal(typeof LiveBettingGateway, 'object');
     });
 
     it('Should return instance', function() {
-        LuckySixGateway = ProductGateway('LuckySix');
+        LuckySixGateway = ProductGateway({groupId : 'LuckySix'});
         assert.equal(typeof LuckySixGateway, 'object');
     });
 
     it('Instantiation should return existing instance', function() {
-        assert.strictEqual(ProductGateway('LiveBetting'), LiveBettingGateway);
+        assert.strictEqual(ProductGateway({groupId : 'LiveBetting'}), LiveBettingGateway);
     });
 
     it('Instantiation should fail', function() {

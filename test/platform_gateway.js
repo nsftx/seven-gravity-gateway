@@ -10,7 +10,7 @@ describe('Testing platform gateway instantiation', function() {
     });
 
     it('Instantiation should return existing instance', function() {
-        assert.strictEqual(PlatformGateway(), 1);
+        assert.strictEqual(PlatformGateway(), instance);
     });
 
 });

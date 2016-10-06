@@ -6,12 +6,25 @@ var product = require('./messaging/product'),
 
 var GatewayInstances = {};
 
-function Gateway(groupId) {
-    this.pubSub = new PubSub(groupId);
-    this.groupId = groupId;
+function Gateway(config) {
+    this.pubSub = new PubSub();
+    this.groupId = config.groupId;
     this.msgOrigin = 'product';
 
+    if(config && config.allowedOrigins) {
+        this.allowedOrigins = config.allowedOrigins;
+    } else {
+        this.allowedOrigins = '*';
+    }
+
     window.addEventListener('message', function (event) {
+        // For Chrome, the origin property is in the event.originalEvent object.
+        var origin = event.origin || event.originalEvent.origin;
+
+        if(this.allowedOrigins != '*' && this.allowedOrigins.indexOf(origin) == -1) {
+            return false;
+        }
+
         // Listen only to platform messages and messages intended to specific groupId
         if(event.data.groupId === this.groupId && event.data.msgOrigin !== this.msgOrigin) {
             this.pubSub.publish(event.data);
@@ -40,10 +53,11 @@ Gateway.prototype.sendMessage = function(data, origin) {
 };
 
 
-module.exports = function(groupId) {
-    if(!groupId) {
+module.exports = function(config) {
+    if(!config || !config.groupId) {
         return false;
     }
 
-    return GatewayInstances[groupId] ? GatewayInstances[groupId] : GatewayInstances[groupId] = new Gateway(groupId);
+    return GatewayInstances[config.groupId] ? GatewayInstances[config.groupId] :
+                                              GatewayInstances[config.groupId] = new Gateway(config.groupId);
 };

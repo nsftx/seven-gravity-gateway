@@ -3,12 +3,24 @@ var platform = require('./messaging/platform'),
 
 var GatewayInstance;
     
-function Gateway() {
+function Gateway(config) {
     this.pubSub = new PubSub();
     this.groupId = 'default';
     this.msgOrigin = 'platform';
+    if(config && config.allowedOrigins) {
+        this.allowedOrigins = config.allowedOrigins;
+    } else {
+        this.allowedOrigins = '*';
+    }
 
     window.addEventListener('message', function (event) {
+        // For Chrome, the origin property is in the event.originalEvent object.
+        var origin = event.origin || event.originalEvent.origin;
+
+        if(this.allowedOrigins != '*' && this.allowedOrigins.indexOf(origin) == -1) {
+            return false;
+        }
+
         // Listen only to non-platform messages
         if(event.data.msgOrigin !== this.msgOrigin) {
             this.pubSub.publish(event.data);
@@ -34,7 +46,7 @@ Gateway.prototype.sendMessage = function(productFrame, data, origin) {
     platform.sendMessage(productFrame, data, origin);
 };
 
-module.exports = function() {
+module.exports = function(config) {
     // Gateway must be singleton
-    return GatewayInstance ? GatewayInstance : GatewayInstance = new Gateway();
+    return GatewayInstance ? GatewayInstance : GatewayInstance = new Gateway(config);
 };
