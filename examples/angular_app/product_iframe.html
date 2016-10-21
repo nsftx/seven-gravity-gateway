@@ -7,6 +7,11 @@
 
 <script type="text/javascript">
     var bootstrapApp = function(data) {
+        console.log('hfoirhe');
+        var initialRoute = data.route || 'state1';
+
+        console.log(initialRoute)
+
         productApp.config(function($stateProvider, $urlRouterProvider
         ) {
 
@@ -20,7 +25,7 @@
                 template: '<h1>State 2</h1>'
             });
 
-            $urlRouterProvider.otherwise(data.route);
+            $urlRouterProvider.otherwise(initialRoute);
         });
 
 
@@ -29,14 +34,14 @@
         });
     };
     // Load gateway module and initialize it
-    var gatewayModule = require('product_gateway')({loadCallback : bootstrapApp});
+    var gatewayModule = require('product_gateway')({groupId :'product' ,loadCallback : bootstrapApp});
     // Main application module
     var productApp = angular.module('productApp', [
         'ui.router'
     ]);
 </script>
 
-<div id="container">
+<div id="container" style="height:800px;">
     <button ui-sref="state1">Go to state1</button>
     <button ui-sref="state2">Go to state2</button>
 

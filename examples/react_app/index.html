@@ -6,14 +6,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.js"></script>
 
 <script type="text/javascript">
-    var gravityGateway = require('platform_gateway')({
-        products : {
-            'product' : {
-                frameId : 'product',
-                data : {}
-            }
-        }
-    });
+    var gravityGateway = require('platform_gateway')({});
 
     // Main application module
     var gravityApp = angular.module('gravityApp', [
@@ -21,7 +14,7 @@
     ]);
 
     gravityApp.config(function($stateProvider, $urlRouterProvider
-        ) {
+    ) {
 
         $stateProvider.state('app', {
             url: '/app',
@@ -36,12 +29,12 @@
     });
 
 </script>
-    <div id="container">
+<div id="container">
 
-        <section ui-view>
+    <section ui-view>
 
-        </section>
+    </section>
 
-    </div>
+</div>
 </body>
 </html>
