@@ -1,26 +1,17 @@
 var ProductGateway = require('../src/product_gateway'),
-    assert = require('assert');
+    assert = require('assert'),
+    dom = require('jsdom-global')(); //Inject dom in test because window deps
 
 describe('Testing product gateway instantiation', function() {
-    var LiveBettingGateway,
-        LuckySixGateway;
+    var productInstance;
 
     it('Should return instance', function() {
-        LiveBettingGateway = ProductGateway({groupId : 'LiveBetting', allowedOrigins : ['http://www.nsoft.ba']});
-        assert.equal(typeof LiveBettingGateway, 'object');
-    });
-
-    it('Should return instance', function() {
-        LuckySixGateway = ProductGateway({groupId : 'LuckySix'});
-        assert.equal(typeof LuckySixGateway, 'object');
+        productInstance = ProductGateway({groupId : 'Product', allowedOrigins : ['http://www.nsoft.ba']});
+        assert.equal(typeof productInstance, 'object');
     });
 
     it('Instantiation should return existing instance', function() {
-        assert.strictEqual(ProductGateway({groupId : 'LiveBetting'}), LiveBettingGateway);
+        assert.strictEqual(ProductGateway(), productInstance);
     });
 
-    it('Instantiation should fail', function() {
-        var instance = ProductGateway();
-        assert.equal(instance, false);
-    });
 });

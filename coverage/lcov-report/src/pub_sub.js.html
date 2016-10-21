@@ -22,7 +22,7 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>30/30</span>
+        <span class='fraction'>24/24</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
@@ -32,12 +32,12 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>6/6</span>
+        <span class='fraction'>5/5</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>30/30</span>
+        <span class='fraction'>24/24</span>
       </div>
     </div>
   </div>
@@ -98,28 +98,13 @@
 53
 54
 55
-56</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">6×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
+56
+57
+58</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5×</span>
 <span class="cline-any cline-yes">4×</span>
 <span class="cline-any cline-yes">4×</span>
@@ -128,7 +113,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -137,7 +122,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4×</span>
@@ -149,72 +135,92 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span></td><td class="text"><pre class="prettyprint lang-js">function PubSub() {
-    this.topics = {};
-}
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span></td><td class="text"><pre class="prettyprint lang-js">var pubSub = {
 &nbsp;
-PubSub.prototype.checkNamespaceActions = function(action) {
-    var found = this.topics.hasOwnProperty(action),
-        domainSeparator = action.lastIndexOf('.');
+    topics : {},
 &nbsp;
-    while(!found &amp;&amp; domainSeparator !== -1) {
-        action = action.substr(0, domainSeparator);
-        domainSeparator = action.lastIndexOf('.');
-        found = this.topics.hasOwnProperty(action);
-    }
+    subscribe : function(data) {
+        if(data.action &amp;&amp; typeof data.callback === 'function') {
+            this.topics[data.action] = data.callback;
+            return true;
+        } else {
+            return false;
+        }
+    },
 &nbsp;
-    if(found) {
-        return this.topics[action];
-    } else {
-        return false;
+    unsubscribe : function(data) {
+        if (!this.topics[data.action]) {
+            return false;
+        } else {
+            delete this.topics[data.action];
+            return true;
+        }
+    },
+&nbsp;
+&nbsp;
+    publish : function(data) {
+        var topicAction = this.checkNamespaceActions(data.action);
+&nbsp;
+        if(!Boolean(topicAction)) {
+            return false;
+        } else {
+            topicAction(data);
+            return true;
+        }
+&nbsp;
+    },
+&nbsp;
+    clearSubscriptions : function() {
+        this.topics = {};
+    },
+&nbsp;
+    checkNamespaceActions : function(action) {
+        var found = this.topics.hasOwnProperty(action),
+            domainSeparator = action.lastIndexOf('.');
+&nbsp;
+        while(!found &amp;&amp; domainSeparator !== -1) {
+            action = action.substr(0, domainSeparator);
+            domainSeparator = action.lastIndexOf('.');
+            found = this.topics.hasOwnProperty(action);
+        }
+&nbsp;
+        if(found) {
+            return this.topics[action];
+        } else {
+            return false;
+        }
     }
 };
 &nbsp;
-PubSub.prototype.subscribe = function(data) {
-    if(data.action &amp;&amp; typeof data.callback === 'function') {
-        this.topics[data.action] = data.callback;
-        return true;
-    } else {
-        return false;
-    }
-};
-&nbsp;
-PubSub.prototype.unsubscribe = function(data) {
-    if(!this.topics[data.action]) {
-        return false;
-    } else {
-        delete this.topics[data.action];
-        return true;
-    }
-};
-&nbsp;
-PubSub.prototype.publish = function(data) {
-    var topicAction = this.checkNamespaceActions(data.action);
-&nbsp;
-    if(!Boolean(topicAction)) {
-        return false;
-    } else {
-        topicAction(data);
-        return true;
-    }
-&nbsp;
-};
-&nbsp;
-PubSub.prototype.clearSubscriptions = function() {
-    this.topics = {};
-};
-&nbsp;
-module.exports = PubSub;</pre></td></tr>
+module.exports = pubSub;</pre></td></tr>
 </table></pre>
 <div class='push'></div><!-- for sticky footer -->
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Oct 06 2016 12:36:44 GMT+0200 (CEST)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Oct 21 2016 11:55:53 GMT+0200 (CEST)
 </div>
 </div>
 <script src="../prettify.js"></script>

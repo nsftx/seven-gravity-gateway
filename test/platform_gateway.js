@@ -1,5 +1,6 @@
 var PlatformGateway = require('../src/platform_gateway'),
-    assert = require('assert');
+    assert = require('assert'),
+    dom = require('jsdom-global')(); //Inject dom in test because window deps
 
 describe('Testing platform gateway instantiation', function() {
     var instance;
