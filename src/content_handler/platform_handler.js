@@ -1,20 +1,10 @@
-var iframes;
+var contentHandler = {
+    resize : function(frameId, event) {
+        var frame = document.getElementById(frameId);
 
-window.onload = function() {
-  iframes =  document.getElementsByTagName('iframe');
-};
-
-module.exports = {
-    cacheDOM : function() {
-        iframes =  document.getElementsByTagName('iframe');
-    },
-
-    resize : function(event) {
-        for (var i = 0; i < iframes.length; i++) {
-            if (iframes[i].contentWindow === event.source) {
-                iframes[i].style.height = event.data.windowHeight;
-                iframes[i].style.width = event.data.windowWidth;
-            }
-        }
+        frame.style.height = event.data.height;
+        frame.style.width = event.data.width;
     }
 };
+
+module.exports = contentHandler;

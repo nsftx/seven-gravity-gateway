@@ -18,49 +18,66 @@ var OBSERVED_EVENTS = [
     INTERVAL_DURATION = 200,
     intervalTimer = null;
 
-window.onload = function() {
-    attachEventListeners();
+var contentHandler = {
 
-    if (window.MutationObserver || window.WebKitMutationObserver){
-        setupMutationObserver();
-    } else {
-        runDirtyCheck();
+    eventName : null,
+
+    handleContentChange : function() {
+        var data = {
+            action : this.eventName,
+            width : window.innerWidth,
+            height : window.document.documentElement.offsetHeight
+        };
+
+        this.eventCallback(data);
+    },
+
+    init: function(eventCb, eventName) {
+        this.eventCallback = eventCb;
+        this.eventName = eventName;
+
+        this.attachEventListeners();
+
+        if (window.MutationObserver || window.WebKitMutationObserver){
+            this.setupMutationObserver();
+        } else {
+            this.runDirtyCheck();
+        }
+    },
+
+    attachEventListeners : function() {
+        OBSERVED_EVENTS.forEach(function(event) {
+            if(Array.isArray(event.eventName)) {
+                event.eventName.forEach(function(event) {
+                    window.addEventListener(event, this.handleContentChange);
+                }.bind(this));
+            } else {
+                window.addEventListener(event.eventName, this.handleContentChange.bind(this));
+            }
+        }.bind(this));
+    },
+
+    setupMutationObserver : function() {
+        var MutationObserver = window.MutationObserver || window.WebKitMutationObserver,
+            mutationConfig = {
+                childList : true,
+                subtree : true,
+                characterData : true,
+                attributes : true
+            },
+            observer,
+            target = document.querySelector('body');
+
+        observer = new MutationObserver(this.handleContentChange.bind(this));
+        observer.observe(target, mutationConfig);
+    },
+
+    runDirtyCheck : function() {
+        intervalTimer = setInterval(function() {
+            this.handleContentChange();
+        }.bind(this), INTERVAL_DURATION);
+
     }
 };
 
-function attachEventListeners() {
-    OBSERVED_EVENTS.forEach(function(eventObj) {
-        if(Array.isArray(eventObj.eventName)) {
-            eventObj.eventName.forEach(function(event) {
-                window.addEventListener(event, handleEvent);
-            })
-        } else {
-            window.addEventListener(eventObj.eventName, handleEvent);
-        }
-    })
-}
-
-function handleEvent() {
-    console.log('Resize triggered');
-}
-
-function setupMutationObserver() {
-    var MutationObserver = window.MutationObserver || window.WebKitMutationObserver,
-        mutationConfig = {
-            childList : true,
-            subtree : true,
-            characterData : true,
-            attributes : true
-        },
-        observer,
-        target = document.querySelector('body');
-
-    observer = new MutationObserver(handleEvent);
-    observer.observe(target, mutationConfig);
-}
-
-function runDirtyCheck() {
-    intervalTimer = setinterval(function() {
-        handleEvent();
-    }, INTERVAL_DURATION)
-}
+module.exports= contentHandler;
