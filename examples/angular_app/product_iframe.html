@@ -1,0 +1,49 @@
+<html>
+<body>
+
+<script src="../../dist/product_gateway.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.js"></script>
+
+<script type="text/javascript">
+    var bootstrapApp = function(data) {
+        productApp.config(function($stateProvider, $urlRouterProvider
+        ) {
+
+            $stateProvider.state('state1', {
+                url: '/state1',
+                template: '<h1>State 1</h1>'
+            });
+
+            $stateProvider.state('state2', {
+                url: '/state2',
+                template: '<h1>State 2</h1>'
+            });
+
+            $urlRouterProvider.otherwise(data.route);
+        });
+
+
+        angular.element(document).ready(function () {
+            angular.bootstrap(document, ['productApp']);
+        });
+    };
+    // Load gateway module and initialize it
+    var gatewayModule = require('product_gateway')({loadCallback : bootstrapApp});
+    // Main application module
+    var productApp = angular.module('productApp', [
+        'ui.router'
+    ]);
+</script>
+
+<div id="container">
+    <button ui-sref="state1">Go to state1</button>
+    <button ui-sref="state2">Go to state2</button>
+
+    <section ui-view>
+
+    </section>
+
+</div>
+</body>
+</html>
