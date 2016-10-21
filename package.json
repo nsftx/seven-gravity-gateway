@@ -1,7 +1,7 @@
 {
   "name": "seven-gravity-gateway",
   "private": false,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Seven Gravity Gateway",
   "homepage": "http://7platform.com",
   "scripts": {
