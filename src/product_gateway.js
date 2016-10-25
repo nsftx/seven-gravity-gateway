@@ -6,7 +6,7 @@ var product = require('./messaging/product'),
 
 var productGateway = {
 
-    groupId : '',
+    productId : '',
 
     config : null,
 
@@ -24,7 +24,7 @@ var productGateway = {
 
     init: function(config){
         this.config = config;
-        this.groupId = config.groupId;
+        this.productId = config.productId;
         this.loadCallback = config.loadCallback;
         this.setAllowedDomains();
         
@@ -34,14 +34,14 @@ var productGateway = {
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
         
-        //Notify platform that product is evaluated
-        this.sendMessage({action: 'Product.Init'});
+        //Notify platform that product is evaluated and pass the necessary config data
+        this.sendMessage({action: 'Product.Init', data: config.initData});
     },
 
     handleMessage : function(event) {
         // Check if message is reserved system message (Product and Platfrom messages)
         if(event.data && (productPattern.test(event.data.action) || platformPattern.test(event.data.action))) {
-            this.handleNamespaceMessage(event);
+            this.handleProtectedMessage(event);
             return false;
         }
         // For Chrome, the origin property is in the event.originalEvent object.
@@ -54,10 +54,10 @@ var productGateway = {
         pubSub.publish(event.data);
     },
 
-    handleNamespaceMessage : function(event) {
+    handleProtectedMessage : function(event) {
         if(event.data.action === 'Product.Load') {
             this.loadCallback(event.data);
-        } else {
+        } else { 
             console.log('Error - Actions with domain `Product` or `Platfrom` are protected');
         }
     },
@@ -75,7 +75,7 @@ var productGateway = {
     },
 
     sendMessage : function(data, origin) {
-        data.groupId = this.groupId;
+        data.productId = this.productId;
 
         product.sendMessage(data, origin);
     }

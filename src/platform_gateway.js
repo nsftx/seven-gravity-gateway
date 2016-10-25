@@ -42,7 +42,7 @@ var platformGateway = {
     handleMessage : function(event) {
         // Check if message is reserved system message (Product and Platfrom messages)
         if(event.data && (productPattern.test(event.data.action) || platformPattern.test(event.data.action))) {
-            this.handleNamespaceMessage(event);
+            this.handleProtectedMessage(event);
             return false;
         }
         
@@ -56,17 +56,25 @@ var platformGateway = {
         pubSub.publish(event.data);
     },
 
-    handleNamespaceMessage : function(event) {
-        if(event.data.action === 'Product.Init') {
-            if(event.data.groupId && this.products[event.data.groupId]) {
-                var productData = this.products[event.data.groupId];
-                var productFrame = document.getElementById(productData.frameId);
-                productData.data.action = 'Product.Load';
+    handleProtectedMessage : function(event) {
+        if(!this.products[event.data.productId]) {
+            return false;
+        }
+        var productData = this.products[event.data.productId],
+            productFrame = document.getElementById(productData.frameId);
 
-                this.sendMessage(productFrame, this.products[event.data.groupId].data);
-            }
+        if(event.data.action === 'Product.Init') {
+            // Run the product init callback
+            productData.productInitCallback(event.data.initData);
+            // Notify product to load
+            productData.data.action = 'Product.Load';
+            this.sendMessage(productFrame, this.products[event.data.productId].data);
         } else if(event.data.action === 'Product.Resize') {
-            contentHandler.resize(this.products[event.data.groupId].frameId, event);
+            // Resize product
+            contentHandler.resize(productData.frameId, event);
+        } else if(event.data.action === 'Product.Loaded') {
+            // Call registered callback when product is loaded (e.g. - remove loader)
+            productData.productLoadedCallback(event.data.initData);
         } else {
             console.log('Error - Actions with domain `Product` or `Platfrom` are protected');
         }

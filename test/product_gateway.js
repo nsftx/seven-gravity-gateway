@@ -6,7 +6,14 @@ describe('Testing product gateway instantiation', function() {
     var productInstance;
 
     it('Should return instance', function() {
-        productInstance = ProductGateway({groupId : 'Product', allowedOrigins : ['http://www.nsoft.ba']});
+        productInstance = ProductGateway({
+            productId : 'Product',
+            initData : {
+                gameConfig : {}
+            },
+            loadCallback: function(){},
+            allowedOrigins : ['http://www.nsoft.ba']
+        });
         assert.equal(typeof productInstance, 'object');
     });
 

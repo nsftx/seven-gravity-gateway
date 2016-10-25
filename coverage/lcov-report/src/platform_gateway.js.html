@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">53.85% </span>
+        <span class="strong">52.38% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>21/39</span>
+        <span class='fraction'>22/42</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">57.14% </span>
+        <span class="strong">48.57% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>20/35</span>
+        <span class='fraction'>17/35</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">60% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>6/10</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">53.85% </span>
+        <span class="strong">52.38% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>21/39</span>
+        <span class='fraction'>22/42</span>
       </div>
     </div>
   </div>
@@ -151,7 +151,15 @@
 106
 107
 108
-109</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+109
+110
+111
+112
+113
+114
+115
+116
+117</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -179,16 +187,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -199,6 +197,16 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -212,13 +220,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -286,8 +302,8 @@ var platformGateway = {
     },
 &nbsp;
     setProductsConfigs : function () {
-        <span class="missing-if-branch" title="if path not taken" >I</span>if(this.config &amp;&amp; this.config.products) {
-<span class="cstat-no" title="statement not covered" >            this.products = this.config.products;</span>
+        <span class="missing-if-branch" title="else path not taken" >E</span>if(this.config &amp;&amp; this.config.products) {
+            this.products = this.config.products;
         }
     },
 &nbsp;
@@ -303,7 +319,7 @@ var platformGateway = {
     handleMessage : function(event) {
         // Check if message is reserved system message (Product and Platfrom messages)
         <span class="missing-if-branch" title="else path not taken" >E</span>if(event.data &amp;&amp; (productPattern.test(event.data.action) || <span class="branch-2 cbranch-no" title="branch not covered" >platformPattern.test(event.data.action))</span>) {
-            this.handleNamespaceMessage(event);
+            this.handleProtectedMessage(event);
             return false;
         }
         
@@ -317,17 +333,25 @@ var platformGateway = {
 <span class="cstat-no" title="statement not covered" >        pubSub.publish(event.data);</span>
     },
 &nbsp;
-    handleNamespaceMessage : function(event) {
-        <span class="missing-if-branch" title="else path not taken" >E</span>if(event.data.action === 'Product.Init') {
-            <span class="missing-if-branch" title="if path not taken" >I</span>if(event.data.groupId &amp;&amp; this.products[event.data.groupId]) {
-<span class="cstat-no" title="statement not covered" >                var productData = this.products[event.data.groupId];</span>
-<span class="cstat-no" title="statement not covered" >                var productFrame = document.getElementById(productData.frameId);</span>
-<span class="cstat-no" title="statement not covered" >                productData.data.action = 'Product.Load';</span>
+    handleProtectedMessage : function(event) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if(!this.products[event.data.productId]) {
+            return false;
+        }
+<span class="cstat-no" title="statement not covered" >        var productData = this.products[event.data.productId],</span>
+            productFrame = document.getElementById(productData.frameId);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >                this.sendMessage(productFrame, this.products[event.data.groupId].data);</span>
-            }
+<span class="cstat-no" title="statement not covered" >        if(event.data.action === 'Product.Init') {</span>
+            // Run the product init callback
+<span class="cstat-no" title="statement not covered" >            productData.productInitCallback(event.data.initData);</span>
+            // Notify product to load
+<span class="cstat-no" title="statement not covered" >            productData.data.action = 'Product.Load';</span>
+<span class="cstat-no" title="statement not covered" >            this.sendMessage(productFrame, this.products[event.data.productId].data);</span>
         } else <span class="cstat-no" title="statement not covered" >if(event.data.action === 'Product.Resize') {</span>
-<span class="cstat-no" title="statement not covered" >            contentHandler.resize(this.products[event.data.groupId].frameId, event);</span>
+            // Resize product
+<span class="cstat-no" title="statement not covered" >            contentHandler.resize(productData.frameId, event);</span>
+        } else <span class="cstat-no" title="statement not covered" >if(event.data.action === 'Product.Loaded') {</span>
+            // Call registered callback when product is loaded (e.g. - remove loader)
+<span class="cstat-no" title="statement not covered" >            productData.productLoadedCallback(event.data.initData);</span>
         } else {
 <span class="cstat-no" title="statement not covered" >            console.log('Error - Actions with domain `Product` or `Platfrom` are protected');</span>
         }
@@ -373,7 +397,7 @@ module.exports = function(config) {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Oct 21 2016 11:55:53 GMT+0200 (CEST)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Oct 25 2016 09:30:43 GMT+0200 (CEST)
 </div>
 </div>
 <script src="../prettify.js"></script>

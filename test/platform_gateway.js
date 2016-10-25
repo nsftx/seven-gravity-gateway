@@ -6,7 +6,18 @@ describe('Testing platform gateway instantiation', function() {
     var instance;
 
     it('Should return instance', function() {
-        instance = PlatformGateway({allowedOrigins : ['http://www.nsoft.ba']});
+        instance = PlatformGateway({
+            allowedOrigins : ['http://www.nsoft.ba'],
+            products : {
+                'product': {
+                    frame: 'product',
+                    data : {},
+                    productInitCallback : function(){},
+                    productLoadedCallback : function(){}
+
+                }
+            }
+        });
         assert.equal(typeof instance, 'object');
     });
 
