@@ -58,17 +58,19 @@ Component is initialized by calling the module and passing the proper config obj
 lang=javascript
 var Gateway = productGateway({
     productId : $productId,
-    initData : function,
+    initData : object,
     loadCallback: function,
-    allowedOrigins : []
+    allowedOrigins : [],
+    debugMode : bool
 });
 ```
 Config:
 |Name|Description|Type|Required|
 |productId|Product id|string|Y|
-|initData|Data necesarry for product init(config, token...) id|function|Y|
+|initData|Data necesarry for product init(config, token...) id|object|Y|
 |loadCallback|Callback which will be triggered when product is ready for load|function|Y|
 |allowedOrigins|Array of allowed URIs|array|N|
+|debugMode|Debug messages setting|bool|N|
 
 
 IMPORTANT: !!productId!!  must be an unique identifier of the product(unique game ID).
@@ -81,6 +83,7 @@ IMPORTANT: !!productId!!  must be an unique identifier of the product(unique gam
 lang=javascript
 var Gateway = platformGateway({
     allowedOrigins : [],
+    debugMode : bool,
     products : {
         ‘LiveBetting’: {
   	    frame: frameId,
@@ -98,6 +101,7 @@ Config:
 |Name|Description|Type|Required|
 |products|Object with details for all products|array|Y|
 |allowedOrigins|Array of allowed URIs|array|N|
+|debugMode|Debug messages setting|bool|N|
 
 
 !!allowedOrigins!! param contains array of URI's which are allowed to exchange messages with gateway. If obeyed default value will be set to '*'. This prop is not required by Product and Platform gateway, but it's highly recommend.
@@ -213,7 +217,3 @@ npm publish
 
 When publishing, npm will automatically run tests.
 It is very important that you set valid version in package before publishing.
-
-
-
-

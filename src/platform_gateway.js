@@ -1,8 +1,40 @@
 var platform = require('./messaging/platform'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/platform_handler'),
+    logger = require('./utils/logger'),
     productPattern = new RegExp('^Product\\.', 'g'),
     platformPattern = new RegExp('^Platform\\.', 'g');
+
+function validateProductsConfig(products) {
+    var productValidity = true;
+
+    for(var game in products) {
+        if(!products[game].frameId || typeof products[game].frameId != 'string' ) {
+            logger.out('error', '[G] Platform:', 'frameId property is invalid or missing for game ' + game);
+            productValidity = false;
+        } else if(!products[game].data || typeof products[game].data != 'object' ) {
+            logger.out('error', '[G] Platform:', 'data property is invalid or missing for game ' + game);
+            productValidity = false;
+        } else if (!products[game].productInitCallback || typeof products[game].productInitCallback != 'function' ) {
+            logger.out('error', '[G] Platform:', 'productInitCallback property is invalid or missing for game ' + game);
+            productValidity = false;
+        }
+    }
+
+    return productValidity
+}
+
+function validateInitialization(config) {
+    if(!config.products || typeof config.products !== 'object') {
+        logger.out('error', '[G] Platform:', 'products object is invalid or missing');
+        return false;
+    } else if(!validateProductsConfig(config.products)) {
+        return false;
+    } else {
+        logger.out('info', '[G] Platform:', 'Initializing');
+        return true;
+    }
+}
 
 var platformGateway = {
 
@@ -24,17 +56,11 @@ var platformGateway = {
         }
     },
 
-    setProductsConfigs : function () {
-        if(this.config && this.config.products) {
-            this.products = this.config.products;
-        }
-    },
-
     init: function(config) {
+        this.initialized = true;
         this.config = config;
+        this.products = config.products;
         this.setAllowedDomains();
-        this.setProductsConfigs();
-        
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
     },
@@ -45,14 +71,13 @@ var platformGateway = {
             this.handleProtectedMessage(event);
             return false;
         }
-        
-        // For Chrome, the origin property is in the event.originalEvent object.
-        var origin = event.origin || event.originalEvent.origin;
-        
-        if(this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(origin) === -1) {
+
+        if(this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
+            logger.out('error', '[G] Platform: Message origin is not allowed');
             return false;
         }
 
+        logger.out('info', '[G] Platform - Product message received:', event.data);
         pubSub.publish(event.data);
     },
 
@@ -64,19 +89,20 @@ var platformGateway = {
             productFrame = document.getElementById(productData.frameId);
 
         if(event.data.action === 'Product.Init') {
-            // Run the product init callback
-            productData.productInitCallback(event.data.initData);
-            // Notify product to load
+            logger.out('info', '[G] Platform:', 'Starting to load product.', event.data);
+            productData.productInitCallback(event.data.initData); // Run the product init callback and notify product to load
             productData.data.action = 'Product.Load';
-            this.sendMessage(productFrame, this.products[event.data.productId].data);
+            this.sendMessage(productFrame, productData.data);
         } else if(event.data.action === 'Product.Resize') {
-            // Resize product
+            logger.out('info', '[G] Platform:', 'Resizing product.');
             contentHandler.resize(productData.frameId, event);
         } else if(event.data.action === 'Product.Loaded') {
-            // Call registered callback when product is loaded (e.g. - remove loader)
-            productData.productLoadedCallback(event.data.initData);
+            if(productData.productLoadedCallback) {
+                logger.out('info', '[G] Platform:', 'Product loaded.', event.data);
+                productData.productLoadedCallback(event.data.initData);
+            }
         } else {
-            console.log('Error - Actions with domain `Product` or `Platfrom` are protected');
+            logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platfrom` are protected!');
         }
     },
 
@@ -102,16 +128,16 @@ var platformGateway = {
  * If it is already initialized return the Gateway otherwise return false
  */
 module.exports = function(config) {
-    if(!platformGateway.initialized && config) {
+    if(config && config.debugMode === true) {
+        logger.debugMode = true;
+    }
+
+    if(!platformGateway.initialized && validateInitialization(config)) {
         platformGateway.init(config);
-        platformGateway.initialized = true;
-
         return platformGateway;
-    } else if(platformGateway.initialized && !config) {
-
+    } else if(platformGateway.initialized) {
         return platformGateway;
     } else {
-
         return false;
     }
 };

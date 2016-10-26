@@ -1,7 +1,7 @@
 var logger = {
     debugMode : false, //Verbosity setting
 
-    output : function() {
+    out : function() {
         if(this.debugMode) {
             //Convert to array
             var args = Array.prototype.slice.call(arguments);
@@ -17,4 +17,4 @@ var logger = {
     }
 };
 
-module.export = logger;
+module.exports = logger;

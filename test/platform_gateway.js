@@ -10,7 +10,7 @@ describe('Testing platform gateway instantiation', function() {
             allowedOrigins : ['http://www.nsoft.ba'],
             products : {
                 'product': {
-                    frame: 'product',
+                    frameId: 'product',
                     data : {},
                     productInitCallback : function(){},
                     productLoadedCallback : function(){}

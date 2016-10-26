@@ -1,8 +1,25 @@
 var product = require('./messaging/product'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/product_handler'),
+    logger = require('./utils/logger'),
     productPattern = new RegExp('^Product\\.', 'g'),
     platformPattern = new RegExp('^Platform\\.', 'g');
+
+function validateInitialization(config) {
+    if(!config.productId || typeof config.productId !== 'string') {
+        logger.out('error', '[G] Product:', 'productId property is invalid or missing');
+        return false;
+    } else if(!config.initData || typeof config.initData !== 'object') {
+        logger.out('error', '[G] Product:', 'initData property is invalid or missing');
+        return false;
+    } else if(!config.loadCallback || typeof config.loadCallback !== 'function') {
+        logger.out('error', '[G] Product:', 'loadCallback property is invalid or missing');
+        return false;
+    } else {
+        logger.out('info', '[G] Product:', 'Initializing');
+        return true;
+    }
+}
 
 var productGateway = {
 
@@ -23,19 +40,17 @@ var productGateway = {
     },
 
     init: function(config){
+        this.initialized = true;
         this.config = config;
         this.productId = config.productId;
         this.loadCallback = config.loadCallback;
         this.setAllowedDomains();
-        
         //Pass the event callback, and event name
         contentHandler.init(this.sendMessage.bind(this), 'Product.Resize');
-        
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
-        
-        //Notify platform that product is evaluated and pass the necessary config data
-        this.sendMessage({action: 'Product.Init', data: config.initData});
+        //Notify platform that product is evaluated and pass the necessary init data
+        this.startProductInitialization();
     },
 
     handleMessage : function(event) {
@@ -44,21 +59,29 @@ var productGateway = {
             this.handleProtectedMessage(event);
             return false;
         }
-        // For Chrome, the origin property is in the event.originalEvent object.
-        var origin = event.origin || event.originalEvent.origin;
 
-        if(this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(origin) === -1) {
+        if(this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
+            logger.out('error', '[G] Product: Message origin is not allowed');
             return false;
         }
 
+        logger.out('info', '[G] Product - Platform message received:', event.data);
         pubSub.publish(event.data);
+    },
+
+    startProductInitialization : function() {
+        this.sendMessage({
+            action: 'Product.Init',
+            data: this.config.initData
+        });
     },
 
     handleProtectedMessage : function(event) {
         if(event.data.action === 'Product.Load') {
+            logger.out('info', '[G] Product:', 'Starting to load.');
             this.loadCallback(event.data);
-        } else { 
-            console.log('Error - Actions with domain `Product` or `Platfrom` are protected');
+        } else {
+            logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platfrom` are protected!');
         }
     },
 
@@ -81,22 +104,17 @@ var productGateway = {
     }
 };
 
-
-/**
- * Gateway is singleton
- * If it is already initialized return the Gateway otherwise return false
- */
 module.exports = function(config) {
-    if(!productGateway.initialized && config) {
+    if(config && config.debugMode === true) {
+        logger.debugMode = true;
+    }
+
+    if(!productGateway.initialized && validateInitialization(config)) {
         productGateway.init(config);
-        productGateway.initialized = true;
-
         return productGateway;
-    } else if(productGateway.initialized && !config) {
-
+    } else if(productGateway.initialized) {
         return productGateway;
     } else {
-
         return false;
     }
 };

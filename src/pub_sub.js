@@ -1,3 +1,5 @@
+var logger = require('./utils/logger');
+
 var pubSub = {
 
     topics : {},
@@ -7,12 +9,14 @@ var pubSub = {
             this.topics[data.action] = data.callback;
             return true;
         } else {
+            logger.out('error', 'Subscribe failed - action property is invalid or missing.');
             return false;
         }
     },
 
     unsubscribe : function(data) {
         if (!this.topics[data.action]) {
+            logger.out('error', 'Unsubscribe failed - topic ' + data.action + ' doesn´t exist');
             return false;
         } else {
             delete this.topics[data.action];
@@ -25,6 +29,7 @@ var pubSub = {
         var topicAction = this.checkNamespaceActions(data.action);
 
         if(!Boolean(topicAction)) {
+            logger.out('error', 'Publish failed - topic ' + data.action + ' doesn´t exist');
             return false;
         } else {
             topicAction(data);
