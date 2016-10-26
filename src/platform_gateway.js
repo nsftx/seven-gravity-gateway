@@ -9,19 +9,19 @@ function validateProductsConfig(products) {
     var productValidity = true;
 
     for(var game in products) {
-        if(!products[game].frameId || typeof products[game].frameId != 'string' ) {
+        if(!products[game].frameId || typeof products[game].frameId !== 'string' ) {
             logger.out('error', '[G] Platform:', 'frameId property is invalid or missing for game ' + game);
             productValidity = false;
-        } else if(!products[game].data || typeof products[game].data != 'object' ) {
+        } else if(!products[game].data || typeof products[game].data !== 'object' ) {
             logger.out('error', '[G] Platform:', 'data property is invalid or missing for game ' + game);
             productValidity = false;
-        } else if (!products[game].productInitCallback || typeof products[game].productInitCallback != 'function' ) {
+        } else if (!products[game].productInitCallback || typeof products[game].productInitCallback !== 'function' ) {
             logger.out('error', '[G] Platform:', 'productInitCallback property is invalid or missing for game ' + game);
             productValidity = false;
         }
     }
 
-    return productValidity
+    return productValidity;
 }
 
 function validateInitialization(config) {
