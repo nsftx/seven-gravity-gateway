@@ -56,16 +56,20 @@ var platformGateway = {
         }
     },
 
-    setInfiniteScroll : function() {
+    setInfiniteScroll : function(game) {
+        window.addEventListener('scroll', function() {
+            var scrollContentEnded = contentHandler.checkScrollContent();
+
+            if(scrollContentEnded) {
+                this.sendMessage(game, 'Product.ScrollEnded');
+            }
+        }.bind(this));
+    },
+
+    checkInfiniteScroll : function() {
         for(var game in  this.products) {
             if(this.products[game].infiniteLoader) {
-                window.addEventListener('scroll', function() {
-                    var scrollContentEnded = contentHandler.checkScrollContent();
-
-                    if(scrollContentEnded) {
-                        this.sendMessage(game, 'Product.ScrollEnded');
-                    }
-                }.bind(this))
+               this.setInfiniteScroll(game);
             }
         }
     },
@@ -75,7 +79,7 @@ var platformGateway = {
         this.config = config;
         this.products = config.products;
         this.setAllowedDomains();
-        this.setInfiniteScroll();
+        this.checkInfiniteScroll();
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
     },

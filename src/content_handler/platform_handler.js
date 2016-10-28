@@ -18,7 +18,7 @@ var contentHandler = {
         var documentHeight = getDocumentMaxHeight();
 
         //Return boolean if scrollable content got to the end
-        return window.innerHeight + window.document.body.scrollTop == documentHeight;
+        return window.innerHeight + window.document.body.scrollTop === documentHeight;
     }
 };
 
