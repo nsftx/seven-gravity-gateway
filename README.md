@@ -61,6 +61,7 @@ var Gateway = productGateway({
     initData : object,
     loadCallback: function,
     allowedOrigins : [],
+    infiniteScrollCallback : function,
     debugMode : bool
 });
 ```
@@ -69,6 +70,7 @@ Config:
 |productId|Product id|string|Y|
 |initData|Data necesarry for product init(config, token...) id|object|Y|
 |loadCallback|Callback which will be triggered when product is ready for load|function|Y|
+|infiniteScrollCallback|Callback which will be triggered if product uses infiniteScroll feature|function|N|
 |allowedOrigins|Array of allowed URIs|array|N|
 |debugMode|Debug messages setting|bool|N|
 
@@ -86,11 +88,11 @@ var Gateway = platformGateway({
     debugMode : bool,
     products : {
         ‘LiveBetting’: {
-  	    frame: frameId,
-	    data : {},
-	    productInitCallback : function,
-	    productLoadedCallback : function,
-
+  	        frame: frameId,
+	        data : {},
+	        productInitCallback : function,
+	        productLoadedCallback : function,
+	        infiniteScroll : bool
          }
     }
 );
@@ -110,8 +112,9 @@ Config:
 
 !!productInitCallback!! Is required callback which will be triggered when product is ready for load. In this step product can pass necessary data for initialization(e.g. Url, token, configuration…).
 
-
 !!productLoadedCallback!! Is optional callback which will be triggered when product is loaded(eg removing loader).
+
+!!infiniteScroll!! optional flag. If it is set to true, product frame will be notified that user scrolled the content till the end and registered callback will be called.
 
 
 ==Subscription==
@@ -130,7 +133,7 @@ Subscription format:
 lang=javascript
 Gateway.subscribe({
     action : 'betslip.add',
-    callback: function
+    callback: function,
 })
 ```
 

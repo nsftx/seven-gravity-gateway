@@ -68,7 +68,7 @@ var platformGateway = {
 
     checkInfiniteScroll : function() {
         for(var game in  this.products) {
-            if(this.products[game].infiniteLoader) {
+            if(this.products[game].infiniteScroll) {
                this.setInfiniteScroll(game);
             }
         }
