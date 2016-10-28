@@ -56,11 +56,26 @@ var platformGateway = {
         }
     },
 
+    setInfiniteScroll : function() {
+        for(var game in  this.products) {
+            if(this.products[game].infiniteLoader) {
+                window.addEventListener('scroll', function() {
+                    var scrollContentEnded = contentHandler.checkScrollContent();
+
+                    if(scrollContentEnded) {
+                        this.sendMessage(game, 'Product.ScrollEnded');
+                    }
+                }.bind(this))
+            }
+        }
+    },
+
     init: function(config) {
         this.initialized = true;
         this.config = config;
         this.products = config.products;
         this.setAllowedDomains();
+        this.setInfiniteScroll();
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
     },
@@ -85,14 +100,13 @@ var platformGateway = {
         if(!this.products[event.data.productId]) {
             return false;
         }
-        var productData = this.products[event.data.productId],
-            productFrame = document.getElementById(productData.frameId);
+        var productData = this.products[event.data.productId];
 
         if(event.data.action === 'Product.Init') {
             logger.out('info', '[G] Platform:', 'Starting to load product.', event.data);
             productData.productInitCallback(event.data.initData); // Run the product init callback and notify product to load
             productData.data.action = 'Product.Load';
-            this.sendMessage(productFrame, productData.data);
+            this.sendMessage(productData.frameId, productData.data);
         } else if(event.data.action === 'Product.Resize') {
             logger.out('info', '[G] Platform:', 'Resizing product.');
             contentHandler.resize(productData.frameId, event);
@@ -118,7 +132,12 @@ var platformGateway = {
         pubSub.clearSubscriptions();
     },
 
-    sendMessage : function(productFrame, data, origin) {
+    sendMessage : function(productFrameId, data, origin) {
+        var productFrame = document.getElementById(productFrameId);
+        if(!productFrame) {
+            return false;
+        }
+
         platform.sendMessage(productFrame, data, origin);
     }
 };

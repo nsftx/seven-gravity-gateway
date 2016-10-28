@@ -44,6 +44,9 @@ var productGateway = {
         this.config = config;
         this.productId = config.productId;
         this.loadCallback = config.loadCallback;
+        if(config.infiniteScrollCallback && typeof config.infiniteScrollCallback === 'function') {
+            this.infiniteScrollCallback = config.infiniteScrollCallback;
+        }
         this.setAllowedDomains();
         //Pass the event callback, and event name
         contentHandler.init(this.sendMessage.bind(this), 'Product.Resize');
@@ -80,6 +83,11 @@ var productGateway = {
         if(event.data.action === 'Product.Load') {
             logger.out('info', '[G] Product:', 'Starting to load.');
             this.loadCallback(event.data);
+        } else if (event.data.action === 'Product.ScrollEnded') {
+            if(this.infiniteScrollCallback) {
+                logger.out('info', '[G] Product:', 'Trigger infinite scroll callback.', event.data);
+                this.infiniteScrollCallback();
+            }
         } else {
             logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platfrom` are protected!');
         }
