@@ -1,9 +1,7 @@
 var platform = require('./messaging/platform'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/platform_handler'),
-    logger = require('./utils/logger'),
-    productPattern = new RegExp('^Product\\.', 'g'),
-    platformPattern = new RegExp('^Platform\\.', 'g');
+    logger = require('./utils/logger');
 
 function validateProductsConfig(products) {
     var productValidity = true;
@@ -85,6 +83,9 @@ var platformGateway = {
     },
 
     handleMessage : function(event) {
+        var productPattern = new RegExp('^Product\\.', 'g'),
+            platformPattern = new RegExp('^Platform\\.', 'g');
+        
         // Check if message is reserved system message (Product and Platfrom messages)
         if(event.data && (productPattern.test(event.data.action) || platformPattern.test(event.data.action))) {
             this.handleProtectedMessage(event);
@@ -112,7 +113,7 @@ var platformGateway = {
             productData.data.action = 'Product.Load';
             this.sendMessage(productData.frameId, productData.data);
         } else if(event.data.action === 'Product.Resize') {
-            logger.out('info', '[G] Platform:', 'Resizing product.');
+            logger.out('info', '[G] Platform:', 'Resizing product.', event.data);
             contentHandler.resize(productData.frameId, event);
         } else if(event.data.action === 'Product.Loaded') {
             if(productData.productLoadedCallback) {

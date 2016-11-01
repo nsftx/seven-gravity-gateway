@@ -1,7 +1,7 @@
 var logger = {
     debugMode : false, //Verbosity setting
 
-    out : function() {
+    out : function(){
         if(this.debugMode) {
             //Convert to array
             var args = Array.prototype.slice.call(arguments);
@@ -9,9 +9,9 @@ var logger = {
             var type = args.splice(0,1);
 
             if(console[type]) {
-                console[type](args);
+                console[type].apply(this, args);
             } else {
-                console.log(args);
+                console.log.apply(this, args);
             }
         }
     }

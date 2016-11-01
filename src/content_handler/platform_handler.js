@@ -10,8 +10,8 @@ var contentHandler = {
     resize : function(frameId, event) {
         var frame = document.getElementById(frameId);
 
-        frame.style.height = event.data.height;
-        frame.style.width = event.data.width;
+        frame.style.height = event.data.height + 'px';
+        frame.style.width = event.data.width + 'px';
     },
 
     checkScrollContent : function() {

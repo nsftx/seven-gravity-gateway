@@ -1,9 +1,7 @@
 var product = require('./messaging/product'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/product_handler'),
-    logger = require('./utils/logger'),
-    productPattern = new RegExp('^Product\\.', 'g'),
-    platformPattern = new RegExp('^Platform\\.', 'g');
+    logger = require('./utils/logger');
 
 function validateInitialization(config) {
     if(!config.productId || typeof config.productId !== 'string') {
@@ -57,6 +55,8 @@ var productGateway = {
     },
 
     handleMessage : function(event) {
+        var productPattern = new RegExp('^Product\\.', 'g'),
+            platformPattern = new RegExp('^Platform\\.', 'g');
         // Check if message is reserved system message (Product and Platfrom messages)
         if(event.data && (productPattern.test(event.data.action) || platformPattern.test(event.data.action))) {
             this.handleProtectedMessage(event);
