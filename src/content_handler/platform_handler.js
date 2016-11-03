@@ -1,24 +1,18 @@
-function getDocumentMaxHeight() {
-    return Math.max(
-        document.body.scrollHeight, document.documentElement.scrollHeight,
-        document.body.offsetHeight, document.documentElement.offsetHeight,
-        document.body.clientHeight, document.documentElement.clientHeight
-    );
-}
-
 var contentHandler = {
     resize : function(frameId, event) {
         var frame = document.getElementById(frameId);
 
-        frame.style.height = event.data.height + 'px';
-        frame.style.width = event.data.width + 'px';
+        frame.height = event.data.height;
+        frame.width = event.data.width ;
     },
 
-    checkScrollContent : function() {
-        var documentHeight = getDocumentMaxHeight();
-
-        //Return boolean if scrollable content got to the end
-        return window.innerHeight + window.document.body.scrollTop === documentHeight;
+    getViewData : function() {
+        return {
+            top: window.document.body.scrollTop,
+            left:  window.document.body.scrollLeft,
+            totalHeight: window.innerHeight,
+            totalWidth : window.innerWidth
+        };
     }
 };
 

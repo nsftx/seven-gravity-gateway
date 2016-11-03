@@ -7,11 +7,11 @@ function validateInitialization(config) {
     if(!config.productId || typeof config.productId !== 'string') {
         logger.out('error', '[G] Product:', 'productId property is invalid or missing');
         return false;
-    } else if(!config.initData || typeof config.initData !== 'object') {
-        logger.out('error', '[G] Product:', 'initData property is invalid or missing');
+    } else if(!config.data || typeof config.data !== 'object') {
+        logger.out('error', '[G] Product:', 'data property is invalid or missing');
         return false;
-    } else if(!config.loadCallback || typeof config.loadCallback !== 'function') {
-        logger.out('error', '[G] Product:', 'loadCallback property is invalid or missing');
+    } else if(!config.load || typeof config.load !== 'function') {
+        logger.out('error', '[G] Product:', 'load property is invalid or missing');
         return false;
     } else {
         logger.out('info', '[G] Product:', 'Initializing');
@@ -27,7 +27,7 @@ var productGateway = {
 
     initialized : false,
 
-    loadCallback : null,
+    load : null,
 
     setAllowedDomains : function() {
         if(this.config && this.config.allowedOrigins) {
@@ -41,10 +41,7 @@ var productGateway = {
         this.initialized = true;
         this.config = config;
         this.productId = config.productId;
-        this.loadCallback = config.loadCallback;
-        if(config.infiniteScrollCallback && typeof config.infiniteScrollCallback === 'function') {
-            this.infiniteScrollCallback = config.infiniteScrollCallback;
-        }
+        this.load = config.load;
         this.setAllowedDomains();
         //Pass the event callback, and event name
         contentHandler.init(this.sendMessage.bind(this), 'Product.Resize');
@@ -57,6 +54,7 @@ var productGateway = {
     handleMessage : function(event) {
         var productPattern = new RegExp('^Product\\.', 'g'),
             platformPattern = new RegExp('^Platform\\.', 'g');
+
         // Check if message is reserved system message (Product and Platfrom messages)
         if(event.data && (productPattern.test(event.data.action) || platformPattern.test(event.data.action))) {
             this.handleProtectedMessage(event);
@@ -75,19 +73,17 @@ var productGateway = {
     startProductInitialization : function() {
         this.sendMessage({
             action: 'Product.Init',
-            data: this.config.initData
+            data: this.config.data
         });
     },
 
     handleProtectedMessage : function(event) {
         if(event.data.action === 'Product.Load') {
             logger.out('info', '[G] Product:', 'Starting to load.');
-            this.loadCallback(event.data);
-        } else if (event.data.action === 'Product.ScrollEnded') {
-            if(this.infiniteScrollCallback) {
-                logger.out('info', '[G] Product:', 'Trigger infinite scroll callback.', event.data);
-                this.infiniteScrollCallback();
-            }
+            this.load(event.data);
+        } else if (event.data.action === 'Product.Scroll') {
+            logger.out('info', '[G] Product:', 'Publish Product.Scroll event.', event.data);
+            pubSub.publish(event.data);
         } else {
             logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platfrom` are protected!');
         }

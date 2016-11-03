@@ -5,6 +5,7 @@ var OBSERVED_EVENTS = [
     {type: 'Input',                 eventName : 'input'},
     {type: 'Resize',                eventName : 'resize'},
     {type: 'Mouse Up',              eventName : 'mouseup'},
+    {type: 'Content Loaded',        eventName : 'DOMContentLoaded'},
     {type: 'Mouse Down',            eventName : 'mousedown'},
     {type: 'Orientation Change',    eventName : 'orientationchange'},
     {type: 'Print',                 eventName : ['afterprint', 'beforeprint']},

@@ -8,11 +8,11 @@ describe('Testing product gateway instantiation', function() {
     it('Should return instance', function() {
         productInstance = ProductGateway({
             productId : 'Product',
-            initData : {
-                gameConfig : {}
+            allowedOrigins : ['http://www.nsoft.ba'],
+            data : {
+                config : {}
             },
-            loadCallback: function(){},
-            allowedOrigins : ['http://www.nsoft.ba']
+            load: function(){}
         });
         assert.equal(typeof productInstance, 'object');
     });

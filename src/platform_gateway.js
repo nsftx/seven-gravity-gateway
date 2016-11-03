@@ -13,8 +13,8 @@ function validateProductsConfig(products) {
         } else if(!products[game].data || typeof products[game].data !== 'object' ) {
             logger.out('error', '[G] Platform:', 'data property is invalid or missing for game ' + game);
             productValidity = false;
-        } else if (!products[game].productInitCallback || typeof products[game].productInitCallback !== 'function' ) {
-            logger.out('error', '[G] Platform:', 'productInitCallback property is invalid or missing for game ' + game);
+        } else if (!products[game].init || typeof products[game].init !== 'function' ) {
+            logger.out('error', '[G] Platform:', 'init property is invalid or missing for game ' + game);
             productValidity = false;
         }
     }
@@ -44,8 +44,6 @@ var platformGateway = {
 
     allowedOrigins : null,
 
-    infiniteScroll : false,
-
     setAllowedDomains : function() {
         if(this.config && this.config.allowedOrigins) {
             this.allowedOrigins = this.config.allowedOrigins;
@@ -54,20 +52,20 @@ var platformGateway = {
         }
     },
 
-    setInfiniteScroll : function(game) {
+    enableScrollMsg : function(game) {
         window.addEventListener('scroll', function() {
-            var scrollContentEnded = contentHandler.checkScrollContent();
-
-            if(scrollContentEnded) {
-                this.sendMessage(game, 'Product.ScrollEnded');
-            }
+            this.sendMessage(game.frameId, {
+                action : 'Product.Scroll',
+                viewData : contentHandler.getViewData(game.frameId)
+            });
         }.bind(this));
     },
 
-    checkInfiniteScroll : function() {
+    checkProductScroll : function() {
+        // Check if scroll message is enabled
         for(var game in  this.products) {
-            if(this.products[game].infiniteScroll) {
-               this.setInfiniteScroll(game);
+            if(this.products[game].scroll) {
+               this.enableScrollMsg(game);
             }
         }
     },
@@ -77,7 +75,7 @@ var platformGateway = {
         this.config = config;
         this.products = config.products;
         this.setAllowedDomains();
-        this.checkInfiniteScroll();
+        this.checkProductScroll();
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
     },
@@ -85,9 +83,9 @@ var platformGateway = {
     handleMessage : function(event) {
         var productPattern = new RegExp('^Product\\.', 'g'),
             platformPattern = new RegExp('^Platform\\.', 'g');
-        
-        // Check if message is reserved system message (Product and Platfrom messages)
-        if(event.data && (productPattern.test(event.data.action) || platformPattern.test(event.data.action))) {
+
+        // Check if message is reserved system message (Product and Platform messages)
+        if(productPattern.test(event.data.action) || platformPattern.test(event.data.action)) {
             this.handleProtectedMessage(event);
             return false;
         }
@@ -109,19 +107,19 @@ var platformGateway = {
 
         if(event.data.action === 'Product.Init') {
             logger.out('info', '[G] Platform:', 'Starting to load product.', event.data);
-            productData.productInitCallback(event.data.initData); // Run the product init callback and notify product to load
+            productData.init(event.data.data); // Run the product init callback and notify product to load
             productData.data.action = 'Product.Load';
             this.sendMessage(productData.frameId, productData.data);
         } else if(event.data.action === 'Product.Resize') {
             logger.out('info', '[G] Platform:', 'Resizing product.', event.data);
             contentHandler.resize(productData.frameId, event);
         } else if(event.data.action === 'Product.Loaded') {
-            if(productData.productLoadedCallback) {
+            if(productData.loaded) {
                 logger.out('info', '[G] Platform:', 'Product loaded.', event.data);
-                productData.productLoadedCallback(event.data.initData);
+                productData.loaded();
             }
         } else {
-            logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platfrom` are protected!');
+            logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platform` are protected!');
         }
     },
 

@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 
             definition[component] = {
                 files: [{
-                    src: 'build/' + component + '.js',
+                    src: './' + component + '.js',
                     dest: 'dist/' + component + '.js'
                 }],
                 options : {
@@ -16,7 +16,7 @@ module.exports = function(grunt) {
                 }
             };
 
-            definition[component].options.alias[component] =  './build/' + component + '.js';
+            definition[component].options.alias[component] =  './' + component + '.js';
         });
 
         return definition;

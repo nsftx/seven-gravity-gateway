@@ -12,9 +12,9 @@ describe('Testing platform gateway instantiation', function() {
                 'product': {
                     frameId: 'product',
                     data : {},
-                    productInitCallback : function(){},
-                    productLoadedCallback : function(){}
-
+                    scroll : true,
+                    init : function(){},
+                    loaded : function(){}
                 }
             }
         });
