@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">33.33% </span>
+        <span class="strong">22.22% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>3/9</span>
+        <span class='fraction'>2/9</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">0% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>0/0</span>
+        <span class='fraction'>0/4</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>0/3</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">33.33% </span>
+        <span class="strong">22.22% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>3/9</span>
+        <span class='fraction'>2/9</span>
       </div>
     </div>
   </div>
@@ -67,7 +67,25 @@
 22
 23
 24
-25</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+25
+26
+27</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -75,43 +93,31 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span></td><td class="text"><pre class="prettyprint lang-js"><span class="fstat-no" title="function not covered" >function getDocumentMaxHeight() {</span>
-<span class="cstat-no" title="statement not covered" >    return Math.max(</span>
-        document.body.scrollHeight, document.documentElement.scrollHeight,
-        document.body.offsetHeight, document.documentElement.offsetHeight,
-        document.body.clientHeight, document.documentElement.clientHeight
-    );
-}
+<span class="cline-any cline-yes">1×</span></td><td class="text"><pre class="prettyprint lang-js">var contentHandler = {
 &nbsp;
-var contentHandler = {
-    resize : <span class="fstat-no" title="function not covered" >function(frameId, event) {</span>
+    resetFrameSize : <span class="fstat-no" title="function not covered" >function(frameId) {</span>
 <span class="cstat-no" title="statement not covered" >        var frame = document.getElementById(frameId);</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >        frame.style.height = event.data.height;</span>
-<span class="cstat-no" title="statement not covered" >        frame.style.width = event.data.width;</span>
+<span class="cstat-no" title="statement not covered" >        if(frame) {</span>
+<span class="cstat-no" title="statement not covered" >            frame.style.height = '0px';</span>
+        }
     },
 &nbsp;
-    checkScrollContent : <span class="fstat-no" title="function not covered" >function() {</span>
-<span class="cstat-no" title="statement not covered" >        var documentHeight = getDocumentMaxHeight();</span>
+    resize : <span class="fstat-no" title="function not covered" >function(frameId, event) {</span>
+<span class="cstat-no" title="statement not covered" >        var frame = document.getElementById(frameId);</span>
+<span class="cstat-no" title="statement not covered" >        if(frame) {</span>
+<span class="cstat-no" title="statement not covered" >            frame.style.height = event.data.height + 'px';</span>
+        }
+    },
 &nbsp;
-        //Return boolean if scrollable content got to the end
-<span class="cstat-no" title="statement not covered" >        return window.innerHeight + window.document.body.scrollTop === documentHeight;</span>
+    getViewData : <span class="fstat-no" title="function not covered" >function() {</span>
+<span class="cstat-no" title="statement not covered" >        return {</span>
+            top: window.document.body.scrollTop,
+            left:  window.document.body.scrollLeft,
+            totalHeight: window.innerHeight,
+            totalWidth : window.innerWidth
+        };
     }
 };
 &nbsp;
@@ -121,7 +127,7 @@ module.exports = contentHandler;</pre></td></tr>
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Oct 28 2016 13:46:58 GMT+0200 (CEST)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Nov 07 2016 14:07:19 GMT+0100 (CET)
 </div>
 </div>
 <script src="../../prettify.js"></script>

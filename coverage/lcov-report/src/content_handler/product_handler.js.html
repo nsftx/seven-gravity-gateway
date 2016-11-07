@@ -20,24 +20,24 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">66.67% </span>
+        <span class="strong">61.54% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>14/21</span>
+        <span class='fraction'>16/26</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">62.5% </span>
+        <span class="strong">50% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>5/8</span>
+        <span class='fraction'>5/10</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">62.5% </span>
+        <span class="strong">60% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>5/8</span>
+        <span class='fraction'>6/10</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">66.67% </span>
+        <span class="strong">61.54% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>14/21</span>
+        <span class='fraction'>16/26</span>
       </div>
     </div>
   </div>
@@ -126,8 +126,19 @@
 81
 82
 83
-84</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -149,6 +160,12 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -162,8 +179,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
@@ -175,12 +199,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">15×</span>
 <span class="cline-any cline-yes">7×</span>
 <span class="cline-any cline-yes">23×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">8×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -214,7 +238,6 @@
     {type: 'Animation Iteration',   eventName : ['animationiteration','webkitAnimationIteration']},
     {type: 'Animation End',         eventName : ['animationend','webkitAnimationEnd']},
     {type: 'Input',                 eventName : 'input'},
-    {type: 'Resize',                eventName : 'resize'},
     {type: 'Mouse Up',              eventName : 'mouseup'},
     {type: 'Mouse Down',            eventName : 'mousedown'},
     {type: 'Orientation Change',    eventName : 'orientationchange'},
@@ -233,7 +256,13 @@ var contentHandler = {
 &nbsp;
     eventName : null,
 &nbsp;
+    DOMReady : false,
+&nbsp;
     handleContentChange : <span class="fstat-no" title="function not covered" >function() {</span>
+<span class="cstat-no" title="statement not covered" >        if(!this.DOMReady) {</span>
+<span class="cstat-no" title="statement not covered" >            return false;</span>
+        }
+&nbsp;
 <span class="cstat-no" title="statement not covered" >        var data = {</span>
             action : this.eventName,
             width : window.innerWidth,
@@ -243,11 +272,18 @@ var contentHandler = {
 <span class="cstat-no" title="statement not covered" >        this.eventCallback(data);</span>
     },
 &nbsp;
+    listenDOMReady : function() {
+        window.addEventListener('DOMContentLoaded', <span class="fstat-no" title="function not covered" >function() {</span>
+<span class="cstat-no" title="statement not covered" >            this.DOMReady = true;</span>
+        }.bind(this));
+    },
+&nbsp;
     init: function(eventCb, eventName) {
         this.eventCallback = eventCb;
         this.eventName = eventName;
 &nbsp;
-        this.attachEventListeners();
+        this.addContentListeners();
+        this.listenDOMReady();
 &nbsp;
         <span class="missing-if-branch" title="if path not taken" >I</span>if (window.MutationObserver || window.WebKitMutationObserver){
 <span class="cstat-no" title="statement not covered" >            this.setupMutationObserver();</span>
@@ -256,7 +292,7 @@ var contentHandler = {
         }
     },
 &nbsp;
-    attachEventListeners : function() {
+    addContentListeners : function() {
         OBSERVED_EVENTS.forEach(function(event) {
             if(Array.isArray(event.eventName)) {
                 event.eventName.forEach(function(event) {
@@ -298,7 +334,7 @@ module.exports= contentHandler;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Oct 28 2016 13:46:58 GMT+0200 (CEST)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Nov 07 2016 14:07:19 GMT+0100 (CET)
 </div>
 </div>
 <script src="../../prettify.js"></script>

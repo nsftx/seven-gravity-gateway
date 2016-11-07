@@ -20,24 +20,24 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">45.57% </span>
+        <span class="strong">49.37% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>36/79</span>
+        <span class='fraction'>39/79</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">50.88% </span>
+        <span class="strong">51.85% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>29/57</span>
+        <span class='fraction'>28/54</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">57.14% </span>
+        <span class="strong">64.29% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>8/14</span>
+        <span class='fraction'>9/14</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">45.57% </span>
+        <span class="strong">49.37% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>36/79</span>
+        <span class='fraction'>39/79</span>
       </div>
     </div>
   </div>
@@ -213,8 +213,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -257,8 +255,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -267,17 +263,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -285,6 +270,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
@@ -293,6 +289,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -316,6 +315,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -376,9 +376,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var platform = require('./messaging/platform'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/platform_handler'),
-    logger = require('./utils/logger'),
-    productPattern = new RegExp('^Product\\.', 'g'),
-    platformPattern = new RegExp('^Platform\\.', 'g');
+    logger = require('./utils/logger');
 &nbsp;
 function validateProductsConfig(products) {
     var productValidity = true;
@@ -390,8 +388,8 @@ function validateProductsConfig(products) {
         } else <span class="missing-if-branch" title="if path not taken" >I</span>if(!products[game].data || typeof products[game].data !== 'object' ) {
 <span class="cstat-no" title="statement not covered" >            logger.out('error', '[G] Platform:', 'data property is invalid or missing for game ' + game);</span>
 <span class="cstat-no" title="statement not covered" >            productValidity = false;</span>
-        } else <span class="missing-if-branch" title="if path not taken" >I</span>if (!products[game].productInitCallback || typeof products[game].productInitCallback !== 'function' ) {
-<span class="cstat-no" title="statement not covered" >            logger.out('error', '[G] Platform:', 'productInitCallback property is invalid or missing for game ' + game);</span>
+        } else <span class="missing-if-branch" title="if path not taken" >I</span>if (!products[game].init || typeof products[game].init !== 'function' ) {
+<span class="cstat-no" title="statement not covered" >            logger.out('error', '[G] Platform:', 'init property is invalid or missing for game ' + game);</span>
 <span class="cstat-no" title="statement not covered" >            productValidity = false;</span>
         }
     }
@@ -421,8 +419,6 @@ var platformGateway = {
 &nbsp;
     allowedOrigins : null,
 &nbsp;
-    infiniteScroll : false,
-&nbsp;
     setAllowedDomains : function() {
         <span class="missing-if-branch" title="else path not taken" >E</span>if(this.config &amp;&amp; this.config.allowedOrigins) {
             this.allowedOrigins = this.config.allowedOrigins;
@@ -431,20 +427,20 @@ var platformGateway = {
         }
     },
 &nbsp;
-    setInfiniteScroll : <span class="fstat-no" title="function not covered" >function(game) {</span>
-<span class="cstat-no" title="statement not covered" >        window.addEventListener('scroll', <span class="fstat-no" title="function not covered" >function() {</span></span>
-<span class="cstat-no" title="statement not covered" >            var scrollContentEnded = contentHandler.checkScrollContent();</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >            if(scrollContentEnded) {</span>
-<span class="cstat-no" title="statement not covered" >                this.sendMessage(game, 'Product.ScrollEnded');</span>
-            }
+    enableScrollMsg : function(productFrameId) {
+        window.addEventListener('scroll', <span class="fstat-no" title="function not covered" >function() {</span>
+<span class="cstat-no" title="statement not covered" >            this.sendMessage(productFrameId, {</span>
+                action : 'Product.Scroll',
+                data : contentHandler.getViewData(productFrameId)
+            });
         }.bind(this));
     },
 &nbsp;
-    checkInfiniteScroll : function() {
+    checkProductScroll : function() {
+        // Check if scroll message is enabled
         for(var game in  this.products) {
-            <span class="missing-if-branch" title="if path not taken" >I</span>if(this.products[game].infiniteLoader) {
-<span class="cstat-no" title="statement not covered" >               this.setInfiniteScroll(game);</span>
+            <span class="missing-if-branch" title="else path not taken" >E</span>if(this.products[game].scroll) {
+                this.enableScrollMsg(this.products[game].frameId);
             }
         }
     },
@@ -454,14 +450,17 @@ var platformGateway = {
         this.config = config;
         this.products = config.products;
         this.setAllowedDomains();
-        this.checkInfiniteScroll();
+        this.checkProductScroll();
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
     },
 &nbsp;
     handleMessage : function(event) {
-        // Check if message is reserved system message (Product and Platfrom messages)
-        <span class="missing-if-branch" title="else path not taken" >E</span>if(event.data &amp;&amp; (productPattern.test(event.data.action) || <span class="branch-2 cbranch-no" title="branch not covered" >platformPattern.test(event.data.action))</span>) {
+        var productPattern = new RegExp('^Product\\.', 'g'),
+            platformPattern = new RegExp('^Platform\\.', 'g');
+&nbsp;
+        // Check if message is reserved system message (Product and Platform messages)
+        <span class="missing-if-branch" title="else path not taken" >E</span>if(productPattern.test(event.data.action) || <span class="branch-1 cbranch-no" title="branch not covered" >platformPattern.test(event.data.action))</span> {
             this.handleProtectedMessage(event);
             return false;
         }
@@ -472,7 +471,7 @@ var platformGateway = {
         }
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        logger.out('info', '[G] Platform - Product message received:', event.data);</span>
-<span class="cstat-no" title="statement not covered" >        pubSub.publish(event.data);</span>
+<span class="cstat-no" title="statement not covered" >        pubSub.publish(event.data.action, event.data);</span>
     },
 &nbsp;
     handleProtectedMessage : function(event) {
@@ -483,28 +482,29 @@ var platformGateway = {
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        if(event.data.action === 'Product.Init') {</span>
 <span class="cstat-no" title="statement not covered" >            logger.out('info', '[G] Platform:', 'Starting to load product.', event.data);</span>
-<span class="cstat-no" title="statement not covered" >            productData.productInitCallback(event.data.initData); </span>// Run the product init callback and notify product to load
+<span class="cstat-no" title="statement not covered" >            contentHandler.resetFrameSize(productData.frameId); </span>//On every init reset the frame size
+<span class="cstat-no" title="statement not covered" >            productData.init(event.data.data); </span>// Run the product init callback and notify product to load
 <span class="cstat-no" title="statement not covered" >            productData.data.action = 'Product.Load';</span>
 <span class="cstat-no" title="statement not covered" >            this.sendMessage(productData.frameId, productData.data);</span>
         } else <span class="cstat-no" title="statement not covered" >if(event.data.action === 'Product.Resize') {</span>
-<span class="cstat-no" title="statement not covered" >            logger.out('info', '[G] Platform:', 'Resizing product.');</span>
+<span class="cstat-no" title="statement not covered" >            logger.out('info', '[G] Platform:', 'Resizing product.', event.data);</span>
 <span class="cstat-no" title="statement not covered" >            contentHandler.resize(productData.frameId, event);</span>
         } else <span class="cstat-no" title="statement not covered" >if(event.data.action === 'Product.Loaded') {</span>
-<span class="cstat-no" title="statement not covered" >            if(productData.productLoadedCallback) {</span>
+<span class="cstat-no" title="statement not covered" >            if(productData.loaded) {</span>
 <span class="cstat-no" title="statement not covered" >                logger.out('info', '[G] Platform:', 'Product loaded.', event.data);</span>
-<span class="cstat-no" title="statement not covered" >                productData.productLoadedCallback(event.data.initData);</span>
+<span class="cstat-no" title="statement not covered" >                productData.loaded();</span>
             }
         } else {
-<span class="cstat-no" title="statement not covered" >            logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platfrom` are protected!');</span>
+<span class="cstat-no" title="statement not covered" >            logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platform` are protected!');</span>
         }
     },
 &nbsp;
-    subscribe : <span class="fstat-no" title="function not covered" >function(data) {</span>
-<span class="cstat-no" title="statement not covered" >        pubSub.subscribe(data);</span>
+    subscribe : <span class="fstat-no" title="function not covered" >function(action, callback) {</span>
+<span class="cstat-no" title="statement not covered" >        pubSub.subscribe(action, callback);</span>
     },
 &nbsp;
-    unsubscribe : <span class="fstat-no" title="function not covered" >function(data) {</span>
-<span class="cstat-no" title="statement not covered" >        pubSub.unsubscribe(data);</span>
+    unsubscribe : <span class="fstat-no" title="function not covered" >function(action) {</span>
+<span class="cstat-no" title="statement not covered" >        pubSub.unsubscribe(action);</span>
     },
 &nbsp;
     clearSubscriptions : <span class="fstat-no" title="function not covered" >function() {</span>
@@ -544,7 +544,7 @@ module.exports = function(config) {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Oct 28 2016 13:46:58 GMT+0200 (CEST)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Nov 07 2016 14:07:19 GMT+0100 (CET)
 </div>
 </div>
 <script src="../prettify.js"></script>
