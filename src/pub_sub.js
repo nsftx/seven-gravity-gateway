@@ -4,9 +4,9 @@ var pubSub = {
 
     topics : {},
 
-    subscribe : function(data) {
-        if(data.action && typeof data.callback === 'function') {
-            this.topics[data.action] = data.callback;
+    subscribe : function(action, callback) {
+        if(action && typeof callback === 'function') {
+            this.topics[action] = callback;
             return true;
         } else {
             logger.out('error', 'Subscribe failed - action property is invalid or missing.');
@@ -14,22 +14,22 @@ var pubSub = {
         }
     },
 
-    unsubscribe : function(data) {
-        if (!this.topics[data.action]) {
-            logger.out('error', 'Unsubscribe failed - topic ' + data.action + ' doesn´t exist');
+    unsubscribe : function(action) {
+        if (!this.topics[action]) {
+            logger.out('error', 'Unsubscribe failed - topic ' + action + ' doesn´t exist');
             return false;
         } else {
-            delete this.topics[data.action];
+            delete this.topics[action];
             return true;
         }
     },
 
 
-    publish : function(data) {
-        var topicAction = this.checkNamespaceActions(data.action);
+    publish : function(action, data) {
+        var topicAction = this.checkNamespaceActions(action);
 
         if(!Boolean(topicAction)) {
-            logger.out('error', 'Publish failed - topic ' + data.action + ' doesn´t exist');
+            logger.out('error', 'Publish failed - topic ' + action + ' doesn´t exist');
             return false;
         } else {
             topicAction(data);

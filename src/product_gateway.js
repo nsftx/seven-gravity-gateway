@@ -56,7 +56,7 @@ var productGateway = {
             platformPattern = new RegExp('^Platform\\.', 'g');
 
         // Check if message is reserved system message (Product and Platfrom messages)
-        if(event.data && (productPattern.test(event.data.action) || platformPattern.test(event.data.action))) {
+        if(productPattern.test(event.data.action) || platformPattern.test(event.data.action)) {
             this.handleProtectedMessage(event);
             return false;
         }
@@ -67,7 +67,7 @@ var productGateway = {
         }
 
         logger.out('info', '[G] Product - Platform message received:', event.data);
-        pubSub.publish(event.data);
+        pubSub.publish(event.data.action, event.data);
     },
 
     startProductInitialization : function() {
@@ -83,18 +83,18 @@ var productGateway = {
             this.load(event.data);
         } else if (event.data.action === 'Product.Scroll') {
             logger.out('info', '[G] Product:', 'Publish Product.Scroll event.', event.data);
-            pubSub.publish(event.data);
+            pubSub.publish(event.data.action, event.data);
         } else {
             logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platfrom` are protected!');
         }
     },
 
-    subscribe : function(data) {
-        pubSub.subscribe(data);
+    subscribe : function(action, callback) {
+        pubSub.subscribe(action, callback);
     },
 
-    unsubscribe : function(data) {
-        pubSub.unsubscribe(data);
+    unsubscribe : function(action) {
+        pubSub.unsubscribe(action);
     },
 
     clearSubscriptions : function() {

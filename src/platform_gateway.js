@@ -96,7 +96,7 @@ var platformGateway = {
         }
 
         logger.out('info', '[G] Platform - Product message received:', event.data);
-        pubSub.publish(event.data);
+        pubSub.publish(event.data.action, event.data);
     },
 
     handleProtectedMessage : function(event) {
@@ -124,12 +124,12 @@ var platformGateway = {
         }
     },
 
-    subscribe : function(data) {
-        pubSub.subscribe(data);
+    subscribe : function(action, callback) {
+        pubSub.subscribe(action, callback);
     },
 
-    unsubscribe : function(data) {
-        pubSub.unsubscribe(data);
+    unsubscribe : function(action) {
+        pubSub.unsubscribe(action);
     },
 
     clearSubscriptions : function() {
