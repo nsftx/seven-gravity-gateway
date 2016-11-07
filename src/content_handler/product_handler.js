@@ -3,9 +3,7 @@ var OBSERVED_EVENTS = [
     {type: 'Animation Iteration',   eventName : ['animationiteration','webkitAnimationIteration']},
     {type: 'Animation End',         eventName : ['animationend','webkitAnimationEnd']},
     {type: 'Input',                 eventName : 'input'},
-    {type: 'Resize',                eventName : 'resize'},
     {type: 'Mouse Up',              eventName : 'mouseup'},
-    {type: 'Content Loaded',        eventName : 'DOMContentLoaded'},
     {type: 'Mouse Down',            eventName : 'mousedown'},
     {type: 'Orientation Change',    eventName : 'orientationchange'},
     {type: 'Print',                 eventName : ['afterprint', 'beforeprint']},
@@ -23,7 +21,13 @@ var contentHandler = {
 
     eventName : null,
 
+    DOMReady : false,
+
     handleContentChange : function() {
+        if(!this.DOMReady) {
+            return false;
+        }
+
         var data = {
             action : this.eventName,
             width : window.innerWidth,
@@ -33,11 +37,18 @@ var contentHandler = {
         this.eventCallback(data);
     },
 
+    listenDOMReady : function() {
+        window.addEventListener('DOMContentLoaded', function() {
+            this.DOMReady = true;
+        }.bind(this));
+    },
+
     init: function(eventCb, eventName) {
         this.eventCallback = eventCb;
         this.eventName = eventName;
 
-        this.attachEventListeners();
+        this.addContentListeners();
+        this.listenDOMReady();
 
         if (window.MutationObserver || window.WebKitMutationObserver){
             this.setupMutationObserver();
@@ -46,7 +57,7 @@ var contentHandler = {
         }
     },
 
-    attachEventListeners : function() {
+    addContentListeners : function() {
         OBSERVED_EVENTS.forEach(function(event) {
             if(Array.isArray(event.eventName)) {
                 event.eventName.forEach(function(event) {

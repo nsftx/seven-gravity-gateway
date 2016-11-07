@@ -52,11 +52,11 @@ var platformGateway = {
         }
     },
 
-    enableScrollMsg : function(game) {
+    enableScrollMsg : function(productFrameId) {
         window.addEventListener('scroll', function() {
-            this.sendMessage(game.frameId, {
+            this.sendMessage(productFrameId, {
                 action : 'Product.Scroll',
-                viewData : contentHandler.getViewData(game.frameId)
+                data : contentHandler.getViewData(productFrameId)
             });
         }.bind(this));
     },
@@ -65,7 +65,7 @@ var platformGateway = {
         // Check if scroll message is enabled
         for(var game in  this.products) {
             if(this.products[game].scroll) {
-               this.enableScrollMsg(game);
+                this.enableScrollMsg(this.products[game].frameId);
             }
         }
     },
@@ -107,6 +107,7 @@ var platformGateway = {
 
         if(event.data.action === 'Product.Init') {
             logger.out('info', '[G] Platform:', 'Starting to load product.', event.data);
+            contentHandler.resetFrameSize(productData.frameId); //On every init reset the frame size
             productData.init(event.data.data); // Run the product init callback and notify product to load
             productData.data.action = 'Product.Load';
             this.sendMessage(productData.frameId, productData.data);
