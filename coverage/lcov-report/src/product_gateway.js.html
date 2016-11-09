@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">69.64% </span>
+        <span class="strong">78.57% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>39/56</span>
+        <span class='fraction'>44/56</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">78.95% </span>
+        <span class="strong">86.84% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>30/38</span>
+        <span class='fraction'>33/38</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">72.73% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>8/11</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">69.64% </span>
+        <span class="strong">78.57% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>39/56</span>
+        <span class='fraction'>44/56</span>
       </div>
     </div>
   </div>
@@ -172,15 +172,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
@@ -277,17 +277,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var product = require('./messaging/product'),
     pubSub = require('./pub_sub'),
@@ -295,15 +295,15 @@
     logger = require('./utils/logger');
 &nbsp;
 function validateInitialization(config) {
-    <span class="missing-if-branch" title="if path not taken" >I</span>if(!config.productId || typeof config.productId !== 'string') {
-<span class="cstat-no" title="statement not covered" >        logger.out('error', '[G] Product:', 'productId property is invalid or missing');</span>
-<span class="cstat-no" title="statement not covered" >        return false;</span>
+    if(!config.productId || typeof config.productId !== 'string') {
+        logger.out('error', '[G] Product:', 'productId property is invalid or missing');
+        return false;
     } else <span class="missing-if-branch" title="if path not taken" >I</span>if(!config.data || typeof config.data !== 'object') {
 <span class="cstat-no" title="statement not covered" >        logger.out('error', '[G] Product:', 'data property is invalid or missing');</span>
 <span class="cstat-no" title="statement not covered" >        return false;</span>
-    } else <span class="missing-if-branch" title="if path not taken" >I</span>if(!config.load || typeof config.load !== 'function') {
-<span class="cstat-no" title="statement not covered" >        logger.out('error', '[G] Product:', 'load property is invalid or missing');</span>
-<span class="cstat-no" title="statement not covered" >        return false;</span>
+    } else if(!config.load || typeof config.load !== 'function') {
+        logger.out('error', '[G] Product:', 'load property is invalid or missing');
+        return false;
     } else {
         logger.out('info', '[G] Product:', 'Initializing');
         return true;
@@ -407,10 +407,10 @@ module.exports = function(config) {
     if(!productGateway.initialized &amp;&amp; validateInitialization(config)) {
         productGateway.init(config);
         return productGateway;
-    } else <span class="missing-if-branch" title="else path not taken" >E</span>if(productGateway.initialized) {
+    } else if(productGateway.initialized) {
         return productGateway;
     } else {
-<span class="cstat-no" title="statement not covered" >        return false;</span>
+        return false;
     }
 };</pre></td></tr>
 </table></pre>
@@ -418,7 +418,7 @@ module.exports = function(config) {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Nov 09 2016 14:00:42 GMT+0100 (CET)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Nov 09 2016 14:22:19 GMT+0100 (CET)
 </div>
 </div>
 <script src="../prettify.js"></script>
