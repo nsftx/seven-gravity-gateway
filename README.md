@@ -23,7 +23,7 @@ To use this component in web browser load it from !!dist!! directory in !!node_m
 
 
 
-== Load module ==
+=Load module =
 
 
 You can load module in your code using embedded require module loader:
@@ -45,40 +45,13 @@ var productGateway = require('product_gateway');
 ```
 
 
-=Usage=
+==Usage=
 
 
 Component is initialized by calling the module and passing the proper config object.
 
 
-==Product gateway==
-
-
-```
-lang=javascript
-var Gateway = productGateway({
-    productId : $productId,
-    initData : object,
-    loadCallback: function,
-    allowedOrigins : [],
-    infiniteScrollCallback : function,
-    debugMode : bool
-});
-```
-Config:
-|Name|Description|Type|Required|
-|productId|Product id|string|Y|
-|initData|Data necesarry for product init(config, token...) id|object|Y|
-|loadCallback|Callback which will be triggered when product is ready for load|function|Y|
-|infiniteScrollCallback|Callback which will be triggered if product uses infiniteScroll feature|function|N|
-|allowedOrigins|Array of allowed URIs|array|N|
-|debugMode|Debug messages setting|bool|N|
-
-
-IMPORTANT: !!productId!!  must be an unique identifier of the product(unique game ID).
-
-
-== Platfrom gateway==
+=====Platform gateway=====
 
 
 ```
@@ -88,11 +61,12 @@ var Gateway = platformGateway({
     debugMode : bool,
     products : {
         ‘LiveBetting’: {
-  	        frame: frameId,
+  	        frameId : frameId,
 	        data : {},
-	        productInitCallback : function,
-	        productLoadedCallback : function,
-	        infiniteScroll : bool
+	        init : function,
+ 	        load : function,
+                loaded : function
+	        scroll : bool
          }
     }
 );
@@ -102,22 +76,60 @@ var Gateway = platformGateway({
 Config:
 |Name|Description|Type|Required|
 |products|Object with details for all products|array|Y|
-|allowedOrigins|Array of allowed URIs|array|N|
+|allowedOrigins|Array of allowed URIs which are allowed to exchange messages|array|N|
 |debugMode|Debug messages setting|bool|N|
 
 
-!!allowedOrigins!! param contains array of URI's which are allowed to exchange messages with gateway. If obeyed default value will be set to '*'. This prop is not required by Product and Platform gateway, but it's highly recommend.
+!!allowedOrigins!! If obeyed default value will be set to '*'. This prop is not required by Product and Platform gateway, but it's highly recommend.
 
-!!data!! prop passed to product to initialize //product load// phase.
+!!products!! object contains configuration for all products. Products object must have next format: productId -> object
 
-!!productInitCallback!! Is required callback which will be triggered when product is ready for load. In this step product can pass necessary data for initialization(e.g. Url, token, configuration…).
+|Name|Description|Type|Required|
+|frameId|DOM elememnt id where game frame is located|string|Y|
+|data|prop passed to product to initialize product load phase.|object|Y|
+|init|Callback which will be triggered when product is ready for load |function|Y|
+|loaded|Callback which will trigger when game is loaded|function|N|
+|scroll|Notify product about scroll event in parent frame|bool|N|
 
-!!productLoadedCallback!! Is optional callback which will be triggered when product is loaded(eg removing loader).
+!!init!! Is required callback which will be triggered when product is ready for load. In this step product can pass necessary data for initialization(e.g. Url, token, configuration…).
 
-!!infiniteScroll!! optional flag. If it is set to true, product frame will be notified that user scrolled the content till the end and registered callback will be called.
+=====Product gateway====
 
 
-==Subscription==
+```
+lang=javascript
+var Gateway = productGateway({
+    productId : string,
+    data : object,
+    load: function,
+    allowedOrigins : array,
+    debugMode : bool
+});
+```
+Config:
+|Name|Description|Type|Required|
+|productId|Product id|string|Y|
+|data|Data which will be passed to platform on init(config, token...) |object|Y|
+|load|Callback which will be triggered when product is ready for load|function|Y|
+|allowedOrigins|Array of allowed URIs|array|N|
+|debugMode|Debug messages setting|bool|N|
+
+IMPORTANT: !!productId!!  must be an unique identifier of the product(unique game ID).
+
+In order to receive scroll messages gateway must subscribe to message 'Product.Scroll'. Also scroll must be set to true in platform gateway.
+
+In order to notify Platform about !!loaded!! event message should be sent to Platform frame in next format:
+
+```
+lang=javascript
+
+Gateway.sendMessage({
+    action : 'Product.Loaded'
+})
+```
+
+
+=====Subscription=====
 
 
 Gateway uses pub/sub pattern to handle events and actions.
@@ -131,10 +143,7 @@ Subscription format:
 
 ```
 lang=javascript
-Gateway.subscribe({
-    action : 'betslip.add',
-    callback: function,
-})
+Gateway.subscribe('betslip.add',function)
 ```
 
 
@@ -144,7 +153,8 @@ It is possible to use namespaced subscriptions. e.g. If one of the products subs
 IMPORTANT: Mesagess prefixed with Product and Platform are system reserved messages and therefore they will be ignored
 
 
-=Message exchange==
+=====Message exchange====
+
 =====Product -> Platfrom====
 
 
@@ -179,20 +189,18 @@ Data object must contain name of action and productId prop. !!productId!! proper
 IMPORTANT: !!productId!! prop must be an ID of game to which is dispatched
 
 
-==Unsubscribe
+====Unsubscribe
 Unsubscribe format:
 ```
 lang=javascript
-Gateway.unsubscribe({
-   action : 'betslip.add’
-})
+Gateway.unsubscribe('betslip.add’)
 ```
 
 
 Unsubscribe will remove registered action and its callback.
 
 
-==Clear subscription
+====Clear subscription
 ```
 lang=javascript
 Gateway.clearSubscriptions()
