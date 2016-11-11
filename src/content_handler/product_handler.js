@@ -3,6 +3,7 @@ var OBSERVED_EVENTS = [
     {type: 'Animation Iteration',   eventName : ['animationiteration','webkitAnimationIteration']},
     {type: 'Animation End',         eventName : ['animationend','webkitAnimationEnd']},
     {type: 'Input',                 eventName : 'input'},
+    {type: 'Resize',                eventName : 'resize'},
     {type: 'Mouse Up',              eventName : 'mouseup'},
     {type: 'Mouse Down',            eventName : 'mousedown'},
     {type: 'Orientation Change',    eventName : 'orientationchange'},
