@@ -1,4 +1,4 @@
-var logger = require('./utils/logger');
+var logger = require('./utils/utils').logger;
 
 var pubSub = {
 

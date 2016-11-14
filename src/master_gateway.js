@@ -1,7 +1,8 @@
 var masterPorthole = require('./messaging/master'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/master_handler'),
-    logger = require('./utils/logger');
+    logger = require('./utils/utils').logger,
+    throttle = require('./utils/utils').throttle;
 
 function validateProductsConfig(products) {
     var configValid = true;
@@ -53,12 +54,14 @@ var masterGateway = {
     },
 
     enableScrollMsg : function(frameId) {
-        window.addEventListener('scroll', function() {
+
+        window.addEventListener('scroll', throttle(function(){
             this.sendMessage(frameId, {
                 action : 'Master.Scroll',
                 data : contentHandler.getViewData(frameId)
             });
-        }.bind(this));
+        }.bind(this), 100));
+
     },
 
     checkProductScroll : function() {

@@ -1,7 +1,7 @@
 var slavePorthole = require('./messaging/slave'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/slave_handler'),
-    logger = require('./utils/logger');
+    logger = require('./utils/utils').logger;
 
 function validateInitialization(config) {
     if(!config.productId || typeof config.productId !== 'string') {
