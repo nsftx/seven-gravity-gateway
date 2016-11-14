@@ -32,10 +32,41 @@ var contentHandler = {
         var data = {
             action : this.eventName,
             width : window.innerWidth,
-            height : window.document.documentElement.offsetHeight
+            height : this.getContentHeight() + this.getBodyStyle()
         };
 
         this.eventCallback(data);
+    },
+
+    //Get offset height of iframe content
+    getContentHeight : function() {
+        var contentHeight = 0,
+            bodyChildNodes = document.querySelectorAll('body > *');
+
+        //If iframe's body has no child nodes
+        if(!bodyChildNodes.length) {
+            return 0;
+        }
+
+        //Convert HTML collection to array and calc the first level child nodes height sum
+        Array.prototype.forEach.call(bodyChildNodes, function(element){
+            contentHeight += element.offsetHeight;
+        });
+
+        return contentHeight;
+    },
+
+    getBodyStyle : function() {
+        //Get body margin and padding
+        var styles = getComputedStyle(document.body),
+            contentHeight = 0;
+
+        contentHeight += parseInt(styles.getPropertyValue('margin-top'), 10);
+        contentHeight += parseInt(styles.getPropertyValue('margin-bottom'), 10);
+        contentHeight += parseInt(styles.getPropertyValue('padding-top'), 10);
+        contentHeight += parseInt(styles.getPropertyValue('padding-bottom'), 10);
+
+        return contentHeight;
     },
 
     listenDOMReady : function() {
