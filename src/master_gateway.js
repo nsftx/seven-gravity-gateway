@@ -117,7 +117,7 @@ var masterGateway = {
         } else if(event.data.action === 'Slave.Loaded') {
             if(productData.loaded) {
                 logger.out('info', '[GW] Master:', 'Slave loaded.', event.data);
-                productData.loaded();
+                productData.loaded(event.data);
             }
         } else {
             logger.out('warn', '[GW] Master:', 'Actions with domain `Master` or `Slave` are protected!');

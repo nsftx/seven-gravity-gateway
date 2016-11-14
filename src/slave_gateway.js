@@ -8,13 +8,13 @@ function validateInitialization(config) {
         logger.out('error', '[GW] Slave:', 'productId property is invalid or missing');
         return false;
     } else if(!config.data || typeof config.data !== 'object') {
-        logger.out('error', '[GW] Slave:', 'data property is invalid or missing');
+        logger.out('error', '[GW] Slave.' + config.productId + ':', 'data property is invalid or missing');
         return false;
     } else if(!config.load || typeof config.load !== 'function') {
-        logger.out('error', '[GW] Slave:', 'load property is invalid or missing');
+        logger.out('error', '[GW] Slave.' + config.productId + ':', 'load property is invalid or missing');
         return false;
     } else {
-        logger.out('info', '[GW] Slave:', 'Initializing');
+        logger.out('info', '[GW] Slave.' + config.productId + ':', 'Initializing');
         return true;
     }
 }
@@ -62,11 +62,11 @@ var slaveGateway = {
         }
 
         if(this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
-            logger.out('error', '[GW] Slave: Message origin is not allowed');
+            logger.out('error', '[GW] Slave.' +  this.productId + ':' + ' Message origin is not allowed');
             return false;
         }
 
-        logger.out('info', '[G"] Slave: Master message received:', event.data);
+        logger.out('info', '[GW] Slave.' +  this.productId + ':' + ' Master message received:', event.data);
         pubSub.publish(event.data.action, event.data);
     },
 
@@ -79,13 +79,13 @@ var slaveGateway = {
 
     handleProtectedMessage : function(event) {
         if(event.data.action === 'Slave.Load') {
-            logger.out('info', '[GW] Slave:', 'Starting to load.');
+            logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Starting to load.');
             this.load(event.data);
         } else if (event.data.action === 'Master.Scroll') {
-            logger.out('info', '[GW] Slave:', 'Publish Master.Scroll event.', event.data);
+            logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Publish Master.Scroll event.', event.data);
             pubSub.publish(event.data.action, event.data);
         } else {
-            logger.out('warn', '[GW] Slave:', 'Actions with domain `Master` or `Slave` are protected!');
+            logger.out('warn', '[GW] Slave.' +  this.productId + ':', 'Actions with domain `Master` or `Slave` are protected!');
         }
     },
 

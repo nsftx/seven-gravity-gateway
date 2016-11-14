@@ -14,8 +14,8 @@ You can install this package with **npm**:
 
 
 Seven Gravity Gateway component consists of 2 files:
- - platform_gateway
- - product_gateway
+ - master_gateway
+ - slave_gateway
 
 
 To use this component in web browser load it from !!dist!! directory in !!node_modules!!:
@@ -29,19 +29,19 @@ To use this component in web browser load it from !!dist!! directory in !!node_m
 You can load module in your code using embedded require module loader:
 
 
-Platform gateway:
+Master gateway:
 
 
 ```
 lang=javascript
-var platformGateway = require('platform_gateway');
+var gateway = require('master_gateway');
 ```
-Product gateway:
+Slave gateway:
 
 
 ```
 lang=javascript
-var productGateway = require('product_gateway');
+var gateway = require('slave_gateway');
 ```
 
 
@@ -51,14 +51,14 @@ var productGateway = require('product_gateway');
 Component is initialized by calling the module and passing the proper config object.
 
 
-=====Platform gateway=====
+=====Master gateway=====
 
 
 ```
 lang=javascript
-var Gateway = platformGateway({
+var masterGateway = gateway({
     allowedOrigins : [],
-    debugMode : bool,
+    debug : bool,
     products : {
         ‘LiveBetting’: {
   	        frameId : frameId,
@@ -77,10 +77,10 @@ Config:
 |Name|Description|Type|Required|
 |products|Object with details for all products|array|Y|
 |allowedOrigins|Array of allowed URIs which are allowed to exchange messages|array|N|
-|debugMode|Debug messages setting|bool|N|
+|debug|Debug messages setting|bool|N|
 
 
-!!allowedOrigins!! If obeyed default value will be set to '*'. This prop is not required by Product and Platform gateway, but it's highly recommend.
+!!allowedOrigins!! If obeyed default value will be set to '*'. This prop is not required by Master and Slave gateway, but it's highly recommend.
 
 !!products!! object contains configuration for all products. Products object must have next format: productId -> object
 
@@ -88,22 +88,22 @@ Config:
 |frameId|DOM elememnt id where game frame is located|string|Y|
 |data|prop passed to product to initialize product load phase.|object|Y|
 |init|Callback which will be triggered when product is ready for load |function|Y|
-|loaded|Callback which will trigger when game is loaded|function|N|
-|scroll|Notify product about scroll event in parent frame|bool|N|
+|loaded|Callback which will trigger when product is loaded|function|N|
+|scroll|Notify slave frame about scroll event in parent frame|bool|N|
 
 !!init!! Is required callback which will be triggered when product is ready for load. In this step product can pass necessary data for initialization(e.g. Url, token, configuration…).
 
-=====Product gateway====
+=====Slave gateway====
 
 
 ```
 lang=javascript
-var Gateway = productGateway({
+var slaveGateway = gateway({
     productId : string,
     data : object,
     load: function,
     allowedOrigins : array,
-    debugMode : bool
+    debug : bool
 });
 ```
 Config:
@@ -112,19 +112,19 @@ Config:
 |data|Data which will be passed to platform on init(config, token...) |object|Y|
 |load|Callback which will be triggered when product is ready for load|function|Y|
 |allowedOrigins|Array of allowed URIs|array|N|
-|debugMode|Debug messages setting|bool|N|
+|debug|Debug messages setting|bool|N|
 
 IMPORTANT: !!productId!!  must be an unique identifier of the product(unique game ID).
 
-In order to receive scroll messages gateway must subscribe to message 'Product.Scroll'. Also scroll must be set to true in platform gateway.
+In order to receive scroll messages gateway must subscribe to message 'Master.Scroll'. Also scroll must be set to true in platform gateway.
 
 In order to notify Platform about !!loaded!! event message should be sent to Platform frame in next format:
 
 ```
 lang=javascript
 
-Gateway.sendMessage({
-    action : 'Product.Loaded'
+slaveGateway.sendMessage({
+    action : 'Slave.Loaded'
 })
 ```
 
@@ -155,7 +155,7 @@ IMPORTANT: Mesagess prefixed with Product and Platform are system reserved messa
 
 =====Message exchange====
 
-=====Product -> Platfrom====
+=====Slave -> Master====
 
 
 ```
@@ -169,7 +169,7 @@ Gateway.sendMessage({
 Data object must contain name of action. Origin param is the origin of sender. That origin must be enabled in platform gateway in order to process the message. If origin is obeyed origin will be set to ‘*’,
 
 
-=====Platform -> Product====
+=====Master -> Slave====
 
 
 ```
@@ -181,7 +181,7 @@ Gateway.sendMessage(gameFrameId, {
 ```
 
 
-Data object must contain name of action and productId prop. !!productId!! property is the unique id of the product to whom message is dispatched. Origin param is the origin of sender. That origin must be enabled in product gateway in order to process the message. If origin is obeyed origin will be set to ‘*’.
+Data object must contain name of action and productId prop. !!productId!! property is the unique id of the product to whom message is dispatched. Origin param is the origin of sender. That origin must be enabled in slave gateway in order to process the message. If origin is obeyed origin will be set to ‘*’.
 
 
 
