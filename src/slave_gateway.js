@@ -1,4 +1,4 @@
-var slaveMessages = require('./messaging/slave'),
+var slavePorthole = require('./messaging/slave'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/slave_handler'),
     logger = require('./utils/logger');
@@ -104,7 +104,7 @@ var slaveGateway = {
     sendMessage : function(data, origin) {
         data.productId = this.productId;
 
-        slaveMessages.sendMessage(data, origin);
+        slavePorthole.sendMessage(data, origin);
     }
 };
 

@@ -1,4 +1,4 @@
-var masterMessages = require('./messaging/master'),
+var masterPorthole = require('./messaging/master'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/master_handler'),
     logger = require('./utils/logger');
@@ -142,7 +142,7 @@ var masterGateway = {
             return false;
         }
 
-        masterMessages.sendMessage(frame, data, origin);
+        masterPorthole.sendMessage(frame, data, origin);
     }
 };
 
