@@ -111,7 +111,7 @@ var masterGateway = {
         if(event.data.action === 'Slave.Init') {
             logger.out('info', '[GW] Master:', 'Starting to load slave.', event.data);
             contentHandler.resetFrameSize(productData.frameId); //On every init reset the frame size
-            productData.init(event.data.data); // Run the slave init callback and notify slave to load
+            productData.init(event.data); // Run the slave init callback and notify slave to load
             productData.data.action = 'Slave.Load';
             this.sendMessage(productData.frameId, productData.data);
         } else if(event.data.action === 'Slave.Resize') {
