@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Code coverage report for src/platform_gateway.js</title>
+    <title>Code coverage report for src/master_gateway.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -16,18 +16,18 @@
 <div class='wrapper'>
   <div class='pad1'>
     <h1>
-      <a href="../index.html">all files</a> / <a href="index.html">src/</a> platform_gateway.js
+      <a href="../index.html">all files</a> / <a href="index.html">src/</a> master_gateway.js
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">60.76% </span>
+        <span class="strong">62.03% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>48/79</span>
+        <span class='fraction'>49/79</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">68.52% </span>
+        <span class="strong">70.37% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>37/54</span>
+        <span class='fraction'>38/54</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">64.29% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>9/14</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">60.76% </span>
+        <span class="strong">62.03% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>48/79</span>
+        <span class='fraction'>49/79</span>
       </div>
     </div>
   </div>
@@ -362,7 +362,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4×</span>
@@ -373,43 +373,43 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var platform = require('./messaging/platform'),
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var masterMessages = require('./messaging/master'),
     pubSub = require('./pub_sub'),
-    contentHandler = require('./content_handler/platform_handler'),
+    contentHandler = require('./content_handler/master_handler'),
     logger = require('./utils/logger');
 &nbsp;
 function validateProductsConfig(products) {
-    var productValidity = true;
+    var configValid = true;
 &nbsp;
     for(var game in products) {
         if(!products[game].frameId || typeof products[game].frameId !== 'string' ) {
-            logger.out('error', '[G] Platform:', 'frameId property is invalid or missing for game ' + game);
-            productValidity = false;
+            logger.out('error', '[GW] Master:', 'frameId property is invalid or missing for game ' + game);
+            configValid = false;
         } else <span class="missing-if-branch" title="if path not taken" >I</span>if(!products[game].data || typeof products[game].data !== 'object' ) {
-<span class="cstat-no" title="statement not covered" >            logger.out('error', '[G] Platform:', 'data property is invalid or missing for game ' + game);</span>
-<span class="cstat-no" title="statement not covered" >            productValidity = false;</span>
+<span class="cstat-no" title="statement not covered" >            logger.out('error', '[GW] Master:', 'data property is invalid or missing for game ' + game);</span>
+<span class="cstat-no" title="statement not covered" >            configValid = false;</span>
         } else if (!products[game].init || typeof products[game].init !== 'function' ) {
-            logger.out('error', '[G] Platform:', 'init property is invalid or missing for game ' + game);
-            productValidity = false;
+            logger.out('error', '[GW] Master:', 'init property is invalid or missing for game ' + game);
+            configValid = false;
         }
     }
 &nbsp;
-    return productValidity;
+    return configValid;
 }
 &nbsp;
 function validateInitialization(config) {
     <span class="missing-if-branch" title="if path not taken" >I</span>if(!config.products || typeof config.products !== 'object') {
-<span class="cstat-no" title="statement not covered" >        logger.out('error', '[G] Platform:', 'products object is invalid or missing');</span>
+<span class="cstat-no" title="statement not covered" >        logger.out('error', '[GW] Master:', 'products object is invalid or missing');</span>
 <span class="cstat-no" title="statement not covered" >        return false;</span>
     } else if(!validateProductsConfig(config.products)) {
         return false;
     } else {
-        logger.out('info', '[G] Platform:', 'Initializing');
+        logger.out('info', '[GW] Master:', 'Initializing');
         return true;
     }
 }
 &nbsp;
-var platformGateway = {
+var masterGateway = {
 &nbsp;
     initialized : false,
 &nbsp;
@@ -427,11 +427,11 @@ var platformGateway = {
         }
     },
 &nbsp;
-    enableScrollMsg : function(productFrameId) {
+    enableScrollMsg : function(frameId) {
         window.addEventListener('scroll', <span class="fstat-no" title="function not covered" >function() {</span>
-<span class="cstat-no" title="statement not covered" >            this.sendMessage(productFrameId, {</span>
-                action : 'Product.Scroll',
-                data : contentHandler.getViewData(productFrameId)
+<span class="cstat-no" title="statement not covered" >            this.sendMessage(frameId, {</span>
+                action : 'Master.Scroll',
+                data : contentHandler.getViewData(frameId)
             });
         }.bind(this));
     },
@@ -456,21 +456,21 @@ var platformGateway = {
     },
 &nbsp;
     handleMessage : function(event) {
-        var productPattern = new RegExp('^Product\\.', 'g'),
-            platformPattern = new RegExp('^Platform\\.', 'g');
+        var masterPattern = new RegExp('^Master\\.', 'g'),
+            slavePattern = new RegExp('^Slave\\.', 'g');
 &nbsp;
-        // Check if message is reserved system message (Product and Platform messages)
-        if(productPattern.test(event.data.action) || platformPattern.test(event.data.action)) {
+        // Check if message is reserved system message (Master and Slave messages)
+        if(slavePattern.test(event.data.action) || masterPattern.test(event.data.action)) {
             this.handleProtectedMessage(event);
             return false;
         }
 &nbsp;
         <span class="missing-if-branch" title="else path not taken" >E</span>if(this.allowedOrigins !== '*' &amp;&amp; this.allowedOrigins.indexOf(event.origin) === -1) {
-            logger.out('error', '[G] Platform: Message origin is not allowed');
+            logger.out('error', '[GW] Master: Message origin is not allowed');
             return false;
         }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        logger.out('info', '[G] Platform - Product message received:', event.data);</span>
+<span class="cstat-no" title="statement not covered" >        logger.out('info', '[GW] Master: Slave message received:', event.data);</span>
 <span class="cstat-no" title="statement not covered" >        pubSub.publish(event.data.action, event.data);</span>
     },
 &nbsp;
@@ -480,22 +480,22 @@ var platformGateway = {
         }
 <span class="cstat-no" title="statement not covered" >        var productData = this.products[event.data.productId];</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        if(event.data.action === 'Product.Init') {</span>
-<span class="cstat-no" title="statement not covered" >            logger.out('info', '[G] Platform:', 'Starting to load product.', event.data);</span>
+<span class="cstat-no" title="statement not covered" >        if(event.data.action === 'Slave.Init') {</span>
+<span class="cstat-no" title="statement not covered" >            logger.out('info', '[GW] Master:', 'Starting to load slave.', event.data);</span>
 <span class="cstat-no" title="statement not covered" >            contentHandler.resetFrameSize(productData.frameId); </span>//On every init reset the frame size
-<span class="cstat-no" title="statement not covered" >            productData.init(event.data.data); </span>// Run the product init callback and notify product to load
-<span class="cstat-no" title="statement not covered" >            productData.data.action = 'Product.Load';</span>
+<span class="cstat-no" title="statement not covered" >            productData.init(event.data.data); </span>// Run the slave init callback and notify slave to load
+<span class="cstat-no" title="statement not covered" >            productData.data.action = 'Slave.Load';</span>
 <span class="cstat-no" title="statement not covered" >            this.sendMessage(productData.frameId, productData.data);</span>
-        } else <span class="cstat-no" title="statement not covered" >if(event.data.action === 'Product.Resize') {</span>
-<span class="cstat-no" title="statement not covered" >            logger.out('info', '[G] Platform:', 'Resizing product.', event.data);</span>
+        } else <span class="cstat-no" title="statement not covered" >if(event.data.action === 'Slave.Resize') {</span>
+<span class="cstat-no" title="statement not covered" >            logger.out('info', '[GW] Master:', 'Resizing slave.', event.data);</span>
 <span class="cstat-no" title="statement not covered" >            contentHandler.resize(productData.frameId, event);</span>
-        } else <span class="cstat-no" title="statement not covered" >if(event.data.action === 'Product.Loaded') {</span>
+        } else <span class="cstat-no" title="statement not covered" >if(event.data.action === 'Slave.Loaded') {</span>
 <span class="cstat-no" title="statement not covered" >            if(productData.loaded) {</span>
-<span class="cstat-no" title="statement not covered" >                logger.out('info', '[G] Platform:', 'Product loaded.', event.data);</span>
+<span class="cstat-no" title="statement not covered" >                logger.out('info', '[GW] Master:', 'Slave loaded.', event.data);</span>
 <span class="cstat-no" title="statement not covered" >                productData.loaded();</span>
             }
         } else {
-<span class="cstat-no" title="statement not covered" >            logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platform` are protected!');</span>
+<span class="cstat-no" title="statement not covered" >            logger.out('warn', '[GW] Master:', 'Actions with domain `Master` or `Slave` are protected!');</span>
         }
     },
 &nbsp;
@@ -511,13 +511,13 @@ var platformGateway = {
 <span class="cstat-no" title="statement not covered" >        pubSub.clearSubscriptions();</span>
     },
 &nbsp;
-    sendMessage : <span class="fstat-no" title="function not covered" >function(productFrameId, data, origin) {</span>
-<span class="cstat-no" title="statement not covered" >        var productFrame = document.getElementById(productFrameId);</span>
-<span class="cstat-no" title="statement not covered" >        if(!productFrame) {</span>
+    sendMessage : <span class="fstat-no" title="function not covered" >function(frameId, data, origin) {</span>
+<span class="cstat-no" title="statement not covered" >        var frame = document.getElementById(frameId);</span>
+<span class="cstat-no" title="statement not covered" >        if(!frame) {</span>
 <span class="cstat-no" title="statement not covered" >            return false;</span>
         }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        platform.sendMessage(productFrame, data, origin);</span>
+<span class="cstat-no" title="statement not covered" >        masterMessages.sendMessage(frame, data, origin);</span>
     }
 };
 &nbsp;
@@ -526,15 +526,15 @@ var platformGateway = {
  * If it is already initialized return the Gateway otherwise return false
  */
 module.exports = function(config) {
-    <span class="missing-if-branch" title="if path not taken" >I</span>if(config &amp;&amp; config.debugMode === true) {
-<span class="cstat-no" title="statement not covered" >        logger.debugMode = true;</span>
+    if(config &amp;&amp; config.debug === true) {
+        logger.debug = true;
     }
 &nbsp;
-    if(!platformGateway.initialized &amp;&amp; validateInitialization(config)) {
-        platformGateway.init(config);
-        return platformGateway;
-    } else if(platformGateway.initialized) {
-        return platformGateway;
+    if(!masterGateway.initialized &amp;&amp; validateInitialization(config)) {
+        masterGateway.init(config);
+        return masterGateway;
+    } else if(masterGateway.initialized) {
+        return masterGateway;
     } else {
         return false;
     }
@@ -544,7 +544,7 @@ module.exports = function(config) {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Nov 09 2016 14:22:19 GMT+0100 (CET)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Nov 14 2016 12:53:51 GMT+0100 (CET)
 </div>
 </div>
 <script src="../prettify.js"></script>

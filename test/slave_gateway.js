@@ -1,12 +1,12 @@
-var ProductGateway = require('../src/product_gateway'),
+var Gateway = require('../src/slave_gateway'),
     assert = require('assert'),
     dom = require('jsdom-global')(); //Inject dom in test because window deps
 
-describe('Testing product gateway instantiation', function() {
+describe('Testing slave gateway instantiation', function() {
     var productInstance;
 
     it('Instantiation should fail - productId missing', function() {
-        productInstance = ProductGateway({
+        productInstance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
             data : {
                 config : {}
@@ -17,7 +17,7 @@ describe('Testing product gateway instantiation', function() {
     });
 
     it('Instantiation should fail - load method missing', function() {
-        productInstance = ProductGateway({
+        productInstance = Gateway({
             productId : 'Product',
             allowedOrigins : ['http://www.nsoft.ba'],
             data : {
@@ -28,7 +28,7 @@ describe('Testing product gateway instantiation', function() {
     });
 
     it('Should return instance', function() {
-        productInstance = ProductGateway({
+        productInstance = Gateway({
             productId : 'Product',
             allowedOrigins : ['http://www.nsoft.ba'],
             data : {
@@ -40,7 +40,7 @@ describe('Testing product gateway instantiation', function() {
     });
 
     it('Instantiation should return existing instance', function() {
-        assert.strictEqual(ProductGateway(), productInstance);
+        assert.strictEqual(Gateway(), productInstance);
     });
 
 });

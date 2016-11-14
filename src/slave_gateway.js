@@ -1,25 +1,25 @@
-var product = require('./messaging/product'),
+var slaveMessages = require('./messaging/slave'),
     pubSub = require('./pub_sub'),
-    contentHandler = require('./content_handler/product_handler'),
+    contentHandler = require('./content_handler/slave_handler'),
     logger = require('./utils/logger');
 
 function validateInitialization(config) {
     if(!config.productId || typeof config.productId !== 'string') {
-        logger.out('error', '[G] Product:', 'productId property is invalid or missing');
+        logger.out('error', '[GW] Slave:', 'productId property is invalid or missing');
         return false;
     } else if(!config.data || typeof config.data !== 'object') {
-        logger.out('error', '[G] Product:', 'data property is invalid or missing');
+        logger.out('error', '[GW] Slave:', 'data property is invalid or missing');
         return false;
     } else if(!config.load || typeof config.load !== 'function') {
-        logger.out('error', '[G] Product:', 'load property is invalid or missing');
+        logger.out('error', '[GW] Slave:', 'load property is invalid or missing');
         return false;
     } else {
-        logger.out('info', '[G] Product:', 'Initializing');
+        logger.out('info', '[GW] Slave:', 'Initializing');
         return true;
     }
 }
 
-var productGateway = {
+var slaveGateway = {
 
     productId : '',
 
@@ -44,7 +44,7 @@ var productGateway = {
         this.load = config.load;
         this.setAllowedDomains();
         //Pass the event callback, and event name
-        contentHandler.init(this.sendMessage.bind(this), 'Product.Resize');
+        contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize');
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
         //Notify platform that product is evaluated and pass the necessary init data
@@ -52,8 +52,8 @@ var productGateway = {
     },
 
     handleMessage : function(event) {
-        var productPattern = new RegExp('^Product\\.', 'g'),
-            platformPattern = new RegExp('^Platform\\.', 'g');
+        var productPattern = new RegExp('^Slave\\.', 'g'),
+            platformPattern = new RegExp('^Master\\.', 'g');
 
         // Check if message is reserved system message (Product and Platfrom messages)
         if(productPattern.test(event.data.action) || platformPattern.test(event.data.action)) {
@@ -62,30 +62,30 @@ var productGateway = {
         }
 
         if(this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
-            logger.out('error', '[G] Product: Message origin is not allowed');
+            logger.out('error', '[GW] Slave: Message origin is not allowed');
             return false;
         }
 
-        logger.out('info', '[G] Product - Platform message received:', event.data);
+        logger.out('info', '[G"] Slave: Master message received:', event.data);
         pubSub.publish(event.data.action, event.data);
     },
 
     startProductInitialization : function() {
         this.sendMessage({
-            action: 'Product.Init',
+            action: 'Slave.Init',
             data: this.config.data
         });
     },
 
     handleProtectedMessage : function(event) {
-        if(event.data.action === 'Product.Load') {
-            logger.out('info', '[G] Product:', 'Starting to load.');
+        if(event.data.action === 'Slave.Load') {
+            logger.out('info', '[GW] Slave:', 'Starting to load.');
             this.load(event.data);
-        } else if (event.data.action === 'Product.Scroll') {
-            logger.out('info', '[G] Product:', 'Publish Product.Scroll event.', event.data);
+        } else if (event.data.action === 'Master.Scroll') {
+            logger.out('info', '[GW] Slave:', 'Publish Master.Scroll event.', event.data);
             pubSub.publish(event.data.action, event.data);
         } else {
-            logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platfrom` are protected!');
+            logger.out('warn', '[GW] Slave:', 'Actions with domain `Master` or `Slave` are protected!');
         }
     },
 
@@ -104,20 +104,20 @@ var productGateway = {
     sendMessage : function(data, origin) {
         data.productId = this.productId;
 
-        product.sendMessage(data, origin);
+        slaveMessages.sendMessage(data, origin);
     }
 };
 
 module.exports = function(config) {
-    if(config && config.debugMode === true) {
-        logger.debugMode = true;
+    if(config && config.debug === true) {
+        logger.debug = true;
     }
 
-    if(!productGateway.initialized && validateInitialization(config)) {
-        productGateway.init(config);
-        return productGateway;
-    } else if(productGateway.initialized) {
-        return productGateway;
+    if(!slaveGateway.initialized && validateInitialization(config)) {
+        slaveGateway.init(config);
+        return slaveGateway;
+    } else if(slaveGateway.initialized) {
+        return slaveGateway;
     } else {
         return false;
     }

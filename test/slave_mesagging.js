@@ -1,11 +1,11 @@
-var gateway = require('../src/messaging/product'),
+var slaveMessaging = require('../src/messaging/slave'),
     assert = require('assert'),
     dom = require('jsdom-global')();
 
 describe('Posting messages to platform.', function() {
 
     it('Received value should be 3.14', function(done) {
-        gateway.sendMessage('3.14');
+        slaveMessaging.sendMessage('3.14');
 
         window.addEventListener('message', function(e) {
             if(e.data != '3.14') {

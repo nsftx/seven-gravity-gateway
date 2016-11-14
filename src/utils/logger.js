@@ -1,8 +1,8 @@
 var logger = {
-    debugMode : false, //Verbosity setting
+    debug : false, //Verbosity setting
 
     out : function(){
-        if(this.debugMode) {
+        if(this.debug) {
             //Convert to array
             var args = Array.prototype.slice.call(arguments);
             //First argument is notification type (log, error, warn, info)

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Code coverage report for src/product_gateway.js</title>
+    <title>Code coverage report for src/slave_gateway.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -16,7 +16,7 @@
 <div class='wrapper'>
   <div class='pad1'>
     <h1>
-      <a href="../index.html">all files</a> / <a href="index.html">src/</a> product_gateway.js
+      <a href="../index.html">all files</a> / <a href="index.html">src/</a> slave_gateway.js
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
@@ -289,28 +289,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var product = require('./messaging/product'),
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var slaveMessages = require('./messaging/slave'),
     pubSub = require('./pub_sub'),
-    contentHandler = require('./content_handler/product_handler'),
+    contentHandler = require('./content_handler/slave_handler'),
     logger = require('./utils/logger');
 &nbsp;
 function validateInitialization(config) {
     if(!config.productId || typeof config.productId !== 'string') {
-        logger.out('error', '[G] Product:', 'productId property is invalid or missing');
+        logger.out('error', '[GW] Slave:', 'productId property is invalid or missing');
         return false;
     } else <span class="missing-if-branch" title="if path not taken" >I</span>if(!config.data || typeof config.data !== 'object') {
-<span class="cstat-no" title="statement not covered" >        logger.out('error', '[G] Product:', 'data property is invalid or missing');</span>
+<span class="cstat-no" title="statement not covered" >        logger.out('error', '[GW] Slave:', 'data property is invalid or missing');</span>
 <span class="cstat-no" title="statement not covered" >        return false;</span>
     } else if(!config.load || typeof config.load !== 'function') {
-        logger.out('error', '[G] Product:', 'load property is invalid or missing');
+        logger.out('error', '[GW] Slave:', 'load property is invalid or missing');
         return false;
     } else {
-        logger.out('info', '[G] Product:', 'Initializing');
+        logger.out('info', '[GW] Slave:', 'Initializing');
         return true;
     }
 }
 &nbsp;
-var productGateway = {
+var slaveGateway = {
 &nbsp;
     productId : '',
 &nbsp;
@@ -335,7 +335,7 @@ var productGateway = {
         this.load = config.load;
         this.setAllowedDomains();
         //Pass the event callback, and event name
-        contentHandler.init(this.sendMessage.bind(this), 'Product.Resize');
+        contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize');
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
         //Notify platform that product is evaluated and pass the necessary init data
@@ -343,8 +343,8 @@ var productGateway = {
     },
 &nbsp;
     handleMessage : function(event) {
-        var productPattern = new RegExp('^Product\\.', 'g'),
-            platformPattern = new RegExp('^Platform\\.', 'g');
+        var productPattern = new RegExp('^Slave\\.', 'g'),
+            platformPattern = new RegExp('^Master\\.', 'g');
 &nbsp;
         // Check if message is reserved system message (Product and Platfrom messages)
         if(productPattern.test(event.data.action) || platformPattern.test(event.data.action)) {
@@ -353,30 +353,30 @@ var productGateway = {
         }
 &nbsp;
         <span class="missing-if-branch" title="else path not taken" >E</span>if(this.allowedOrigins !== '*' &amp;&amp; this.allowedOrigins.indexOf(event.origin) === -1) {
-            logger.out('error', '[G] Product: Message origin is not allowed');
+            logger.out('error', '[GW] Slave: Message origin is not allowed');
             return false;
         }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        logger.out('info', '[G] Product - Platform message received:', event.data);</span>
+<span class="cstat-no" title="statement not covered" >        logger.out('info', '[G"] Slave: Master message received:', event.data);</span>
 <span class="cstat-no" title="statement not covered" >        pubSub.publish(event.data.action, event.data);</span>
     },
 &nbsp;
     startProductInitialization : function() {
         this.sendMessage({
-            action: 'Product.Init',
+            action: 'Slave.Init',
             data: this.config.data
         });
     },
 &nbsp;
     handleProtectedMessage : function(event) {
-        <span class="missing-if-branch" title="if path not taken" >I</span>if(event.data.action === 'Product.Load') {
-<span class="cstat-no" title="statement not covered" >            logger.out('info', '[G] Product:', 'Starting to load.');</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if(event.data.action === 'Slave.Load') {
+<span class="cstat-no" title="statement not covered" >            logger.out('info', '[GW] Slave:', 'Starting to load.');</span>
 <span class="cstat-no" title="statement not covered" >            this.load(event.data);</span>
-        } else <span class="missing-if-branch" title="if path not taken" >I</span>if (event.data.action === 'Product.Scroll') {
-<span class="cstat-no" title="statement not covered" >            logger.out('info', '[G] Product:', 'Publish Product.Scroll event.', event.data);</span>
+        } else <span class="missing-if-branch" title="if path not taken" >I</span>if (event.data.action === 'Master.Scroll') {
+<span class="cstat-no" title="statement not covered" >            logger.out('info', '[GW] Slave:', 'Publish Master.Scroll event.', event.data);</span>
 <span class="cstat-no" title="statement not covered" >            pubSub.publish(event.data.action, event.data);</span>
         } else {
-            logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platfrom` are protected!');
+            logger.out('warn', '[GW] Slave:', 'Actions with domain `Master` or `Slave` are protected!');
         }
     },
 &nbsp;
@@ -395,20 +395,20 @@ var productGateway = {
     sendMessage : function(data, origin) {
         data.productId = this.productId;
 &nbsp;
-        product.sendMessage(data, origin);
+        slaveMessages.sendMessage(data, origin);
     }
 };
 &nbsp;
 module.exports = function(config) {
-    if(config &amp;&amp; config.debugMode === true) {
-        logger.debugMode = true;
+    if(config &amp;&amp; config.debug === true) {
+        logger.debug = true;
     }
 &nbsp;
-    if(!productGateway.initialized &amp;&amp; validateInitialization(config)) {
-        productGateway.init(config);
-        return productGateway;
-    } else if(productGateway.initialized) {
-        return productGateway;
+    if(!slaveGateway.initialized &amp;&amp; validateInitialization(config)) {
+        slaveGateway.init(config);
+        return slaveGateway;
+    } else if(slaveGateway.initialized) {
+        return slaveGateway;
     } else {
         return false;
     }
@@ -418,7 +418,7 @@ module.exports = function(config) {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Nov 09 2016 14:22:19 GMT+0100 (CET)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Nov 14 2016 12:53:51 GMT+0100 (CET)
 </div>
 </div>
 <script src="../prettify.js"></script>

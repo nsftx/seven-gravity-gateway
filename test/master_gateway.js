@@ -1,12 +1,12 @@
-var PlatformGateway = require('../src/platform_gateway'),
+var Gateway = require('../src/master_gateway'),
     assert = require('assert'),
     dom = require('jsdom-global')(); //Inject dom in test because window deps
 
-describe('Testing platform gateway instantiation', function() {
+describe('Testing master gateway instantiation', function() {
     var instance;
 
     it('Instantiation should fail - frameId missing', function() {
-        instance = PlatformGateway({
+        instance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
             products : {
                 'product': {
@@ -20,8 +20,8 @@ describe('Testing platform gateway instantiation', function() {
         assert.equal(instance, false);
     });
 
-    it('Instantiation should fail - initi method missing', function() {
-        instance = PlatformGateway({
+    it('Instantiation should fail - init method missing', function() {
+        instance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
             products : {
                 'product': {
@@ -37,7 +37,7 @@ describe('Testing platform gateway instantiation', function() {
     });
 
     it('Should return instance', function() {
-        instance = PlatformGateway({
+        instance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
             products : {
                 'product': {
@@ -53,7 +53,7 @@ describe('Testing platform gateway instantiation', function() {
     });
 
     it('Instantiation should return existing instance', function() {
-        assert.strictEqual(PlatformGateway(), instance);
+        assert.strictEqual(Gateway(), instance);
     });
 
 });

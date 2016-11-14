@@ -1,40 +1,40 @@
-var platform = require('./messaging/platform'),
+var masterMessages = require('./messaging/master'),
     pubSub = require('./pub_sub'),
-    contentHandler = require('./content_handler/platform_handler'),
+    contentHandler = require('./content_handler/master_handler'),
     logger = require('./utils/logger');
 
 function validateProductsConfig(products) {
-    var productValidity = true;
+    var configValid = true;
 
     for(var game in products) {
         if(!products[game].frameId || typeof products[game].frameId !== 'string' ) {
-            logger.out('error', '[G] Platform:', 'frameId property is invalid or missing for game ' + game);
-            productValidity = false;
+            logger.out('error', '[GW] Master:', 'frameId property is invalid or missing for game ' + game);
+            configValid = false;
         } else if(!products[game].data || typeof products[game].data !== 'object' ) {
-            logger.out('error', '[G] Platform:', 'data property is invalid or missing for game ' + game);
-            productValidity = false;
+            logger.out('error', '[GW] Master:', 'data property is invalid or missing for game ' + game);
+            configValid = false;
         } else if (!products[game].init || typeof products[game].init !== 'function' ) {
-            logger.out('error', '[G] Platform:', 'init property is invalid or missing for game ' + game);
-            productValidity = false;
+            logger.out('error', '[GW] Master:', 'init property is invalid or missing for game ' + game);
+            configValid = false;
         }
     }
 
-    return productValidity;
+    return configValid;
 }
 
 function validateInitialization(config) {
     if(!config.products || typeof config.products !== 'object') {
-        logger.out('error', '[G] Platform:', 'products object is invalid or missing');
+        logger.out('error', '[GW] Master:', 'products object is invalid or missing');
         return false;
     } else if(!validateProductsConfig(config.products)) {
         return false;
     } else {
-        logger.out('info', '[G] Platform:', 'Initializing');
+        logger.out('info', '[GW] Master:', 'Initializing');
         return true;
     }
 }
 
-var platformGateway = {
+var masterGateway = {
 
     initialized : false,
 
@@ -52,11 +52,11 @@ var platformGateway = {
         }
     },
 
-    enableScrollMsg : function(productFrameId) {
+    enableScrollMsg : function(frameId) {
         window.addEventListener('scroll', function() {
-            this.sendMessage(productFrameId, {
-                action : 'Product.Scroll',
-                data : contentHandler.getViewData(productFrameId)
+            this.sendMessage(frameId, {
+                action : 'Master.Scroll',
+                data : contentHandler.getViewData(frameId)
             });
         }.bind(this));
     },
@@ -81,21 +81,21 @@ var platformGateway = {
     },
 
     handleMessage : function(event) {
-        var productPattern = new RegExp('^Product\\.', 'g'),
-            platformPattern = new RegExp('^Platform\\.', 'g');
+        var masterPattern = new RegExp('^Master\\.', 'g'),
+            slavePattern = new RegExp('^Slave\\.', 'g');
 
-        // Check if message is reserved system message (Product and Platform messages)
-        if(productPattern.test(event.data.action) || platformPattern.test(event.data.action)) {
+        // Check if message is reserved system message (Master and Slave messages)
+        if(slavePattern.test(event.data.action) || masterPattern.test(event.data.action)) {
             this.handleProtectedMessage(event);
             return false;
         }
 
         if(this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
-            logger.out('error', '[G] Platform: Message origin is not allowed');
+            logger.out('error', '[GW] Master: Message origin is not allowed');
             return false;
         }
 
-        logger.out('info', '[G] Platform - Product message received:', event.data);
+        logger.out('info', '[GW] Master: Slave message received:', event.data);
         pubSub.publish(event.data.action, event.data);
     },
 
@@ -105,22 +105,22 @@ var platformGateway = {
         }
         var productData = this.products[event.data.productId];
 
-        if(event.data.action === 'Product.Init') {
-            logger.out('info', '[G] Platform:', 'Starting to load product.', event.data);
+        if(event.data.action === 'Slave.Init') {
+            logger.out('info', '[GW] Master:', 'Starting to load slave.', event.data);
             contentHandler.resetFrameSize(productData.frameId); //On every init reset the frame size
-            productData.init(event.data.data); // Run the product init callback and notify product to load
-            productData.data.action = 'Product.Load';
+            productData.init(event.data.data); // Run the slave init callback and notify slave to load
+            productData.data.action = 'Slave.Load';
             this.sendMessage(productData.frameId, productData.data);
-        } else if(event.data.action === 'Product.Resize') {
-            logger.out('info', '[G] Platform:', 'Resizing product.', event.data);
+        } else if(event.data.action === 'Slave.Resize') {
+            logger.out('info', '[GW] Master:', 'Resizing slave.', event.data);
             contentHandler.resize(productData.frameId, event);
-        } else if(event.data.action === 'Product.Loaded') {
+        } else if(event.data.action === 'Slave.Loaded') {
             if(productData.loaded) {
-                logger.out('info', '[G] Platform:', 'Product loaded.', event.data);
+                logger.out('info', '[GW] Master:', 'Slave loaded.', event.data);
                 productData.loaded();
             }
         } else {
-            logger.out('warn', '[G] Product:', 'Actions with domain `Product` or `Platform` are protected!');
+            logger.out('warn', '[GW] Master:', 'Actions with domain `Master` or `Slave` are protected!');
         }
     },
 
@@ -136,13 +136,13 @@ var platformGateway = {
         pubSub.clearSubscriptions();
     },
 
-    sendMessage : function(productFrameId, data, origin) {
-        var productFrame = document.getElementById(productFrameId);
-        if(!productFrame) {
+    sendMessage : function(frameId, data, origin) {
+        var frame = document.getElementById(frameId);
+        if(!frame) {
             return false;
         }
 
-        platform.sendMessage(productFrame, data, origin);
+        masterMessages.sendMessage(frame, data, origin);
     }
 };
 
@@ -151,15 +151,15 @@ var platformGateway = {
  * If it is already initialized return the Gateway otherwise return false
  */
 module.exports = function(config) {
-    if(config && config.debugMode === true) {
-        logger.debugMode = true;
+    if(config && config.debug === true) {
+        logger.debug = true;
     }
 
-    if(!platformGateway.initialized && validateInitialization(config)) {
-        platformGateway.init(config);
-        return platformGateway;
-    } else if(platformGateway.initialized) {
-        return platformGateway;
+    if(!masterGateway.initialized && validateInitialization(config)) {
+        masterGateway.init(config);
+        return masterGateway;
+    } else if(masterGateway.initialized) {
+        return masterGateway;
     } else {
         return false;
     }
