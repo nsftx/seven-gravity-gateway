@@ -61,10 +61,10 @@ var contentHandler = {
         var styles = getComputedStyle(document.body),
             contentHeight = 0;
 
-        contentHeight += parseInt(styles.getPropertyValue('margin-top'), 10);
-        contentHeight += parseInt(styles.getPropertyValue('margin-bottom'), 10);
-        contentHeight += parseInt(styles.getPropertyValue('padding-top'), 10);
-        contentHeight += parseInt(styles.getPropertyValue('padding-bottom'), 10);
+        contentHeight += parseInt(styles.getPropertyValue('margin-top'));
+        contentHeight += parseInt(styles.getPropertyValue('margin-bottom'));
+        contentHeight += parseInt(styles.getPropertyValue('padding-top'));
+        contentHeight += parseInt(styles.getPropertyValue('padding-bottom'));
 
         return contentHeight;
     },
