@@ -29,6 +29,8 @@ var slaveGateway = {
 
     load : null,
 
+    msgSender : 'Slave',
+
     setAllowedDomains : function() {
         if(this.config && this.config.allowedOrigins) {
             this.allowedOrigins = this.config.allowedOrigins;
@@ -52,6 +54,8 @@ var slaveGateway = {
     },
 
     handleMessage : function(event) {
+        if(event.data.msgSender === this.msgSender) return false;
+
         var productPattern = new RegExp('^Slave\\.', 'g'),
             platformPattern = new RegExp('^Master\\.', 'g');
 
@@ -103,7 +107,7 @@ var slaveGateway = {
 
     sendMessage : function(data, origin) {
         data.productId = this.productId;
-
+        data.msgSender = 'Slave';
         slavePorthole.sendMessage(data, origin);
     }
 };

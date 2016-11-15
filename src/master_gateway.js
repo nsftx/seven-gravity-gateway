@@ -45,6 +45,8 @@ var masterGateway = {
 
     allowedOrigins : null,
 
+    msgSender : 'Master',
+
     setAllowedDomains : function() {
         if(this.config && this.config.allowedOrigins) {
             this.allowedOrigins = this.config.allowedOrigins;
@@ -84,6 +86,8 @@ var masterGateway = {
     },
 
     handleMessage : function(event) {
+        if(event.data.msgSender === this.msgSender) return false;
+
         var masterPattern = new RegExp('^Master\\.', 'g'),
             slavePattern = new RegExp('^Slave\\.', 'g');
 
@@ -141,10 +145,9 @@ var masterGateway = {
 
     sendMessage : function(frameId, data, origin) {
         var frame = document.getElementById(frameId);
-        if(!frame) {
-            return false;
-        }
+        if(!frame) return false;
 
+        data.msgSender = this.msgSender;
         masterPorthole.sendMessage(frame, data, origin);
     }
 };
