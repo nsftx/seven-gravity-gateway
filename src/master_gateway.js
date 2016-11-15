@@ -7,15 +7,15 @@ var masterPorthole = require('./messaging/master'),
 function validateProductsConfig(products) {
     var configValid = true;
 
-    for(var game in products) {
-        if(!products[game].frameId || typeof products[game].frameId !== 'string' ) {
-            logger.out('error', '[GW] Master:', 'frameId property is invalid or missing for game ' + game);
+    for(var slave in products) {
+        if(!products[slave].frameId || typeof products[slave].frameId !== 'string' ) {
+            logger.out('error', '[GW] Master:', 'frameId property is invalid or missing for ' + slave);
             configValid = false;
-        } else if(!products[game].data || typeof products[game].data !== 'object' ) {
-            logger.out('error', '[GW] Master:', 'data property is invalid or missing for game ' + game);
+        } else if(!products[slave].data || typeof products[slave].data !== 'object' ) {
+            logger.out('error', '[GW] Master:', 'data property is invalid or missing for ' + slave);
             configValid = false;
-        } else if (!products[game].init || typeof products[game].init !== 'function' ) {
-            logger.out('error', '[GW] Master:', 'init property is invalid or missing for game ' + game);
+        } else if (!products[slave].init || typeof products[slave].init !== 'function' ) {
+            logger.out('error', '[GW] Master:', 'init property is invalid or missing for ' + slave);
             configValid = false;
         }
     }
@@ -66,9 +66,9 @@ var masterGateway = {
 
     checkProductScroll : function() {
         // Check if scroll message is enabled
-        for(var game in  this.products) {
-            if(this.products[game].scroll) {
-                this.enableScrollMsg(this.products[game].frameId);
+        for(var slave in  this.products) {
+            if(this.products[slave].scroll) {
+                this.enableScrollMsg(this.products[slave].frameId);
             }
         }
     },
