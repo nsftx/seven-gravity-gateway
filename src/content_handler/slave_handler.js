@@ -31,7 +31,7 @@ var contentHandler = {
         var data = {
             action : this.eventName,
             width : window.innerWidth,
-            height : this.getContentHeight() + this.getBodyStyle()
+            height : this.getContentHeight() + this.getElementOffset(document.body)
         };
 
         this.eventCallback(data);
@@ -49,15 +49,15 @@ var contentHandler = {
 
         //Convert HTML collection to array and calc the first level child nodes height sum
         Array.prototype.forEach.call(bodyChildNodes, function(element){
-            contentHeight += element.offsetHeight;
-        });
+            contentHeight += element.offsetHeight + this.getElementOffset(element);
+        }.bind(this));
 
         return contentHeight;
     },
 
-    getBodyStyle : function() {
+    getElementOffset : function(element) {
         //Get body margin and padding
-        var styles = getComputedStyle(document.body),
+        var styles = getComputedStyle(element),
             contentHeight = 0;
 
         contentHeight += parseInt(styles.getPropertyValue('margin-top'));
