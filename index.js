@@ -1,5 +1,5 @@
 // Export
 module.exports = {
-    master : require('./src/master'),
-    slave : require('./src/slave')
+    master : require('./master'),
+    slave : require('./slave')
 };
