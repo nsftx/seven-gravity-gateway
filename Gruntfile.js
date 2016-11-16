@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
 
     var browserifyDist = function () {
-        var components = ['master_gateway', 'slave_gateway'],
+        var components = ['master', 'slave'],
             definition = {};
 
         components.forEach(function (component) {
