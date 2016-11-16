@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">62.03% </span>
+        <span class="strong">60.98% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>49/79</span>
+        <span class='fraction'>50/82</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">70.37% </span>
+        <span class="strong">69.64% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>38/54</span>
+        <span class='fraction'>39/56</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">64.29% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>9/14</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">62.03% </span>
+        <span class="strong">62.5% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>49/79</span>
+        <span class='fraction'>50/80</span>
       </div>
     </div>
   </div>
@@ -208,7 +208,14 @@
 163
 164
 165
-166</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+166
+167
+168
+169
+170
+171
+172</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -255,6 +262,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -263,6 +272,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -273,6 +283,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
@@ -290,6 +301,8 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -349,9 +362,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -373,23 +385,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var masterMessages = require('./messaging/master'),
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var masterPorthole = require('./messaging/master'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/master_handler'),
-    logger = require('./utils/logger');
+    logger = require('./utils/utils').logger,
+    throttle = require('./utils/utils').throttle;
 &nbsp;
 function validateProductsConfig(products) {
     var configValid = true;
 &nbsp;
-    for(var game in products) {
-        if(!products[game].frameId || typeof products[game].frameId !== 'string' ) {
-            logger.out('error', '[GW] Master:', 'frameId property is invalid or missing for game ' + game);
+    for(var slave in products) {
+        if(!products[slave].frameId || typeof products[slave].frameId !== 'string' ) {
+            logger.out('error', '[GW] Master:', 'frameId property is invalid or missing for ' + slave);
             configValid = false;
-        } else <span class="missing-if-branch" title="if path not taken" >I</span>if(!products[game].data || typeof products[game].data !== 'object' ) {
-<span class="cstat-no" title="statement not covered" >            logger.out('error', '[GW] Master:', 'data property is invalid or missing for game ' + game);</span>
+        } else <span class="missing-if-branch" title="if path not taken" >I</span>if(!products[slave].data || typeof products[slave].data !== 'object' ) {
+<span class="cstat-no" title="statement not covered" >            logger.out('error', '[GW] Master:', 'data property is invalid or missing for ' + slave);</span>
 <span class="cstat-no" title="statement not covered" >            configValid = false;</span>
-        } else if (!products[game].init || typeof products[game].init !== 'function' ) {
-            logger.out('error', '[GW] Master:', 'init property is invalid or missing for game ' + game);
+        } else if (!products[slave].init || typeof products[slave].init !== 'function' ) {
+            logger.out('error', '[GW] Master:', 'init property is invalid or missing for ' + slave);
             configValid = false;
         }
     }
@@ -419,6 +432,8 @@ var masterGateway = {
 &nbsp;
     allowedOrigins : null,
 &nbsp;
+    msgSender : 'Master',
+&nbsp;
     setAllowedDomains : function() {
         <span class="missing-if-branch" title="else path not taken" >E</span>if(this.config &amp;&amp; this.config.allowedOrigins) {
             this.allowedOrigins = this.config.allowedOrigins;
@@ -428,19 +443,21 @@ var masterGateway = {
     },
 &nbsp;
     enableScrollMsg : function(frameId) {
-        window.addEventListener('scroll', <span class="fstat-no" title="function not covered" >function() {</span>
+&nbsp;
+        window.addEventListener('scroll', throttle(<span class="fstat-no" title="function not covered" >function(){</span>
 <span class="cstat-no" title="statement not covered" >            this.sendMessage(frameId, {</span>
                 action : 'Master.Scroll',
                 data : contentHandler.getViewData(frameId)
             });
-        }.bind(this));
+        }.bind(this), 100));
+&nbsp;
     },
 &nbsp;
     checkProductScroll : function() {
         // Check if scroll message is enabled
-        for(var game in  this.products) {
-            <span class="missing-if-branch" title="else path not taken" >E</span>if(this.products[game].scroll) {
-                this.enableScrollMsg(this.products[game].frameId);
+        for(var slave in  this.products) {
+            <span class="missing-if-branch" title="else path not taken" >E</span>if(this.products[slave].scroll) {
+                this.enableScrollMsg(this.products[slave].frameId);
             }
         }
     },
@@ -456,6 +473,8 @@ var masterGateway = {
     },
 &nbsp;
     handleMessage : function(event) {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if(event.data.msgSender === this.msgSender) <span class="cstat-no" title="statement not covered" >return false;</span>
+&nbsp;
         var masterPattern = new RegExp('^Master\\.', 'g'),
             slavePattern = new RegExp('^Slave\\.', 'g');
 &nbsp;
@@ -483,7 +502,7 @@ var masterGateway = {
 <span class="cstat-no" title="statement not covered" >        if(event.data.action === 'Slave.Init') {</span>
 <span class="cstat-no" title="statement not covered" >            logger.out('info', '[GW] Master:', 'Starting to load slave.', event.data);</span>
 <span class="cstat-no" title="statement not covered" >            contentHandler.resetFrameSize(productData.frameId); </span>//On every init reset the frame size
-<span class="cstat-no" title="statement not covered" >            productData.init(event.data.data); </span>// Run the slave init callback and notify slave to load
+<span class="cstat-no" title="statement not covered" >            productData.init(event.data); </span>// Run the slave init callback and notify slave to load
 <span class="cstat-no" title="statement not covered" >            productData.data.action = 'Slave.Load';</span>
 <span class="cstat-no" title="statement not covered" >            this.sendMessage(productData.frameId, productData.data);</span>
         } else <span class="cstat-no" title="statement not covered" >if(event.data.action === 'Slave.Resize') {</span>
@@ -492,7 +511,7 @@ var masterGateway = {
         } else <span class="cstat-no" title="statement not covered" >if(event.data.action === 'Slave.Loaded') {</span>
 <span class="cstat-no" title="statement not covered" >            if(productData.loaded) {</span>
 <span class="cstat-no" title="statement not covered" >                logger.out('info', '[GW] Master:', 'Slave loaded.', event.data);</span>
-<span class="cstat-no" title="statement not covered" >                productData.loaded();</span>
+<span class="cstat-no" title="statement not covered" >                productData.loaded(event.data);</span>
             }
         } else {
 <span class="cstat-no" title="statement not covered" >            logger.out('warn', '[GW] Master:', 'Actions with domain `Master` or `Slave` are protected!');</span>
@@ -513,11 +532,10 @@ var masterGateway = {
 &nbsp;
     sendMessage : <span class="fstat-no" title="function not covered" >function(frameId, data, origin) {</span>
 <span class="cstat-no" title="statement not covered" >        var frame = document.getElementById(frameId);</span>
-<span class="cstat-no" title="statement not covered" >        if(!frame) {</span>
-<span class="cstat-no" title="statement not covered" >            return false;</span>
-        }
+<span class="cstat-no" title="statement not covered" >        if(!frame) <span class="cstat-no" title="statement not covered" >return false;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        masterMessages.sendMessage(frame, data, origin);</span>
+<span class="cstat-no" title="statement not covered" >        data.msgSender = this.msgSender;</span>
+<span class="cstat-no" title="statement not covered" >        masterPorthole.sendMessage(frame, data, origin);</span>
     }
 };
 &nbsp;
@@ -544,7 +562,7 @@ module.exports = function(config) {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Nov 14 2016 12:53:51 GMT+0100 (CET)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Nov 16 2016 13:59:12 GMT+0100 (CET)
 </div>
 </div>
 <script src="../prettify.js"></script>
