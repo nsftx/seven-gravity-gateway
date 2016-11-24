@@ -1,12 +1,12 @@
 {
   "name": "seven-gravity-gateway",
   "private": false,
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Seven Gravity Gateway",
   "homepage": "http://7platform.com",
   "scripts": {
     "test": "mocha test --recursive",
-    "coverage" : "istanbul cover _mocha test -- --recursive"
+    "coverage": "istanbul cover _mocha test -- --recursive"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,10 @@
   "publishConfig": {
     "registry": "https://npm.nsoft.ba"
   },
-  "author": "Ivan Pandzic",
+  "author": "Ivan Pandzic <pandzic.ivan@nsoft.ba>",
+  "contributors": [
+    "Jadranko Dragoje <dragoje.jadranko@nsoft.ba>"
+  ],
   "license": "UNLICENSED",
   "devDependencies": {
     "grunt": "^1.0.1",

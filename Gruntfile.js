@@ -1,40 +1,51 @@
-module.exports = function(grunt) {
-
-    var browserifyDist = function () {
-        var components = ['master', 'slave'],
-            definition = {};
-
-        components.forEach(function (component) {
-
-            definition[component] = {
-                files: [{
-                    src: './' + component + '.js',
-                    dest: 'dist/' + component + '.js'
-                }],
-                options : {
-                    alias: {}
-                }
-            };
-
-            definition[component].options.alias[component] =  './' + component + '.js';
-        });
-
-        return definition;
-    };
-
+module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    
+
     grunt.initConfig({
-        mochaTest : {
-            test : {
+        mochaTest: {
+            test: {
                 src: ['test/*.js']
             }
         },
-        browserify: browserifyDist(),
+        browserify: {
+            index: {
+                files: [{
+                    src: './index.js',
+                    dest: 'dist/index.js'
+                }],
+                options: {
+                    alias: {
+                        'seven-gravity-gateway': './index.js'
+                    }
+                }
+            },
+            master: {
+                files: [{
+                    src: './master.js',
+                    dest: 'dist/master.js'
+                }],
+                options: {
+                    alias: {
+                        'seven-gravity-gateway/master': './master.js'
+                    }
+                }
+            },
+            slave: {
+                files: [{
+                    src: './slave.js',
+                    dest: 'dist/slave.js'
+                }],
+                options: {
+                    alias: {
+                        'seven-gravity-gateway/slave': './slave.js'
+                    }
+                }
+            }
+        },
         jshint: {
             options: {
                 eqeqeq: true,
@@ -79,7 +90,6 @@ module.exports = function(grunt) {
         'uglify'
     ]);
 
-    // Develop task
     grunt.registerTask('develop', [
         'jshint',
         'mochaTest',
