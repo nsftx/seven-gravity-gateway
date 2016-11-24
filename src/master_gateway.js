@@ -14,9 +14,6 @@ function validateProductsConfig(products) {
         } else if(!products[slave].data || typeof products[slave].data !== 'object' ) {
             logger.out('error', '[GW] Master:', 'data property is invalid or missing for ' + slave);
             configValid = false;
-        } else if (!products[slave].init || typeof products[slave].init !== 'function' ) {
-            logger.out('error', '[GW] Master:', 'init property is invalid or missing for ' + slave);
-            configValid = false;
         }
     }
 
@@ -115,7 +112,9 @@ var masterGateway = {
         if(event.data.action === 'Slave.Init') {
             logger.out('info', '[GW] Master:', 'Starting to load slave.', event.data);
             contentHandler.resetFrameSize(productData.frameId); //On every init reset the frame size
-            productData.init(event.data); // Run the slave init callback and notify slave to load
+            if(productData.init){
+                productData.init(event.data); // Run the slave init callback and notify slave to load
+            }
             productData.data.action = 'Slave.Load';
             this.sendMessage(productData.frameId, productData.data);
         } else if(event.data.action === 'Slave.Resize') {

@@ -85,7 +85,7 @@ var master= masterGateway({
 	        data : {},
 	        init : function,
  	        load : function,
-                loaded : function
+            loaded : function
 	        scroll : bool
          }
     }
@@ -97,7 +97,7 @@ var master= masterGateway({
 |Name|Description|Type|Required|
 |frameId|DOM id where game frame is located|string|Y|
 |data|data passed to product to run the product load phase.|object|Y|
-|init|Callback which will be triggered when product is ready for load. It will be triggered when product is ready for load. In this step product can pass necessary data for initialization |function|Y|
+|init|Callback which will be triggered when product is ready for load. It will be triggered when product is ready for load. In this step product can pass necessary data for initialization |function|N|
 |loaded|Callback which will trigger when product is loaded|function|N|
 |scroll|Notify slave frame about scroll event in parent frame|bool|N|
 
