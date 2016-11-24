@@ -97,9 +97,12 @@ var master= masterGateway({
 |Name|Description|Type|Required|
 |frameId|DOM id where game frame is located|string|Y|
 |data|data passed to product to run the product load phase.|object|Y|
-|init|Callback which will be triggered when product is ready for load. It will be triggered when product is ready for load. In this step product can pass necessary data for initialization |function|N|
+|init|Callback which will be triggered when product is ready for load. It will be triggered when product is ready for load.|function|N|
 |loaded|Callback which will trigger when product is loaded|function|N|
 |scroll|Notify slave frame about scroll event in parent frame|bool|N|
+
+Init and loaded methods can be used to indicate that product is in loading phase. e.g. start the loader on init and remove the loader on loaded event.
+
 
 =====Slave gateway====
 
