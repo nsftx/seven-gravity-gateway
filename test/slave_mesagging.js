@@ -3,7 +3,6 @@ var slaveMessaging = require('../src/messaging/slave'),
     dom = require('jsdom-global')();
 
 describe('Posting messages to platform.', function() {
-
     it('Received value should be 3.14', function(done) {
         slaveMessaging.sendMessage('3.14');
 
