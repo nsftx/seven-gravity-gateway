@@ -44,23 +44,22 @@ var masterGateway = {
 
     msgSender: 'Master',
 
+    init: function (config) {
+        this.initialized = true;
+        this.config = config;
+        this.products = config.products;
+        this.setAllowedDomains();
+        this.checkProductScroll();
+        //Set message handler
+        window.addEventListener('message', this.handleMessage.bind(this));
+    },
+
     setAllowedDomains: function () {
         if (this.config && this.config.allowedOrigins) {
             this.allowedOrigins = this.config.allowedOrigins;
         } else {
             this.allowedOrigins = '*';
         }
-    },
-
-    enableScrollMsg: function (frameId) {
-
-        window.addEventListener('scroll', throttle(function () {
-            this.sendMessage(frameId, {
-                action: 'Master.Scroll',
-                data: contentHandler.getViewData(frameId)
-            });
-        }.bind(this), 100));
-
     },
 
     checkProductScroll: function () {
@@ -70,16 +69,6 @@ var masterGateway = {
                 this.enableScrollMsg(this.products[slave].frameId);
             }
         }
-    },
-
-    init: function (config) {
-        this.initialized = true;
-        this.config = config;
-        this.products = config.products;
-        this.setAllowedDomains();
-        this.checkProductScroll();
-        //Set message handler
-        window.addEventListener('message', this.handleMessage.bind(this));
     },
 
     handleMessage: function (event) {
@@ -129,6 +118,17 @@ var masterGateway = {
         } else {
             logger.out('warn', '[GW] Master:', 'Actions with domain `Master` or `Slave` are protected!');
         }
+    },
+
+    enableScrollMsg: function (frameId) {
+
+        window.addEventListener('scroll', throttle(function () {
+            this.sendMessage(frameId, {
+                action: 'Master.Scroll',
+                data: contentHandler.getViewData(frameId)
+            });
+        }.bind(this), 100));
+
     },
 
     subscribe: function (action, callback) {

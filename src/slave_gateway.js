@@ -31,14 +31,6 @@ var slaveGateway = {
 
     msgSender : 'Slave',
 
-    setAllowedDomains : function() {
-        if(this.config && this.config.allowedOrigins) {
-            this.allowedOrigins = this.config.allowedOrigins;
-        } else {
-            this.allowedOrigins = '*';
-        }
-    },
-
     init: function(config){
         this.initialized = true;
         this.config = config;
@@ -51,6 +43,21 @@ var slaveGateway = {
         window.addEventListener('message', this.handleMessage.bind(this));
         //Notify platform that product is evaluated and pass the necessary init data
         this.startProductInitialization();
+    },
+    
+    setAllowedDomains : function() {
+        if(this.config && this.config.allowedOrigins) {
+            this.allowedOrigins = this.config.allowedOrigins;
+        } else {
+            this.allowedOrigins = '*';
+        }
+    },
+
+    startProductInitialization : function() {
+        this.sendMessage({
+            action: 'Slave.Init',
+            data: this.config.data
+        });
     },
 
     handleMessage : function(event) {
@@ -72,13 +79,6 @@ var slaveGateway = {
 
         logger.out('info', '[GW] Slave.' +  this.productId + ':' + ' Master message received:', event.data);
         pubSub.publish(event.data.action, event.data);
-    },
-
-    startProductInitialization : function() {
-        this.sendMessage({
-            action: 'Slave.Init',
-            data: this.config.data
-        });
     },
 
     handleProtectedMessage : function(event) {
