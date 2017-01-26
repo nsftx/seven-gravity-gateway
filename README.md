@@ -159,6 +159,48 @@ It is possible to use namespaced subscriptions. e.g. If one of the products subs
 
 IMPORTANT: Mesagess prefixed with Master and Slave are system reserved messages and therefore they will be ignored
 
+=====Keybinding propagation===
+
+In order to dispatch the events from slave to master, slave needs to pass `keyPropagation` property in init stage as part of `data` node.
+
+`keyPropagation` has next format:
+
+```
+keyPropagation : {
+  {$eventType} : [keyCode or key]
+},
+```
+
+Array of bindings which will be propagated can be written as list of:
+
+ - keyCodes(85 for u)
+ - keys(letter 'u')
+ - combined ["u", 73].
+
+Key and letter combinations must be provided with + sign - e.g. `Ctrl+u` or `17+85` or combined `Ctrl+85`.
+
+Format of dispatched message is:
+
+```
+{
+  "action": "Slave.Event",
+  "event": "keyup",
+  "key": "u",
+  "keyCode": 85,
+  "keyboardButton": "KeyU",
+  "shiftKey": false,
+  "altKey": false,
+  "metaKey": false,
+  "ctrlKey": false,
+  "productId": "LiveBetting",
+  "msgSender": "Slave"
+}
+```
+
+In order to dispatch the events from master to slave, slave needs to pass `keyListeners` prop in configuration declaring which keys he wants to listen. Format is the same.
+
+(NOTE) It is advised to use the keyCodes for key binding definition
+
 =====Message exchange====
 
 **Master -> Slave**
