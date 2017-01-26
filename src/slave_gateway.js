@@ -64,12 +64,12 @@ var slaveGateway = {
     },
 
     handleMessage : function(event) {
-        if(event.data.msgSender === this.msgSender) return false;
+        if(!event.data.msgSender || event.data.msgSender === this.msgSender) return false;
 
         var productPattern = new RegExp('^Slave\\.', 'g'),
             platformPattern = new RegExp('^Master\\.', 'g');
 
-        // Check if message is reserved system message (Product and Platfrom messages)
+        // Check if message is reserved system message (Master and Slave messages)
         if(productPattern.test(event.data.action) || platformPattern.test(event.data.action)) {
             this.handleProtectedMessage(event);
             return false;
@@ -85,18 +85,30 @@ var slaveGateway = {
     },
 
     handleProtectedMessage : function(event) {
-        if(event.data.action === 'Slave.Load') {
-            logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Starting to load.');
-            this.load(event.data);
-        } else if (event.data.action === 'Master.Scroll') {
-            logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Publish Master.Scroll event.', event.data);
-            pubSub.publish(event.data.action, event.data);
-        } else if (event.data.action === 'Master.Event') {
-            logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Publish Master.Event event.', event.data);
-            pubSub.publish(event.data.action, event.data);
+        var actionName = event.data.action.replace('.', '');
+        //Lowercase the first letter
+        actionName = actionName.charAt(0).toLowerCase() + actionName.slice(1);
+
+        if (this[actionName]) {
+            this[actionName](event);
         } else {
             logger.out('warn', '[GW] Slave.' +  this.productId + ':', 'Actions with domain `Master` or `Slave` are protected!');
         }
+    },
+
+    slaveLoad : function(event) {
+        logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Starting to load.');
+        this.load(event.data);
+    },
+
+    masterScroll : function(event) {
+        logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Publish Master.Scroll event.', event.data);
+        pubSub.publish(event.data.action, event.data);
+    },
+
+    masterEvent : function(event) {
+        logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Publish Master.Event event.', event.data);
+        pubSub.publish(event.data.action, event.data);
     },
 
     subscribe : function(action, callback) {

@@ -73,8 +73,7 @@ var masterGateway = {
     },
 
     handleMessage: function (event) {
-        if (!event.data.msgSender) return false;
-        if (event.data.msgSender === this.msgSender) return false;
+        if (!event.data.msgSender || event.data.msgSender === this.msgSender) return false;
 
         var masterPattern = new RegExp('^Master\\.', 'g'),
             slavePattern = new RegExp('^Slave\\.', 'g');
@@ -98,35 +97,50 @@ var masterGateway = {
         if (!this.products[event.data.productId]) {
             return false;
         }
-        var productData = this.products[event.data.productId];
-
-        if (event.data.action === 'Slave.Init') {
-            logger.out('info', '[GW] Master:', 'Starting to load slave.', event.data);
-            contentHandler.resetFrameSize(productData.frameId); //On every init reset the frame size
-            if (productData.init) {
-                productData.init(event.data); // Run the slave init callback and notify slave to load
-            }
-            // Propagate events to Slave
-            if(event.data.data.keyListeners) {
-                //Curry the sendMessage function with frameId argument in this special case
-                keyBindingsHandler(event.data.data.keyListeners, this.sendMessage.bind(this, productData.frameId), 'Master.Event');
-            }
-            productData.data.action = 'Slave.Load';
-            this.sendMessage(productData.frameId, productData.data);
-        } else if (event.data.action === 'Slave.Resize') {
-            logger.out('info', '[GW] Master:', 'Resizing slave.', event.data);
-            contentHandler.resize(productData.frameId, event);
-        } else if (event.data.action === 'Slave.Loaded') {
-            if (productData.loaded) {
-                logger.out('info', '[GW] Master:', 'Slave loaded.', event.data);
-                productData.loaded(event.data);
-            }
-        } else if (event.data.action === 'Slave.Event') {
-            logger.out('info', '[GW] Master.' +  this.productId + ':', 'Slave.Event event received.', event.data);
-            pubSub.publish(event.data.action, event.data);
-        }  else {
+        var productData = this.products[event.data.productId],
+            actionName = event.data.action.replace('.', '');
+        //Lowercase the first letter
+        actionName = actionName.charAt(0).toLowerCase() + actionName.slice(1);
+        if (this[actionName]) {
+            this[actionName](event, productData);
+        } else {
             logger.out('warn', '[GW] Master:', 'Actions with domain `Master` or `Slave` are protected!');
         }
+    },
+
+    slaveInit : function(event, productData) {
+        logger.out('info', '[GW] Master:', 'Starting to load slave.', event.data);
+        //On every init reset the frame size
+        contentHandler.resetFrameSize(productData.frameId);
+        // Run the slave init callback and notify slave to load
+        if (productData.init) {
+            productData.init(event.data);
+        }
+        // Propagate events to Slave
+        if(event.data.data.keyListeners) {
+            //Curry the sendMessage function with frameId argument in this special case
+            keyBindingsHandler(event.data.data.keyListeners, this.sendMessage.bind(this, productData.frameId), 'Master.Event');
+        }
+        productData.data.action = 'Slave.Load';
+        this.sendMessage(productData.frameId, productData.data);
+    },
+
+    slaveResize : function(event, productData) {
+        logger.out('info', '[GW] Master:', 'Resizing slave.', event.data);
+        contentHandler.resize(productData.frameId, event);
+    },
+
+    slaveLoaded : function(event, productData) {
+        if (!productData.loaded) {
+            return false;
+        }
+        logger.out('info', '[GW] Master:', 'Slave loaded.', event.data);
+        productData.loaded(event.data);
+    },
+
+    slaveEvent : function(event) {
+        logger.out('info', '[GW] Master:', 'Slave.Event event received.', event.data);
+        pubSub.publish(event.data.action, event.data);
     },
 
     enableScrollMsg: function (frameId) {
