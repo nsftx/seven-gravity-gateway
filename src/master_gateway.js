@@ -2,7 +2,8 @@ var masterPorthole = require('./messaging/master'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/master_handler'),
     logger = require('./utils/utils').logger,
-    throttle = require('./utils/utils').throttle;
+    throttle = require('./utils/utils').throttle,
+    keyBindingsHandler = require('./key_bindings/event_handler');
 
 function validateProductsConfig(products) {
     var configValid = true;
@@ -105,6 +106,11 @@ var masterGateway = {
             if (productData.init) {
                 productData.init(event.data); // Run the slave init callback and notify slave to load
             }
+            // Propagate events to Slave
+            if(event.data.data.keyListeners) {
+                //Curry the sendMessage function with frameId argument in this special case
+                keyBindingsHandler(event.data.data.keyListeners, this.sendMessage.bind(this, productData.frameId), 'Master.Event');
+            }
             productData.data.action = 'Slave.Load';
             this.sendMessage(productData.frameId, productData.data);
         } else if (event.data.action === 'Slave.Resize') {
@@ -148,7 +154,10 @@ var masterGateway = {
 
     sendMessage: function (frameId, data, origin) {
         var frame = document.getElementById(frameId);
-        if (!frame) return false;
+        if (!frame) {
+            logger.out('warn', '[GW] Master:', 'Frame ' + frameId + ' is non existent.');
+            return false;
+        }
 
         data.msgSender = this.msgSender;
         masterPorthole.sendMessage(frame, data, origin);

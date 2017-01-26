@@ -91,6 +91,9 @@ var slaveGateway = {
         } else if (event.data.action === 'Master.Scroll') {
             logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Publish Master.Scroll event.', event.data);
             pubSub.publish(event.data.action, event.data);
+        } else if (event.data.action === 'Master.Event') {
+            logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Publish Master.Event event.', event.data);
+            pubSub.publish(event.data.action, event.data);
         } else {
             logger.out('warn', '[GW] Slave.' +  this.productId + ':', 'Actions with domain `Master` or `Slave` are protected!');
         }
