@@ -1,7 +1,8 @@
 var slavePorthole = require('./messaging/slave'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/slave_handler'),
-    logger = require('./utils/utils').logger;
+    logger = require('./utils/utils').logger,
+    keyBindingsHandler = require('./key_bindings/key_bindings');
 
 function validateInitialization(config) {
     if(!config.productId || typeof config.productId !== 'string') {
@@ -37,10 +38,12 @@ var slaveGateway = {
         this.productId = config.productId;
         this.load = config.load;
         this.setAllowedDomains();
-        //Pass the event callback, and event name
-        contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize');
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
+        //Pass the event callback, and event name
+        contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize');
+        //Pass the key propagation config object, event callback, event name
+        keyBindingsHandler.init(config.data.keyPropagation, this.sendMessage.bind(this), 'Slave.Event');
         //Notify platform that product is evaluated and pass the necessary init data
         this.startProductInitialization();
     },

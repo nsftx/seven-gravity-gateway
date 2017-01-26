@@ -115,7 +115,10 @@ var masterGateway = {
                 logger.out('info', '[GW] Master:', 'Slave loaded.', event.data);
                 productData.loaded(event.data);
             }
-        } else {
+        } else if (event.data.action === 'Slave.Event') {
+            logger.out('info', '[GW] Master.' +  this.productId + ':', 'Slave.Event event received.', event.data);
+            pubSub.publish(event.data.action, event.data);
+        }  else {
             logger.out('warn', '[GW] Master:', 'Actions with domain `Master` or `Slave` are protected!');
         }
     },

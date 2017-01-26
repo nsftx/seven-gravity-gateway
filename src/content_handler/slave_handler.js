@@ -22,6 +22,20 @@ var contentHandler = {
     eventName : null,
 
     DOMReady : false,
+    
+    init: function(eventCb, eventName) {
+        this.eventCallback = eventCb;
+        this.eventName = eventName;
+
+        this.addContentListeners();
+        this.listenDOMReady();
+
+        if (window.MutationObserver || window.WebKitMutationObserver){
+            this.setupMutationObserver();
+        } else {
+            this.runDirtyCheck();
+        }
+    },
 
     handleContentChange : function() {
         if(!this.DOMReady) {
@@ -73,21 +87,7 @@ var contentHandler = {
             this.DOMReady = true;
         }.bind(this));
     },
-
-    init: function(eventCb, eventName) {
-        this.eventCallback = eventCb;
-        this.eventName = eventName;
-
-        this.addContentListeners();
-        this.listenDOMReady();
-
-        if (window.MutationObserver || window.WebKitMutationObserver){
-            this.setupMutationObserver();
-        } else {
-            this.runDirtyCheck();
-        }
-    },
-
+    
     addContentListeners : function() {
         OBSERVED_EVENTS.forEach(function(event) {
             if(Array.isArray(event.eventName)) {
