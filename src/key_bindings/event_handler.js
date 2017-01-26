@@ -24,7 +24,8 @@ KeyBindings.prototype = {
     handleEvent : function(e) {
         var eventCode = e.which || e.keyCode,
             eventKey = e.key || e.keyIdentifier,
-            eventList = this.config[e.type];
+            eventList = this.config[e.type],
+            keyBinding;
 
         if (!eventList) {
             logger.out('info', 'Event ' + e.type + ' is not marked for propagation.');
@@ -32,7 +33,10 @@ KeyBindings.prototype = {
         }
 
         for (var i = 0; i < eventList.length; i++) {
-            var keyBinding = eventList[i];
+            // Cast eventCode and eventKey to String for comparison
+            keyBinding = String(eventList[i]);
+            eventCode = String(eventCode);
+            eventKey = String(eventKey);
             // Check if key is listed for propagation
             if (keyBinding.indexOf(eventCode) !==-1 || keyBinding.indexOf(eventKey) !==-1) {
                 // Check if key is combined with modifier (Alt, Ctrl...)
