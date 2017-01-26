@@ -159,7 +159,7 @@ It is possible to use namespaced subscriptions. e.g. If one of the products subs
 
 IMPORTANT: Mesagess prefixed with Master and Slave are system reserved messages and therefore they will be ignored
 
-=====Keybinding propagation===
+=====Keybinding propagation=====
 
 In order to dispatch the events from slave to master, slave needs to pass `keyPropagation` property in init stage as part of `data` node.
 
