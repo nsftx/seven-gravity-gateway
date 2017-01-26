@@ -1,18 +1,13 @@
 var logger = require('../utils/utils').logger;
 
-var keyBindings = {
-    
-    init : function(config, eventCb, eventName) {
-        if(!config) {
-            logger.out('info', 'No key bindings passed.');
-            return false;
-        }
+function KeyBindings(config, eventCb, eventName) {
+    this.config = config;
+    this.eventCallback = eventCb;
+    this.eventName = eventName;
+    this.addEventListeners();
+}
 
-        this.config = config;
-        this.eventCallback = eventCb;
-        this.eventName = eventName;
-        this.addEventListeners();
-    },
+KeyBindings.prototype = {
 
     addEventListeners : function() {
         for(var event in this.config) {
@@ -44,7 +39,13 @@ var keyBindings = {
 
         this.eventCallback(data);
     }
-
 };
 
-module.exports = keyBindings;
+module.exports = function (config, eventCb, eventName) {
+    if(!config) {
+        logger.out('info', 'No key bindings passed.');
+        return false;
+    }
+
+    return new KeyBindings(config, eventCb, eventName);
+};
