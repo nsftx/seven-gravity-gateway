@@ -43,7 +43,7 @@ var slaveGateway = {
         //Pass the event callback, and event name
         contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize');
         //Pass the key propagation config object, event callback, event name
-        keyBindingsHandler(config.data.keyPropagation, this.sendMessage.bind(this), 'Slave.Event');
+        keyBindingsHandler(this.config.keyPropagation, this.sendMessage.bind(this), 'Slave.Event');
         //Notify platform that product is evaluated and pass the necessary init data
         this.startProductInitialization();
     },
@@ -59,7 +59,9 @@ var slaveGateway = {
     startProductInitialization : function() {
         this.sendMessage({
             action: 'Slave.Init',
-            data: this.config.data
+            data: this.config.data,
+            keyPropagation : this.config.keyPropagation,
+            keyListeners : this.config.keyListeners
         });
     },
 

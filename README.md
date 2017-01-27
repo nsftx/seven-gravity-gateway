@@ -113,7 +113,9 @@ var slave = slaveGateway({
     data : object,
     load: function,
     allowedOrigins : array,
-    debug : bool
+    debug : bool,
+    keyPropagation : object
+    keyListeners : object
 });
 ```
 Config:
@@ -123,6 +125,8 @@ Config:
 |load|Callback which will be triggered when product starts to load|function|Y|
 |allowedOrigins|Array of allowed URIs|array|N|
 |debug|Debug messages setting|bool|N|
+|keyPropagation|Events which will be propagated to master frame|object|N|
+|keyListeners|Events which are required from master frame|object|N|
 
 ==== Scrolling ====
 
@@ -161,7 +165,7 @@ IMPORTANT: Mesagess prefixed with Master and Slave are system reserved messages 
 
 =====Keybinding propagation=====
 
-In order to dispatch the events from slave to master, slave needs to pass `keyPropagation` property in init stage as part of `data` node.
+In order to dispatch the events from slave to master, slave needs to pass `keyPropagation` property in init stage.
 
 `keyPropagation` has next format:
 
@@ -199,7 +203,7 @@ Format of dispatched message is:
 
 In order to dispatch the events from master to slave, slave needs to pass `keyListeners` prop in configuration declaring which keys he wants to listen. Format is the same.
 
-(NOTE) It is advised to use the keyCodes for key binding definition
+(NOTE) It is advised to use the keyCodes for key binding definition for sake of normalization across browsers.
 
 =====Message exchange====
 

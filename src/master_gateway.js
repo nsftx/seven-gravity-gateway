@@ -117,9 +117,9 @@ var masterGateway = {
             productData.init(event.data);
         }
         // Propagate events to Slave
-        if(event.data.data.keyListeners) {
+        if(event.data.keyListeners) {
             //Curry the sendMessage function with frameId argument in this special case
-            keyBindingsHandler(event.data.data.keyListeners, this.sendMessage.bind(this, productData.frameId), 'Master.Event');
+            keyBindingsHandler(event.data.keyListeners, this.sendMessage.bind(this, productData.frameId), 'Master.Event');
         }
         productData.data.action = 'Slave.Load';
         this.sendMessage(productData.frameId, productData.data);
