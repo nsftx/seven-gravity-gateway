@@ -27,8 +27,8 @@ var contentHandler = {
         this.eventCallback = eventCb;
         this.eventName = eventName;
 
-        this.listenDOMReady();
         this.addContentListeners();
+        this.listenDOMReady();
 
         if (window.MutationObserver || window.WebKitMutationObserver){
             this.setupMutationObserver();
@@ -90,14 +90,14 @@ var contentHandler = {
                 self.DOMReady = true;
                 self.handleContentChange();
             }
-        }, 50)
+        }, 50);
     },
     
     addContentListeners : function() {
         OBSERVED_EVENTS.forEach(function(event) {
             if(Array.isArray(event.eventName)) {
                 event.eventName.forEach(function(event) {
-                    window.addEventListener(event, this.handleContentChange);
+                    window.addEventListener(event, this.handleContentChange.bind(this));
                 }.bind(this));
             } else {
                 window.addEventListener(event.eventName, this.handleContentChange.bind(this));
