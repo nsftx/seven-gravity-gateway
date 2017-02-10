@@ -27,8 +27,8 @@ var contentHandler = {
         this.eventCallback = eventCb;
         this.eventName = eventName;
 
-        this.addContentListeners();
         this.listenDOMReady();
+        this.addContentListeners();
 
         if (window.MutationObserver || window.WebKitMutationObserver){
             this.setupMutationObserver();
@@ -83,9 +83,14 @@ var contentHandler = {
     },
 
     listenDOMReady : function() {
-        window.addEventListener('DOMContentLoaded', function() {
-            this.DOMReady = true;
-        }.bind(this));
+        var self = this;
+        var readyInterval = window.setInterval(function () {
+            if(window.document.readyState !== 'loading') {
+                clearInterval(readyInterval);
+                self.DOMReady = true;
+                self.handleContentChange();
+            }
+        }, 50)
     },
     
     addContentListeners : function() {
