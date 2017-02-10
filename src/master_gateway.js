@@ -10,10 +10,10 @@ function validateProductsConfig(products) {
 
     for (var slave in products) {
         if (!products[slave].frameId || typeof products[slave].frameId !== 'string') {
-            logger.out('error', '[GW] Master:', 'frameId property is invalid or missing for ' + slave);
+            logger.out('error', '[GG] Master:', 'frameId property is invalid or missing for ' + slave);
             configValid = false;
         } else if (!products[slave].data || typeof products[slave].data !== 'object') {
-            logger.out('error', '[GW] Master:', 'data property is invalid or missing for ' + slave);
+            logger.out('error', '[GG] Master:', 'data property is invalid or missing for ' + slave);
             configValid = false;
         }
     }
@@ -23,12 +23,12 @@ function validateProductsConfig(products) {
 
 function validateInitialization(config) {
     if (!config.products || typeof config.products !== 'object') {
-        logger.out('error', '[GW] Master:', 'products object is invalid or missing');
+        logger.out('error', '[GG] Master:', 'products object is invalid or missing');
         return false;
     } else if (!validateProductsConfig(config.products)) {
         return false;
     } else {
-        logger.out('info', '[GW] Master:', 'Initializing');
+        logger.out('info', '[GG] Master:', 'Initializing');
         return true;
     }
 }
@@ -79,7 +79,7 @@ var masterGateway = {
             slavePattern;
 
         if (this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
-            logger.out('error', '[GW] Master: Message origin is not allowed');
+            logger.out('error', '[GG] Master: Message origin is not allowed');
             return false;
         }
 
@@ -92,7 +92,7 @@ var masterGateway = {
             return false;
         }
 
-        logger.out('info', '[GW] Master: Slave message received:', event.data);
+        logger.out('info', '[GG] Master: Slave message received:', event.data);
         pubSub.publish(event.data.action, event.data);
     },
 
@@ -107,12 +107,12 @@ var masterGateway = {
         if (this[actionName]) {
             this[actionName](event, productData);
         } else {
-            logger.out('warn', '[GW] Master:', 'Actions with domain `Master` or `Slave` are protected!');
+            logger.out('warn', '[GG] Master:', 'Actions with domain `Master` or `Slave` are protected!');
         }
     },
 
     slaveInit : function(event, productData) {
-        logger.out('info', '[GW] Master:', 'Starting to load slave.', event.data);
+        logger.out('info', '[GG] Master:', 'Starting to load slave.', event.data);
         //On every init reset the frame size
         contentHandler.resetFrameSize(productData.frameId);
         // Run the slave init callback and notify slave to load
@@ -129,7 +129,7 @@ var masterGateway = {
     },
 
     slaveResize : function(event, productData) {
-        logger.out('info', '[GW] Master:', 'Resizing slave.', event.data);
+        logger.out('info', '[GG] Master:', 'Resizing slave.', event.data);
         contentHandler.resize(productData.frameId, event);
     },
 
@@ -137,12 +137,12 @@ var masterGateway = {
         if (!productData.loaded) {
             return false;
         }
-        logger.out('info', '[GW] Master:', 'Slave loaded.', event.data);
+        logger.out('info', '[GG] Master:', 'Slave loaded.', event.data);
         productData.loaded(event.data);
     },
 
     slaveEvent : function(event) {
-        logger.out('info', '[GW] Master:', 'Slave.Event event received.', event.data);
+        logger.out('info', '[GG] Master:', 'Slave.Event event received.', event.data);
         pubSub.publish(event.data.action, event.data);
     },
 
@@ -172,7 +172,7 @@ var masterGateway = {
     sendMessage: function (frameId, data, origin) {
         var frame = document.getElementById(frameId);
         if (!frame) {
-            logger.out('warn', '[GW] Master:', 'Frame ' + frameId + ' is non existent.');
+            logger.out('warn', '[GG] Master:', 'Frame ' + frameId + ' is non existent.');
             return false;
         }
 

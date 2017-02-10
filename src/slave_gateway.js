@@ -6,16 +6,16 @@ var slavePorthole = require('./messaging/slave'),
 
 function validateInitialization(config) {
     if(!config.productId || typeof config.productId !== 'string') {
-        logger.out('error', '[GW] Slave:', 'productId property is invalid or missing');
+        logger.out('error', '[GG] Slave:', 'productId property is invalid or missing');
         return false;
     } else if(!config.data || typeof config.data !== 'object') {
-        logger.out('error', '[GW] Slave.' + config.productId + ':', 'data property is invalid or missing');
+        logger.out('error', '[GG] Slave.' + config.productId + ':', 'data property is invalid or missing');
         return false;
     } else if(!config.load || typeof config.load !== 'function') {
-        logger.out('error', '[GW] Slave.' + config.productId + ':', 'load property is invalid or missing');
+        logger.out('error', '[GG] Slave.' + config.productId + ':', 'load property is invalid or missing');
         return false;
     } else {
-        logger.out('info', '[GW] Slave.' + config.productId + ':', 'Initializing');
+        logger.out('info', '[GG] Slave.' + config.productId + ':', 'Initializing');
         return true;
     }
 }
@@ -72,7 +72,7 @@ var slaveGateway = {
             platformPattern;
 
         if(this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
-            logger.out('error', '[GW] Slave.' +  this.productId + ':' + ' Message origin is not allowed');
+            logger.out('error', '[GG] Slave.' +  this.productId + ':' + ' Message origin is not allowed');
             return false;
         }
 
@@ -84,7 +84,7 @@ var slaveGateway = {
             return false;
         }
 
-        logger.out('info', '[GW] Slave.' +  this.productId + ':' + ' Master message received:', event.data);
+        logger.out('info', '[GG] Slave.' +  this.productId + ':' + ' Master message received:', event.data);
         pubSub.publish(event.data.action, event.data);
     },
 
@@ -96,22 +96,22 @@ var slaveGateway = {
         if (this[actionName]) {
             this[actionName](event);
         } else {
-            logger.out('warn', '[GW] Slave.' +  this.productId + ':', 'Actions with domain `Master` or `Slave` are protected!');
+            logger.out('warn', '[GG] Slave.' +  this.productId + ':', 'Actions with domain `Master` or `Slave` are protected!');
         }
     },
 
     slaveLoad : function(event) {
-        logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Starting to load.');
+        logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Starting to load.');
         this.load(event.data);
     },
 
     masterScroll : function(event) {
-        logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Publish Master.Scroll event.', event.data);
+        logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Publish Master.Scroll event.', event.data);
         pubSub.publish(event.data.action, event.data);
     },
 
     masterEvent : function(event) {
-        logger.out('info', '[GW] Slave.' +  this.productId + ':', 'Publish Master.Event event.', event.data);
+        logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Publish Master.Event event.', event.data);
         pubSub.publish(event.data.action, event.data);
     },
 

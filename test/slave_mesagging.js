@@ -10,11 +10,11 @@ describe('Posting messages to platform.', function() {
             if(e.data != '3.14') {
                 setTimeout(function() {
                     done(new Error("Value is " + e.data + ' but expected to be 3.14'));
-                }, 50);
+                });
             } else {
                 setTimeout(function() {
                     done();
-                }, 50);
+                });
             }
 
         });
