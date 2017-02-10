@@ -75,17 +75,20 @@ var masterGateway = {
     handleMessage: function (event) {
         if (!event.data.msgSender || event.data.msgSender === this.msgSender) return false;
 
-        var masterPattern = new RegExp('^Master\\.', 'g'),
-            slavePattern = new RegExp('^Slave\\.', 'g');
+        var masterPattern,
+            slavePattern;
+
+        if (this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
+            logger.out('error', '[GW] Master: Message origin is not allowed');
+            return false;
+        }
+
+        masterPattern = new RegExp('^Master\\.', 'g');
+        slavePattern = new RegExp('^Slave\\.', 'g');
 
         // Check if message is reserved system message (Master and Slave messages)
         if (slavePattern.test(event.data.action) || masterPattern.test(event.data.action)) {
             this.handleProtectedMessage(event);
-            return false;
-        }
-
-        if (this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
-            logger.out('error', '[GW] Master: Message origin is not allowed');
             return false;
         }
 

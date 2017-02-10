@@ -68,17 +68,19 @@ var slaveGateway = {
     handleMessage : function(event) {
         if(!event.data.msgSender || event.data.msgSender === this.msgSender) return false;
 
-        var productPattern = new RegExp('^Slave\\.', 'g'),
-            platformPattern = new RegExp('^Master\\.', 'g');
-
-        // Check if message is reserved system message (Master and Slave messages)
-        if(productPattern.test(event.data.action) || platformPattern.test(event.data.action)) {
-            this.handleProtectedMessage(event);
-            return false;
-        }
+        var productPattern,
+            platformPattern;
 
         if(this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
             logger.out('error', '[GW] Slave.' +  this.productId + ':' + ' Message origin is not allowed');
+            return false;
+        }
+
+        productPattern = new RegExp('^Slave\\.', 'g');
+        platformPattern = new RegExp('^Master\\.', 'g');
+        // Check if message is reserved system message (Master and Slave messages)
+        if(productPattern.test(event.data.action) || platformPattern.test(event.data.action)) {
+            this.handleProtectedMessage(event);
             return false;
         }
 
