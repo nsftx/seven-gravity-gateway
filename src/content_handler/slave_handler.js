@@ -90,7 +90,7 @@ var contentHandler = {
                 self.DOMReady = true;
                 self.handleContentChange();
             }
-        }, 50);
+        }, 5);
     },
     
     addContentListeners : function() {
