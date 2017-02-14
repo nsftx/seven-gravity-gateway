@@ -1,8 +1,21 @@
-module.exports = {
+function Porthole(){
+    this.worker = null;
+}
+
+Porthole.prototype = {
+
+    setWorker: function(worker) {
+        this.worker = worker;
+    },
 
     sendMessage: function(data, domain) {
-        domain = domain || '*';
+        var windowDomain = domain || '*';
 
-        window.parent.postMessage(data, domain);
+        window.parent.postMessage(data, windowDomain);
+        if(this.worker) {
+            this.worker.postMessage(data, windowDomain);
+        }
     }
 };
+
+module.exports = new Porthole();
