@@ -22,7 +22,11 @@ var contentHandler = {
     eventName : null,
 
     DOMReady : false,
-    
+
+    currentWidth : 0,
+
+    currentHeight : 0,
+
     init: function(eventCb, eventName) {
         this.eventCallback = eventCb;
         this.eventName = eventName;
@@ -42,13 +46,21 @@ var contentHandler = {
             return false;
         }
 
-        var data = {
-            action : this.eventName,
-            width : window.innerWidth,
-            height : this.getContentHeight() + this.getElementOffset(document.body)
-        };
+        var windowWidth = window.innerWidth,
+            windowHeight = this.getContentHeight() + this.getElementOffset(document.body),
+            data;
 
-        this.eventCallback(data);
+        // Check to prevent unnecessary message dispatch even if size didn't change
+        if(windowWidth !== this.currentWidth || windowHeight !== this.currentHeight) {
+            this.currentWidth = windowWidth;
+            this.currentHeight = windowHeight;
+            data = {
+                action : this.eventName,
+                width : windowWidth,
+                height : windowHeight
+            };
+            this.eventCallback(data);
+        }
     },
 
     //Get offset height of iframe content
