@@ -1,11 +1,9 @@
-var slaveMessaging = require('../src/messaging/slave'),
+var porthole = require('../src/messaging/slave'),
     assert = require('assert'),
     dom = require('jsdom-global')();
 
 describe('Posting messages to platform.', function() {
     it('Received value should be 3.14', function(done) {
-        slaveMessaging.sendMessage('3.14');
-
         window.addEventListener('message', function(e) {
             if(e.data != '3.14') {
                 setTimeout(function() {
@@ -16,7 +14,8 @@ describe('Posting messages to platform.', function() {
                     done();
                 });
             }
-
         });
+
+        porthole.sendMessage('3.14');
     });
 });

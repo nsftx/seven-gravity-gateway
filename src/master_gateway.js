@@ -43,6 +43,8 @@ var masterGateway = {
 
     allowedOrigins: null,
 
+    worker : null,
+
     msgSender: 'Master',
 
     init: function (config) {
@@ -50,6 +52,7 @@ var masterGateway = {
         this.config = config;
         this.products = config.products;
         this.setAllowedDomains();
+        this.setWorker();
         this.checkProductScroll();
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
@@ -61,6 +64,14 @@ var masterGateway = {
         } else {
             this.allowedOrigins = '*';
         }
+    },
+
+    setWorker: function(){
+        if(!this.config.worker) {
+            return false;
+        }
+
+        this.worker = this.config.worker;
     },
 
     checkProductScroll: function () {

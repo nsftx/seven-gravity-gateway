@@ -1,12 +1,22 @@
-module.exports = {
+function Porthole() {
+    this.worker = null;
+}
 
-    sendMessage : function(productFrame, data, domain) {
-        domain = domain || '*';
+Porthole.prototype = {
 
-        if(!productFrame.contentWindow) {
-            window.postMessage(data, domain);
-        } else {
-            productFrame.contentWindow.postMessage(data, domain);
+    setWorker: function(worker) {
+        this.worker = worker;
+    },
+
+    sendMessage: function(productFrame, data, domain) {
+        var targetWindow = productFrame.contentWindow || window,
+            windowDomain = domain || '*';
+
+        targetWindow.postMessage(data, windowDomain);
+        if(this.worker) {
+            this.worker.postMessage(data, windowDomain);
         }
     }
 };
+
+module.exports = new Porthole();
