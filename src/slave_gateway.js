@@ -30,6 +30,8 @@ var slaveGateway = {
 
     load : null,
 
+    worker : null,
+
     msgSender : 'Slave',
 
     init: function(config){
@@ -44,7 +46,9 @@ var slaveGateway = {
         contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize');
         //Pass the key propagation config object, event callback, event name
         keyBindingsHandler(this.config.keyPropagation, this.sendMessage.bind(this), 'Slave.Event');
-        //Notify platform that product is evaluated and pass the necessary init data
+        if(this.config.worker) {
+            this.setWorker();
+        }
         this.startProductInitialization();
     },
     
@@ -98,6 +102,20 @@ var slaveGateway = {
         } else {
             logger.out('warn', '[GG] Slave.' +  this.productId + ':', 'Actions with domain `Master` or `Slave` are protected!');
         }
+    },
+
+    setWorker: function(){
+        if(this.config.worker instanceof Worker) {
+            this.worker = this.config.worker;
+        } else if (typeof this.config.worker === 'string') {
+            this.worker = new Worker(this.config.worker);
+        } else {
+            logger.out('error', '[GG] Slave.' +  this.productId + ':', 'Web worker initialization failed. Provide instance of Worker or path to file');
+            return false;
+        }
+
+        logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
+        slavePorthole.setWorker(this.worker);
     },
 
     slaveLoad : function(event) {

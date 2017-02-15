@@ -43,8 +43,6 @@ var masterGateway = {
 
     allowedOrigins: null,
 
-    worker : null,
-
     msgSender: 'Master',
 
     init: function (config) {
@@ -52,8 +50,7 @@ var masterGateway = {
         this.config = config;
         this.products = config.products;
         this.setAllowedDomains();
-        this.setWorker();
-        this.checkProductScroll();
+        this.setProductScroll();
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
     },
@@ -66,15 +63,7 @@ var masterGateway = {
         }
     },
 
-    setWorker: function(){
-        if(!this.config.worker) {
-            return false;
-        }
-
-        this.worker = this.config.worker;
-    },
-
-    checkProductScroll: function () {
+    setProductScroll: function () {
         // Check if scroll message is enabled
         for (var slave in  this.products) {
             if (this.products[slave].scroll) {
@@ -130,11 +119,14 @@ var masterGateway = {
         if (productData.init) {
             productData.init(event.data);
         }
-        // Propagate events to Slave
         if(event.data.keyListeners) {
             //Curry the sendMessage function with frameId argument in this special case
             keyBindingsHandler(event.data.keyListeners, this.sendMessage.bind(this, productData.frameId), 'Master.Event');
         }
+        this.slaveLoad(productData);
+    },
+
+    slaveLoad : function(productData) {
         productData.data.action = 'Slave.Load';
         this.sendMessage(productData.frameId, productData.data);
     },

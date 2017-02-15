@@ -10,10 +10,9 @@ Porthole.prototype = {
 
     sendMessage: function(data, domain) {
         var windowDomain = domain || '*';
-
         window.parent.postMessage(data, windowDomain);
         if(this.worker) {
-            this.worker.postMessage(data, windowDomain);
+            this.worker.postMessage(data);
         }
     }
 };
