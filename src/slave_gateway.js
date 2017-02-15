@@ -105,6 +105,7 @@ var slaveGateway = {
     },
 
     setWorker: function(){
+        var msgBlacklist = ['Slave.Resize'];
         if(this.config.worker instanceof Worker) {
             this.worker = this.config.worker;
         } else if (typeof this.config.worker === 'string') {
@@ -113,9 +114,8 @@ var slaveGateway = {
             logger.out('error', '[GG] Slave.' +  this.productId + ':', 'Web worker initialization failed. Provide instance of Worker or path to file');
             return false;
         }
-
         logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
-        slavePorthole.setWorker(this.worker);
+        slavePorthole.setWorker(this.worker, msgBlacklist);
     },
 
     slaveLoad : function(event) {
