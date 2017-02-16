@@ -12,15 +12,6 @@ var contentHandler = {
         if(frame) {
             frame.style.height = event.data.height + 'px';
         }
-    },
-
-    getViewData : function() {
-        return {
-            top: window.document.body.scrollTop,
-            left:  window.document.body.scrollLeft,
-            totalHeight: window.innerHeight,
-            totalWidth : window.innerWidth
-        };
     }
 };
 

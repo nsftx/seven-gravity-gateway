@@ -2,7 +2,7 @@ var slavePorthole = require('./messaging/slave'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/slave_handler'),
     logger = require('./utils/utils').logger,
-    keyBindingsHandler = require('./key_bindings/event_handler');
+    eventHandler = require('./event_dispatching/event_handler');
 
 function validateInitialization(config) {
     if(!config.productId || typeof config.productId !== 'string') {
@@ -45,8 +45,8 @@ var slaveGateway = {
         //Pass the event callback, and event name
         contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize');
         //Pass the key propagation config object, event callback, event name
-        if(this.config.keyPropagation) {
-            keyBindingsHandler(this.config.keyPropagation, this.sendMessage.bind(this), 'Slave.Event');
+        if(this.config.eventPropagation) {
+            eventHandler(this.config.eventPropagation, this.sendMessage.bind(this), 'Slave.Event');
         }
         if(this.config.worker) {
             this.setWorker();
@@ -66,8 +66,8 @@ var slaveGateway = {
         this.sendMessage({
             action: 'Slave.Init',
             data: this.config.data,
-            keyPropagation : this.config.keyPropagation,
-            keyListeners : this.config.keyListeners
+            eventPropagation : this.config.eventPropagation,
+            eventListeners : this.config.eventListeners
         });
     },
 
@@ -123,11 +123,6 @@ var slaveGateway = {
     slaveLoad : function(event) {
         logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Starting to load.');
         this.load(event.data);
-    },
-
-    masterScroll : function(event) {
-        logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Publish Master.Scroll event.', event.data);
-        pubSub.publish(event.data.action, event.data);
     },
 
     masterEvent : function(event) {

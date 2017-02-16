@@ -2,8 +2,7 @@ var masterPorthole = require('./messaging/master'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/master_handler'),
     logger = require('./utils/utils').logger,
-    throttle = require('./utils/utils').throttle,
-    keyBindingsHandler = require('./key_bindings/event_handler');
+    eventHandler = require('./event_dispatching/event_handler');
 
 function validateProductsConfig(products) {
     var configValid = true;
@@ -50,7 +49,6 @@ var masterGateway = {
         this.config = config;
         this.products = config.products;
         this.setAllowedDomains();
-        this.setProductScroll();
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
     },
@@ -60,15 +58,6 @@ var masterGateway = {
             this.allowedOrigins = this.config.allowedOrigins;
         } else {
             this.allowedOrigins = '*';
-        }
-    },
-
-    setProductScroll: function () {
-        // Check if scroll message is enabled
-        for (var slave in  this.products) {
-            if (this.products[slave].scroll) {
-                this.enableScrollMsg(this.products[slave].frameId);
-            }
         }
     },
 
@@ -119,9 +108,9 @@ var masterGateway = {
         if (productData.init) {
             productData.init(event.data);
         }
-        if(event.data.keyListeners) {
+        if(event.data.eventListeners) {
             //Curry the sendMessage function with frameId argument in this special case
-            keyBindingsHandler(event.data.keyListeners, this.sendMessage.bind(this, productData.frameId), 'Master.Event');
+            eventHandler(event.data.eventListeners, this.sendMessage.bind(this, productData.frameId), 'Master.Event');
         }
         this.slaveLoad(productData);
     },
@@ -147,17 +136,6 @@ var masterGateway = {
     slaveEvent : function(event) {
         logger.out('info', '[GG] Master:', 'Slave.Event event received.', event.data);
         pubSub.publish(event.data.action, event.data);
-    },
-
-    enableScrollMsg: function (frameId) {
-
-        window.addEventListener('scroll', throttle(function () {
-            this.sendMessage(frameId, {
-                action: 'Master.Scroll',
-                data: contentHandler.getViewData(frameId)
-            });
-        }.bind(this), 100));
-
     },
 
     subscribe: function (action, callback) {

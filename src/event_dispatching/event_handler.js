@@ -1,6 +1,6 @@
 var logger = require('../utils/utils').logger;
 
-function KeyBindings(config, eventCb, eventName) {
+function EventHandler(config, eventCb, eventName) {
     this.MODIFIER_KEYS = {
         shiftKey : ['Shift', 16],
         ctrlKey : ['Ctrl', 17],
@@ -13,7 +13,7 @@ function KeyBindings(config, eventCb, eventName) {
     this.addEventListeners();
 }
 
-KeyBindings.prototype = {
+EventHandler.prototype = {
 
     addEventListeners : function() {
         for(var event in this.config) {
@@ -22,15 +22,48 @@ KeyBindings.prototype = {
     },
 
     handleEvent : function(e) {
+
+        var eventType = e.type.toLowerCase();
+
+        if(eventType === 'click') {
+            this.handleClickEvent(e);
+        } else if (eventType === 'scroll') {
+            this.handleScrollEvent(e);
+        } else if(eventType === 'keyup' || eventType === 'keydown' || eventType === 'keypress') {
+            this.handleKeyboardEvent(e);
+        } else {
+            logger.out('warning', 'Unable to dispatch event! Event ' + eventType + ' is not supported by gateway.');
+        }
+
+    },
+
+    handleScrollEvent : function(e) {
+        var data = {
+            action : this.eventName,
+            event : e.type,
+            top: window.document.body.scrollTop,
+            left:  window.document.body.scrollLeft,
+            totalHeight: window.innerHeight,
+            totalWidth : window.innerWidth
+        };
+
+        this.eventCallback(data);
+    },
+
+    handleClickEvent : function(e) {
+        var data = {
+            action : this.eventName,
+            event : e.type
+        };
+
+        this.eventCallback(data);
+    },
+
+    handleKeyboardEvent : function(e) {
         var eventCode = e.which || e.keyCode,
             eventKey = e.key || e.keyIdentifier,
             eventList = this.config[e.type],
             keyBinding;
-
-        if (!eventList) {
-            logger.out('info', 'Event ' + e.type + ' is not marked for propagation.');
-            return false;
-        }
 
         for (var i = 0; i < eventList.length; i++) {
             // Cast eventCode and eventKey to String for comparison
@@ -43,11 +76,11 @@ KeyBindings.prototype = {
                 if(keyBinding.indexOf('+') !== -1) {
                     var modifier = this.getModifierKey(keyBinding);
                     if(modifier && e[modifier] === true) {
-                        this.triggerEventCallback(e);
+                        this.keyboardEventCallback(e);
                         return;
                     }
                 } else {
-                    this.triggerEventCallback(e);
+                    this.keyboardEventCallback(e);
                     return;
                 }
             }
@@ -68,7 +101,7 @@ KeyBindings.prototype = {
         }
     },
 
-    triggerEventCallback : function(e) {
+    keyboardEventCallback : function(e) {
         var data = {
             action : this.eventName,
             event : e.type,
@@ -91,5 +124,5 @@ module.exports = function (config, eventCb, eventName) {
         return false;
     }
 
-    return new KeyBindings(config, eventCb, eventName);
+    return new EventHandler(config, eventCb, eventName);
 };
