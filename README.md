@@ -159,7 +159,7 @@ lang=javascript
 Gateway.subscribe('betslip.add',function)
 ```
 
-It is possible to use namespaced subscriptions. e.g. If one of the products subscribes to !!betslip!! action with proper callback, events !!betslip.add!!, !!betslip.remove!! will trigger the !!betslip!! callback.
+It is possible to use namespaced subscriptions. e.g. If one of the products subscribes to !!betslip.*!! action with proper callback, events !!betslip.add!!, !!betslip.remove!! will trigger the !!betslip!! callback.
 
 IMPORTANT: Mesagess prefixed with Master and Slave are system reserved messages and therefore they will be ignored
 

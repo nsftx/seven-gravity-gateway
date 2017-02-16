@@ -45,7 +45,9 @@ var slaveGateway = {
         //Pass the event callback, and event name
         contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize');
         //Pass the key propagation config object, event callback, event name
-        keyBindingsHandler(this.config.keyPropagation, this.sendMessage.bind(this), 'Slave.Event');
+        if(this.config.keyPropagation) {
+            keyBindingsHandler(this.config.keyPropagation, this.sendMessage.bind(this), 'Slave.Event');
+        }
         if(this.config.worker) {
             this.setWorker();
         }
