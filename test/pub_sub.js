@@ -44,7 +44,7 @@ describe('Publish funcionality', function() {
 
 
     it('Publish: Should be successful - Publish namespaced action', function() {
-        pubSub.subscribe('ticket', function() {
+        pubSub.subscribe('ticket.*', function() {
                 return true;
             }
         );

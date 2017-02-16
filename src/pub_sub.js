@@ -26,9 +26,9 @@ var pubSub = {
 
 
     publish : function(action, data) {
-        var topicAction = this.checkNamespaceActions(action);
+        var topicAction = this.findAction(action);
 
-        if(!Boolean(topicAction)) {
+        if(!topicAction) {
             logger.out('error', 'Publish failed - topic ' + action + ' doesn´t exist');
             return false;
         } else {
@@ -42,20 +42,37 @@ var pubSub = {
         this.topics = {};
     },
 
-    checkNamespaceActions : function(action) {
-        var found = this.topics.hasOwnProperty(action),
-            domainSeparator = action.lastIndexOf('.');
+    findAction : function(actionName) {
+        var actionFound = this.topics.hasOwnProperty(actionName);
 
-        while(!found && domainSeparator !== -1) {
-            action = action.substr(0, domainSeparator);
-            domainSeparator = action.lastIndexOf('.');
-            found = this.topics.hasOwnProperty(action);
-        }
-
-        if(found) {
-            return this.topics[action];
+        if(actionFound) {
+            return this.topics[actionName];
+        } else if (actionName !== '*') {
+            return this.checkWildcardActions(actionName);
         } else {
             return false;
+        }
+    },
+
+    checkWildcardActions : function(actionName) {
+        var pattern,
+            newAction,
+            namespaceArr = actionName.split('.');
+
+        namespaceArr.pop();
+
+        if(namespaceArr.length > 0) {
+            newAction = namespaceArr.join('.');
+            for (var topicName in this.topics) {
+                pattern = new RegExp('^' + newAction + '\\.\\*$', 'g');
+                if(pattern.test(topicName)){
+                    return this.topics[topicName];
+                }
+            }
+
+            return this.checkWildcardActions(newAction);
+        } else {
+            return this.findAction('*');
         }
     }
 };
