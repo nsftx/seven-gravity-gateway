@@ -28,13 +28,13 @@ Master gateway:
 
 ```
 lang=javascript
-var masterGateway = require('master');
+var Gateway = require('master');
 ```
 Slave gateway:
 
 ```
 lang=javascript
-var slaveGateway = require('slave');
+var Gateway = require('slave');
 ```
 
 ====As node module====
@@ -76,7 +76,7 @@ Config:
 
 ```
 lang=javascript
-var master= masterGateway({
+Gateway({
     allowedOrigins : [],
     debug : bool,
     products : {
@@ -85,8 +85,7 @@ var master= masterGateway({
 	        data : {},
 	        init : function,
  	        load : function,
-            loaded : function
-	        scroll : bool
+                loaded : function
          }
     }
 );
@@ -99,7 +98,6 @@ var master= masterGateway({
 |data|data passed to product to run the product load phase.|object|Y|
 |init|Callback which will be triggered when product is ready for load. It will be triggered when product is ready for load.|function|N|
 |loaded|Callback which will trigger when product is loaded|function|N|
-|scroll|Notify slave frame about scroll event in parent frame|bool|N|
 
 Init and loaded methods can be used to indicate that product is in loading phase. e.g. start the loader on init and remove the loader on loaded event.
 
@@ -108,14 +106,15 @@ Init and loaded methods can be used to indicate that product is in loading phase
 
 ```
 lang=javascript
-var slave = slaveGateway({
+Gateway({
     productId : string,
     data : object,
     load: function,
     allowedOrigins : array,
     debug : bool,
-    keyPropagation : object
-    keyListeners : object
+    worker : string || Worker instance
+    eventPropagation : object
+    eventListeners : object
 });
 ```
 Config:
@@ -125,14 +124,9 @@ Config:
 |load|Callback which will be triggered when product starts to load|function|Y|
 |allowedOrigins|Array of allowed URIs|array|N|
 |debug|Debug messages setting|bool|N|
-|keyPropagation|Events which will be propagated to master frame|object|N|
-|keyListeners|Events which are required from master frame|object|N|
-
-==== Scrolling ====
-
-In order to notify product about scroll event in parent frame, `scroll``must be set to `true` in products object of master's configuration.
-
-To receive scroll messages slave gateway must subscribe to message 'Master.Scroll' with proper callback.
+|worker|Optional web worker which will receive all messages except `Resize` event |string / Worker instance|N|
+|eventPropagation|Events which will be propagated to master frame|object|N|
+|eventListeners|Events which are required from master frame|object|N|
 
 ==== Loaded Callback ====
 
@@ -140,9 +134,7 @@ If product needs to inform the parent frame that it has been successfully loaded
 
 
 ```
-lang=javascript
-
-slaveGateway.sendMessage({
+{gatewayInstance}.sendMessage({
     action : 'Slave.Loaded'
 })
 ```
@@ -156,24 +148,26 @@ NOTE: action names are case sensitive, meaning that ‘betslip.Add’ and ‘Bet
 Subscription format:
 ```
 lang=javascript
-Gateway.subscribe('betslip.add',function)
+{gatewayInstance}.subscribe('betslip.add',function)
 ```
 
-It is possible to use namespaced subscriptions. e.g. If one of the products subscribes to !!betslip.*!! action with proper callback, events !!betslip.add!!, !!betslip.remove!! will trigger the !!betslip!! callback.
+It is possible to use namespaced subscriptions. e.g. If one of the products subscribes to !!betslip.*!! action with proper callback, events !!betslip.add!!, !!betslip.remove!! will trigger the !!betslip.*!! callback. It is possible to subscribe using !!*!! wildcard, meaning that every message will trigger registered callback.
 
 IMPORTANT: Mesagess prefixed with Master and Slave are system reserved messages and therefore they will be ignored
 
-=====Keybinding propagation=====
+=====Event propagation=====
 
-In order to dispatch the events from slave to master, slave needs to pass `keyPropagation` property in init stage.
+In order to dispatch the events from slave to master, slave needs to pass `eventPropagation` property in init stage.
 
-`keyPropagation` has next format:
+`eventPropagation` has next format:
 
 ```
-keyPropagation : {
-  {$eventType} : [keyCode or key]
+eventPropagation : {
+  {$eventType} : array || bool // array only for keyboard events
 },
 ```
+
+Only !!keyup!!, !!keydown!!, !!keypress!!, !!scroll!! and !!click!! events are supported.
 
 Array of bindings which will be propagated can be written as list of:
 
@@ -183,25 +177,7 @@ Array of bindings which will be propagated can be written as list of:
 
 Key and letter combinations must be provided with + sign - e.g. `Ctrl+u` or `17+85` or combined `Ctrl+85`.
 
-Format of dispatched message is:
-
-```
-{
-  "action": "Slave.Event",
-  "event": "keyup",
-  "key": "u",
-  "keyCode": 85,
-  "keyboardButton": "KeyU",
-  "shiftKey": false,
-  "altKey": false,
-  "metaKey": false,
-  "ctrlKey": false,
-  "productId": "LiveBetting",
-  "msgSender": "Slave"
-}
-```
-
-In order to dispatch the events from master to slave, slave needs to pass `keyListeners` prop in configuration declaring which keys he wants to listen. Format is the same.
+In order to dispatch the events from master to slave, slave needs to pass `eventListeners` prop in configuration declaring which keys he wants to listen. Format is the same.
 
 (NOTE) It is advised to use the keyCodes for key binding definition for sake of normalization across browsers.
 
@@ -211,7 +187,7 @@ In order to dispatch the events from master to slave, slave needs to pass `keyLi
 
 ```
 lang=javascript
-Gateway.sendMessage(frameId, {
+{gatewayInstance}.sendMessage(frameId, {
     action : 'betslip.add',
     productId : $productId
 }, origin)
@@ -223,7 +199,7 @@ Object must contain name of action and productId property. `productId` property 
 
 ```
 lang=javascript
-Gateway.sendMessage({
+{gatewayInstance}.sendMessage({
     action : 'betslip.add',
 }, origin)
 ```
@@ -235,7 +211,7 @@ Object must contain name of action. Origin param is the origin of sender. That o
 Unsubscribe format:
 ```
 lang=javascript
-Gateway.unsubscribe('betslip.add’)
+{gatewayInstance}.unsubscribe('betslip.add’)
 ```
 
 Unsubscribe will remove registered action and its callback.
@@ -244,7 +220,7 @@ Unsubscribe will remove registered action and its callback.
 ====Clear subscription
 ```
 lang=javascript
-Gateway.clearSubscriptions()
+{gatewayInstance}.clearSubscriptions()
 ```
 
 This will remove all subscribed actions and callbacks.
