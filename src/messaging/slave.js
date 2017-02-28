@@ -9,18 +9,6 @@ Porthole.prototype = {
     setWorker: function (worker, msgBlacklist) {
         this.worker = worker;
         this.msgBlacklist = msgBlacklist;
-        this.setWorkerProxy();
-    },
-    setWorkerProxy: function () {
-      if (this.worker) {
-          // Listen message from worker and proxy same message to slave
-          this.worker.addEventListener('message', function (event) {
-              if (event.data) {
-                  logger.out('info', '[GG] Slave redirecting message from worker =>', event.data);
-                  window.postMessage(event.data, window.location.origin);
-              }
-          });
-      }
     },
     sendMessage: function (data, domain) {
         var windowDomain = domain || '*';

@@ -116,7 +116,17 @@ var slaveGateway = {
             logger.out('error', '[GG] Slave.' +  this.productId + ':', 'Web worker initialization failed. Provide instance of Worker or path to file');
             return false;
         }
+
         logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
+
+        // Set worker message proxy
+        this.worker.addEventListener('message', function (event) {
+            if (event.data && event.data.action) {
+                logger.out('info', '[GG] Slave redirecting message from worker =>', event.data);
+                pubSub.publish(event.data.action, event.data);
+            }
+        });
+
         slavePorthole.setWorker(this.worker, msgBlacklist);
     },
 

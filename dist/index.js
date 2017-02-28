@@ -505,18 +505,6 @@ Porthole.prototype = {
     setWorker: function (worker, msgBlacklist) {
         this.worker = worker;
         this.msgBlacklist = msgBlacklist;
-        this.setWorkerProxy();
-    },
-    setWorkerProxy: function () {
-      if (this.worker) {
-          // Listen message from worker and proxy same message to slave
-          this.worker.addEventListener('message', function (event) {
-              if (event.data) {
-                  logger.out('info', '[GG] Slave redirecting message from worker =>', event.data);
-                  window.postMessage(event.data, window.location.origin);
-              }
-          });
-      }
     },
     sendMessage: function (data, domain) {
         var windowDomain = domain || '*';
@@ -729,7 +717,17 @@ var slaveGateway = {
             logger.out('error', '[GG] Slave.' +  this.productId + ':', 'Web worker initialization failed. Provide instance of Worker or path to file');
             return false;
         }
+
         logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
+
+        // Set worker message proxy
+        this.worker.addEventListener('message', function (event) {
+            if (event.data && event.data.action) {
+                logger.out('info', '[GG] Slave redirecting message from worker =>', event.data);
+                pubSub.publish(event.data.action, event.data);
+            }
+        });
+
         slavePorthole.setWorker(this.worker, msgBlacklist);
     },
 
