@@ -1,3 +1,5 @@
+var logger = require('../utils/utils').logger;
+
 function Porthole() {
     this.worker = null;
     this.msgBlacklist = null;
@@ -13,7 +15,10 @@ Porthole.prototype = {
       if (this.worker) {
           // Listen message from worker and proxy same message to slave
           this.worker.addEventListener('message', function (event) {
-              window.postMessage(event.data, window.location.origin);
+              if (event.data) {
+                  logger.out('info', '[GG] Slave redirecting message from worker =>', event.data);
+                  window.postMessage(event.data, window.location.origin);
+              }
           });
       }
     },

@@ -7,9 +7,13 @@ describe('Posting messages to platform.', function () {
         var messageHandler = function (e) {
             window.removeEventListener('message', messageHandler);
             if (e.data != '3.14') {
-                done(new Error("Value is " + e.data + ' but expected to be 3.14'));
+                setTimeout(function () {
+                    done(new Error("Value is " + e.data + ' but expected to be 3.14'));
+                });
             } else {
-                done();
+                setTimeout(function () {
+                    done();
+                });
             }
         };
 
