@@ -120,7 +120,21 @@ var slaveGateway = {
         logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
 
         // Set worker message proxy
-        this.worker.addEventListener('message', this.handleMessage.bind(this));
+        var self = this;
+        this.worker.addEventListener('message', function (event) {
+            if (event.data && event.data.action) {
+                if (event.data.action === 'Slave.Loaded') {
+                    logger.out('info', '[GG] Slave redirecting message from worker to master =>', event.data);
+                    self.sendMessage({
+                        action: 'Slave.Loaded',
+                        data: event.data.data
+                    });
+                } else {
+                    logger.out('info', '[GG] Slave redirecting message from worker to slave =>', event.data);
+                    pubSub.publish(event.data.action, event.data);
+                }
+            }
+        });
 
         slavePorthole.setWorker(this.worker, msgBlacklist);
     },
