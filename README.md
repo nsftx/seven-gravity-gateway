@@ -139,7 +139,7 @@ It is possible to use namespaced subscriptions. e.g. If one of the products subs
 
 IMPORTANT: Mesagess prefixed with Master and Slave are system reserved messages and therefore they will be ignored
 
-=====Event propagation=====
+==Event propagation==
 
 In order to dispatch the events from slave to master, slave needs to pass `eventPropagation` property in init stage.
 
