@@ -8,19 +8,13 @@ You can install this package with **npm**:
 
 `npm install seven-gravity-gateway --save`
 
-Seven Gravity Gateway component consists of 2 files:
- - master
- - slave
-
-
-To use this component in web browser load it from `dist` directory in `node_modules`:
 
 =Load module =
 
 You can load module for use in browser or as node module.
 
 
-====In browser use====
+==In browser use==
 
 For use in browser we can load it using embedded require module loader:
 
@@ -37,7 +31,7 @@ lang=javascript
 var Gateway = require('slave');
 ```
 
-====As node module====
+==As node module==
 
 To load both modules:
 ```
@@ -61,11 +55,11 @@ lang=javascript
 require('seven-gravity-gateway/slave')
 ```
 
-==Usage=
+=Usage=
 
 Component is initialized by calling the module and passing the proper config object.
 
-=====Master gateway=====
+==Master gateway==
 
 Config:
 |Name|Description|Type|Required|
@@ -102,7 +96,7 @@ Gateway({
 Init and loaded methods can be used to indicate that product is in loading phase. e.g. start the loader on init and remove the loader on loaded event.
 
 
-=====Slave gateway====
+==Slave gateway==
 
 ```
 lang=javascript
@@ -128,18 +122,8 @@ Config:
 |eventPropagation|Events which will be propagated to master frame|object|N|
 |eventListeners|Events which are required from master frame|object|N|
 
-==== Loaded Callback ====
 
-If product needs to inform the parent frame that it has been successfully loaded `Slave.Loaded` msg should be dispatched to parent frame.
-
-
-```
-{gatewayInstance}.sendMessage({
-    action : 'Slave.Loaded'
-})
-```
-
-=====Subscription=====
+==Subscription==
 
 Gateway uses pub/sub pattern to handle events and actions.
 
@@ -181,7 +165,7 @@ In order to dispatch the events from master to slave, slave needs to pass `event
 
 (NOTE) It is advised to use the keyCodes for key binding definition for sake of normalization across browsers.
 
-=====Message exchange====
+==Message exchange==
 
 **Master -> Slave**
 
@@ -206,7 +190,7 @@ lang=javascript
 
 Object must contain name of action. Origin param is the origin of sender. That origin must be enabled in platform gateway in order to process the message. If origin is obeyed origin will be set to ‘*’,
 
-====Unsubscribe
+==Unsubscribe==
 
 Unsubscribe format:
 ```
@@ -217,7 +201,7 @@ lang=javascript
 Unsubscribe will remove registered action and its callback.
 
 
-====Clear subscription
+==Clear subscription==
 ```
 lang=javascript
 {gatewayInstance}.clearSubscriptions()
@@ -225,14 +209,14 @@ lang=javascript
 
 This will remove all subscribed actions and callbacks.
 
-==Running tests
+=Running tests
 To run unit tests on whole library run:
 ```
 lang=javascript
 npm test
 ```
 
-==Publishing
+=Publishing
 This library can be published to npm.nsoft.ba registry. To publish run command:
 ```
 lang=javascript
