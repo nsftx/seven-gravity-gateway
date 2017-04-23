@@ -305,6 +305,8 @@ var pubSub = {
     topics : {},
 
     subscribe : function(action, callback) {
+        var self = this;
+
         if(action && typeof callback === 'function') {
             if(!this.topics[action]) {
                 //Create array of actions for first time subscription
@@ -315,7 +317,7 @@ var pubSub = {
             //Return remove to unsubscripe single susbcription
             return {
                 remove: function() {
-                    delete this.topics[action][index];
+                    delete self.topics[action][index];
                 }
             };
         } else {
@@ -333,7 +335,6 @@ var pubSub = {
             return true;
         }
     },
-
 
     publish : function(action, data) {
         var topicAction = this.findAction(action);
@@ -546,15 +547,9 @@ var slaveGateway = {
         pubSub.subscribe(action, callback);
     },
 
-    // Alias for subscribe
-    on : this.subscribe,
-
     unsubscribe : function(action) {
         pubSub.unsubscribe(action);
     },
-
-    // Alias for unsubscribe
-    off : this.unsubscribe,
 
     clearSubscriptions : function() {
         pubSub.clearSubscriptions();

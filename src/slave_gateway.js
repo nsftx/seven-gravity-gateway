@@ -154,15 +154,9 @@ var slaveGateway = {
         pubSub.subscribe(action, callback);
     },
 
-    // Alias for subscribe
-    on : this.subscribe,
-
     unsubscribe : function(action) {
         pubSub.unsubscribe(action);
     },
-
-    // Alias for unsubscribe
-    off : this.unsubscribe,
 
     clearSubscriptions : function() {
         pubSub.clearSubscriptions();

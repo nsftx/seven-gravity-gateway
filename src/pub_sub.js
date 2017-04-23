@@ -36,7 +36,6 @@ var pubSub = {
         }
     },
 
-
     publish : function(action, data) {
         var topicAction = this.findAction(action);
 
