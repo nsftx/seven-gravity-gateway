@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">42.11% </span>
+        <span class="strong">36.96% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>16/38</span>
+        <span class='fraction'>17/46</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">41.67% </span>
+        <span class="strong">27.78% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>5/12</span>
+        <span class='fraction'>5/18</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">46.15% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>6/13</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">42.11% </span>
+        <span class="strong">36.96% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>16/38</span>
+        <span class='fraction'>17/46</span>
       </div>
     </div>
   </div>
@@ -169,7 +169,24 @@
 124
 125
 126
-127</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -195,6 +212,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -218,8 +239,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -255,7 +284,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -319,7 +353,11 @@ var contentHandler = {
     eventName : null,
 &nbsp;
     DOMReady : false,
-    
+&nbsp;
+    currentWidth : 0,
+&nbsp;
+    currentHeight : 0,
+&nbsp;
     init: function(eventCb, eventName) {
         this.eventCallback = eventCb;
         this.eventName = eventName;
@@ -339,13 +377,21 @@ var contentHandler = {
 <span class="cstat-no" title="statement not covered" >            return false;</span>
         }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        var data = {</span>
-            action : this.eventName,
-            width : window.innerWidth,
-            height : this.getContentHeight() + this.getElementOffset(document.body)
-        };
+<span class="cstat-no" title="statement not covered" >        var windowWidth = window.innerWidth,</span>
+            windowHeight = this.getContentHeight() + this.getElementOffset(document.body),
+            data;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        this.eventCallback(data);</span>
+        // Check to prevent unnecessary message dispatch even if size didn't change
+<span class="cstat-no" title="statement not covered" >        if(windowWidth !== this.currentWidth || windowHeight !== this.currentHeight) {</span>
+<span class="cstat-no" title="statement not covered" >            this.currentWidth = windowWidth;</span>
+<span class="cstat-no" title="statement not covered" >            this.currentHeight = windowHeight;</span>
+<span class="cstat-no" title="statement not covered" >            data = {</span>
+                action : this.eventName,
+                width : windowWidth,
+                height : windowHeight
+            };
+<span class="cstat-no" title="statement not covered" >            this.eventCallback(data);</span>
+        }
     },
 &nbsp;
     //Get offset height of iframe content
@@ -380,16 +426,21 @@ var contentHandler = {
     },
 &nbsp;
     listenDOMReady : function() {
-        window.addEventListener('DOMContentLoaded', <span class="fstat-no" title="function not covered" >function() {</span>
-<span class="cstat-no" title="statement not covered" >            this.DOMReady = true;</span>
-        }.bind(this));
+        var self = this;
+        var readyInterval = window.setInterval(<span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >            if(window.document.readyState !== 'loading') {</span>
+<span class="cstat-no" title="statement not covered" >                clearInterval(readyInterval);</span>
+<span class="cstat-no" title="statement not covered" >                self.DOMReady = true;</span>
+<span class="cstat-no" title="statement not covered" >                self.handleContentChange();</span>
+            }
+        }, 5);
     },
     
     addContentListeners : function() {
         OBSERVED_EVENTS.forEach(function(event) {
             if(Array.isArray(event.eventName)) {
                 event.eventName.forEach(function(event) {
-                    window.addEventListener(event, this.handleContentChange);
+                    window.addEventListener(event, this.handleContentChange.bind(this));
                 }.bind(this));
             } else {
                 window.addEventListener(event.eventName, this.handleContentChange.bind(this));
@@ -427,7 +478,7 @@ module.exports= contentHandler;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Jan 26 2017 17:14:26 GMT+0100 (CET)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Apr 23 2017 19:42:02 GMT+0200 (CEST)
 </div>
 </div>
 <script src="../../prettify.js"></script>

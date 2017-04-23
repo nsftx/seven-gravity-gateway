@@ -306,8 +306,18 @@ var pubSub = {
 
     subscribe : function(action, callback) {
         if(action && typeof callback === 'function') {
-            this.topics[action] = callback;
-            return true;
+            if(!this.topics[action]) {
+                //Create array of actions for first time subscription
+                this.topics[action] = [];
+            }
+            var index = this.topics[action].push(callback) - 1;
+
+            //Return remove to unsubscripe single susbcription
+            return {
+                remove: function() {
+                    delete this.topics[action][index];
+                }
+            };
         } else {
             logger.out('error', 'Subscribe failed - action property is invalid or missing.');
             return false;
@@ -332,8 +342,9 @@ var pubSub = {
             logger.out('error', 'Publish failed - topic ' + action + ' doesn´t exist');
             return false;
         } else {
-            topicAction(data);
-            return true;
+            topicAction.forEach(function(callback) {
+                callback(data !== undefined ? data : {});
+            });
         }
 
     },

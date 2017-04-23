@@ -13,7 +13,8 @@ describe('Subscribe/Unsubscribe funcionality', function() {
                 return true;
             }
         );
-        assert.equal(result, true);
+        var value = typeof result === 'object' && result !== null;
+        assert.equal(value, true);
     });
 
     it('Unsubscribe: Should fail - Topic is not existent', function() {
@@ -32,25 +33,27 @@ describe('Publish funcionality', function() {
     var pubSub = require('../src/pub_sub');
 
     it('Publish: Should be successful', function() {
+        var value = null;
         pubSub.subscribe('betslip.add',
             function() {
-                return true;
+                value = true;
             }
         );
 
-        var result = pubSub.publish('betslip.add', 'Dummy Text');
-        assert.equal(result, true);
+        pubSub.publish('betslip.add', 'Dummy Text');
+        assert.equal(value, true);
     });
 
 
     it('Publish: Should be successful - Publish namespaced action', function() {
+        var value = null;
         pubSub.subscribe('ticket.*', function() {
-                return true;
+                value = true;
             }
         );
 
-        var result = pubSub.publish('ticket.add');
-        assert.equal(result, true);
+        pubSub.publish('ticket.add');
+        assert.equal(value, true);
     });
 
 
