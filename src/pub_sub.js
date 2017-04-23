@@ -5,6 +5,8 @@ var pubSub = {
     topics : {},
 
     subscribe : function(action, callback) {
+        var self = this;
+
         if(action && typeof callback === 'function') {
             if(!this.topics[action]) {
                 //Create array of actions for first time subscription
@@ -15,7 +17,7 @@ var pubSub = {
             //Return remove to unsubscripe single susbcription
             return {
                 remove: function() {
-                    delete this.topics[action][index];
+                    delete self.topics[action][index];
                 }
             };
         } else {

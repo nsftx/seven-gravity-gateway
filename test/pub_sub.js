@@ -63,6 +63,53 @@ describe('Publish funcionality', function() {
     });
 });
 
+
+describe('Subscription and callback execute', function() {
+
+    it('Publish should be successful for both actions', function() {
+        var pubSub = require('../src/pub_sub');
+        var testVal1 = null;
+        var testVal2 = null;
+        var subscription1 = pubSub.subscribe('betslip.add',
+            function() {
+                testVal1 = true;
+            }
+        );
+        var subscription2 = pubSub.subscribe('betslip.add',
+            function() {
+                testVal2 = true;
+            }
+        );
+
+        pubSub.publish('betslip.add', 'Dummy Text');
+
+        assert.equal(testVal1 === true, testVal2 === true);
+    });
+
+    it('Removing subscripton from first action should trigger only second subscription', function() {
+        var pubSub = require('../src/pub_sub');
+        var testVal1 = null;
+        var testVal2 = null;
+        var subscription1 = pubSub.subscribe('betslip.add',
+            function() {
+                testVal1 = true;
+            }
+        );
+        var subscription2 = pubSub.subscribe('betslip.add',
+            function() {
+                testVal2 = true;
+            }
+        );
+
+        subscription1.remove();
+
+        pubSub.publish('betslip.add', 'Dummy Text');
+
+        assert.equal(testVal1 === null, testVal2 === true);
+    });
+})
+
+
 describe('Clear subscriptions', function() {
     var pubSub = require('../src/pub_sub');
 
