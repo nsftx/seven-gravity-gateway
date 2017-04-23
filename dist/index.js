@@ -708,7 +708,9 @@ var slaveGateway = {
     },
 
     setWorker: function(){
-        var msgBlacklist = ['Slave.Resize'];
+        var msgBlacklist = ['Slave.Resize'],
+            self = this;
+
         if(this.config.worker instanceof Worker) {
             this.worker = this.config.worker;
         } else if (typeof this.config.worker === 'string') {
@@ -721,7 +723,6 @@ var slaveGateway = {
         logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
 
         // Set worker message proxy
-        var self = this;
         this.worker.addEventListener('message', function (event) {
             if (event.data && event.data.action) {
                 if (event.data.action === 'Slave.Loaded') {
@@ -754,9 +755,15 @@ var slaveGateway = {
         pubSub.subscribe(action, callback);
     },
 
+    // Alias for subscribe
+    on : this.subscribe,
+
     unsubscribe : function(action) {
         pubSub.unsubscribe(action);
     },
+
+    // Alias for unsubscribe
+    off : this.unsubscribe,
 
     clearSubscriptions : function() {
         pubSub.clearSubscriptions();
