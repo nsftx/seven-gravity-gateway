@@ -44,6 +44,17 @@ module.exports = function (grunt) {
                         'seven-gravity-gateway/slave': './slave.js'
                     }
                 }
+            },
+            plugins : {
+                files: [{
+                    src: './plugin-storage.js',
+                    dest: 'dist/plugin-storage.js'
+                }],
+                options: {
+                    alias: {
+                        'seven-gravity-gateway/plugin-storage': './plugin-storage.js'
+                    }
+                }
             }
         },
         jshint: {
@@ -86,7 +97,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('default', [
         'jshint',
-        'mochaTest',
+        //'mochaTest',
         'browserify',
         'uglify'
     ]);
