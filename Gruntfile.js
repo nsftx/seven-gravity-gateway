@@ -81,7 +81,7 @@ module.exports = function (grunt) {
                 files: [{
                     expand: true,
                     cwd: 'dist/',
-                    src: '*.js',
+                    src: ['*.js', '!*.min.js'],
                     dest: 'dist/',
                     ext: '.min.js'
                 }]
@@ -97,7 +97,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('default', [
         'jshint',
-        //'mochaTest',
+        'mochaTest',
         'browserify',
         'uglify'
     ]);
