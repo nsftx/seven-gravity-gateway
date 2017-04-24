@@ -2,7 +2,8 @@ var slavePorthole = require('./messaging/slave'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/slave_handler'),
     logger = require('./utils/utils').logger,
-    eventHandler = require('./event_dispatching/event_handler');
+    eventHandler = require('./event_dispatching/event_handler'),
+    slaveProxy = require('./slave_proxy');
 
 function validateInitialization(config) {
     if(!config.productId || typeof config.productId !== 'string') {
@@ -29,8 +30,6 @@ var slaveGateway = {
     initialized : false,
 
     load : null,
-
-    worker : null,
 
     msgSender : 'Slave',
 
@@ -110,34 +109,15 @@ var slaveGateway = {
         var msgBlacklist = ['Slave.Resize'],
             self = this;
 
-        if(this.config.worker instanceof Worker) {
-            this.worker = this.config.worker;
-        } else if (typeof this.config.worker === 'string') {
-            this.worker = new Worker(this.config.worker);
+        var worker = slaveProxy.setMsgProxy(this.config.worker, {debug : this.config.debug}, pubSub.publish, this.sendMessage);
+
+        if(worker) {
+            logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
+            slavePorthole.setWorker(worker, msgBlacklist);
         } else {
             logger.out('error', '[GG] Slave.' +  this.productId + ':', 'Web worker initialization failed. Provide instance of Worker or path to file');
             return false;
         }
-
-        logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
-
-        // Set worker message proxy
-        this.worker.addEventListener('message', function (event) {
-            if (event.data && event.data.action) {
-                if (event.data.action === 'Slave.Loaded') {
-                    logger.out('info', '[GG] Slave redirecting message from worker to master =>', event.data);
-                    self.sendMessage({
-                        action: 'Slave.Loaded',
-                        data: event.data.data
-                    });
-                } else {
-                    logger.out('info', '[GG] Slave redirecting message from worker to slave =>', event.data);
-                    pubSub.publish(event.data.action, event.data);
-                }
-            }
-        });
-
-        slavePorthole.setWorker(this.worker, msgBlacklist);
     },
 
     slaveLoad : function(event) {

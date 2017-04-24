@@ -12,18 +12,20 @@ var Locker = {
             action = event.data.action;
 
         if (!pluginPattern.test(event.data.action)) {
-            logger.out('info', '[GG] Plugin Storage: Message doesn`t have valid signature.');
+            logger.out('info', '[GGP] Plugin Storage: Message doesn`t have valid signature.');
             return false;
         }
 
         var lastSeparatorIdx = action.lastIndexOf('.');
         action = action.replace('.', '');
         action = action.substring(lastSeparatorIdx);
+        action = action.charAt(0).toLowerCase() + action.slice(1);
 
-        if(this.action) {
-            this.action(event.data);
+        if(this[action]) {
+            return this[action](event.data.data);
         } else {
-            logger.out('info', '[GG] Plugin Storage: Method isn`t supported.');   
+            logger.out('info', '[GGP] Plugin Storage: Method isn`t supported.');   
+            return false;
         }
     },
 
@@ -55,8 +57,6 @@ var Locker = {
         return window[driver].clear();
     }
 };
-
-//window.addEventListener('message', Locker.handleMessage(event))
 
 module.exports = Locker;
 },{"../utils/utils":2}],2:[function(require,module,exports){

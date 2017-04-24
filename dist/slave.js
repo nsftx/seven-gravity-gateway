@@ -273,7 +273,7 @@ module.exports = function (config, eventCb, eventName) {
     return new EventHandler(config, eventCb, eventName);
 };
 
-},{"../utils/utils":6}],3:[function(require,module,exports){
+},{"../utils/utils":7}],3:[function(require,module,exports){
 var logger = require('../utils/utils').logger;
 
 function Porthole() {
@@ -297,7 +297,7 @@ Porthole.prototype = {
 };
 
 module.exports = new Porthole();
-},{"../utils/utils":6}],4:[function(require,module,exports){
+},{"../utils/utils":7}],4:[function(require,module,exports){
 var logger = require('./utils/utils').logger;
 
 var pubSub = {
@@ -305,14 +305,15 @@ var pubSub = {
     topics : {},
 
     subscribe : function(action, callback) {
-        var self = this;
+        var self = this,
+            index;
 
         if(action && typeof callback === 'function') {
             if(!this.topics[action]) {
                 //Create array of actions for first time subscription
                 this.topics[action] = [];
             }
-            var index = this.topics[action].push(callback) - 1;
+            index = this.topics[action].push(callback) - 1;
 
             //Return remove to unsubscripe single susbcription
             return {
@@ -390,12 +391,13 @@ var pubSub = {
 };
 
 module.exports = pubSub;
-},{"./utils/utils":6}],5:[function(require,module,exports){
+},{"./utils/utils":7}],5:[function(require,module,exports){
 var slavePorthole = require('./messaging/slave'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/slave_handler'),
     logger = require('./utils/utils').logger,
-    eventHandler = require('./event_dispatching/event_handler');
+    eventHandler = require('./event_dispatching/event_handler'),
+    slaveProxy = require('./slave_proxy');
 
 function validateInitialization(config) {
     if(!config.productId || typeof config.productId !== 'string') {
@@ -422,8 +424,6 @@ var slaveGateway = {
     initialized : false,
 
     load : null,
-
-    worker : null,
 
     msgSender : 'Slave',
 
@@ -503,34 +503,15 @@ var slaveGateway = {
         var msgBlacklist = ['Slave.Resize'],
             self = this;
 
-        if(this.config.worker instanceof Worker) {
-            this.worker = this.config.worker;
-        } else if (typeof this.config.worker === 'string') {
-            this.worker = new Worker(this.config.worker);
+        var worker = slaveProxy.setMsgProxy(this.config.worker, {debug : this.config.debug}, pubSub.publish, this.sendMessage);
+
+        if(worker) {
+            logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
+            slavePorthole.setWorker(worker, msgBlacklist);
         } else {
             logger.out('error', '[GG] Slave.' +  this.productId + ':', 'Web worker initialization failed. Provide instance of Worker or path to file');
             return false;
         }
-
-        logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
-
-        // Set worker message proxy
-        this.worker.addEventListener('message', function (event) {
-            if (event.data && event.data.action) {
-                if (event.data.action === 'Slave.Loaded') {
-                    logger.out('info', '[GG] Slave redirecting message from worker to master =>', event.data);
-                    self.sendMessage({
-                        action: 'Slave.Loaded',
-                        data: event.data.data
-                    });
-                } else {
-                    logger.out('info', '[GG] Slave redirecting message from worker to slave =>', event.data);
-                    pubSub.publish(event.data.action, event.data);
-                }
-            }
-        });
-
-        slavePorthole.setWorker(this.worker, msgBlacklist);
     },
 
     slaveLoad : function(event) {
@@ -576,7 +557,107 @@ module.exports = function(config) {
         return false;
     }
 };
-},{"./content_handler/slave_handler":1,"./event_dispatching/event_handler":2,"./messaging/slave":3,"./pub_sub":4,"./utils/utils":6}],6:[function(require,module,exports){
+},{"./content_handler/slave_handler":1,"./event_dispatching/event_handler":2,"./messaging/slave":3,"./pub_sub":4,"./slave_proxy":6,"./utils/utils":7}],6:[function(require,module,exports){
+var logger = require('./utils/utils');
+
+var SlaveWorker = {
+
+    worker : null,
+
+    plugins : null,
+
+    publish : null,
+
+    sendMsg : null,
+
+    setMsgProxy : function(data, config, publish, sendMsg) {
+        if(data.src instanceof Worker) {
+            this.worker = data.src;
+        } else if (typeof data.src === 'string') {
+            this.worker = new Worker(data.src);
+        } else {
+            return false;
+        }
+        this.publish = publish;
+        this.sendMessage = sendMsg;
+
+        if(data.plugins) {
+            this.plugins = data.plugins;
+        }
+
+        this.worker.addEventListener('message', this.handleProxyMsg);
+        return this.worker;
+    },
+
+    handleProxyMsg : function(event) {
+        if(!event.data.action) {
+            logger.out('error', '[GG] Worker message is missing an action name =>', event.data);
+            return false;
+        }
+
+        var pluginPattern = new RegExp('^Plugin\\.', 'g');
+        var pluginMsg = pluginPattern.test(event.data.action);
+
+        if(event.data.action === 'Slave.Loaded') {
+            this.slaveLoaded(event);
+        } else if(pluginMsg) {
+            this.pluginMsg(event);
+        } else {
+            this.publishMsg(event);
+        }
+
+    },
+
+    slaveLoaded : function(event) {
+        logger.out('info', '[GG] Slave redirecting message from worker to master =>', event.data);
+        this.sendMsg({
+            action: 'Slave.Loaded',
+            data: event.data.data
+        });
+    },
+
+    pluginMsg : function(event) {
+        logger.out('info', '[GG] Slave redirecting message from worker to plugin =>', event.data);
+        var self = this;
+        this.plugins.forEach(function(plugin) {
+            var data = plugin.handleMessage(event);
+            self.worker.postMessage(data);
+        });
+    },
+
+    publishMsg : function(event) {
+        logger.out('info', '[GG] Slave redirecting message from worker to slave =>', event.data);
+        this.publish(event.data.action, event.data);
+    }
+};
+
+module.exports = SlaveWorker;
+
+
+/* // Set worker message proxy
+        this.worker.addEventListener('message', function (event) {
+            if (event.data && event.data.action) {
+                if (event.data.action === 'Slave.Loaded') {
+                    logger.out('info', '[GG] Slave redirecting message from worker to master =>', event.data);
+                    self.sendMessage({
+                        action: 'Slave.Loaded',
+                        data: event.data.data
+                    });
+                } else {
+                    if(self.config.worker.plugins) {
+                        self.config.worker.plugins.forEach(function(plugin) {
+                            var data = plugin.handleMessage(event);
+                            console.info(data);
+                            self.worker.postMessage(data);
+                        });
+                    }
+                    logger.out('info', '[GG] Slave redirecting message from worker to slave =>', event.data);
+                    pubSub.publish(event.data.action, event.data);
+                }
+            }
+        });
+*/
+},{"./utils/utils":7}],7:[function(require,module,exports){
 var logger = {
     debug : false, //Verbosity setting
 

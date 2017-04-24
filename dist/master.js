@@ -352,14 +352,15 @@ var pubSub = {
     topics : {},
 
     subscribe : function(action, callback) {
-        var self = this;
+        var self = this,
+            index;
 
         if(action && typeof callback === 'function') {
             if(!this.topics[action]) {
                 //Create array of actions for first time subscription
                 this.topics[action] = [];
             }
-            var index = this.topics[action].push(callback) - 1;
+            index = this.topics[action].push(callback) - 1;
 
             //Return remove to unsubscripe single susbcription
             return {
