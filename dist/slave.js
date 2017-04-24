@@ -503,7 +503,7 @@ var slaveGateway = {
         var msgBlacklist = ['Slave.Resize'],
             self = this;
 
-        var worker = slaveProxy.setMsgProxy(this.config.worker, {debug : this.config.debug}, pubSub.publish, this.sendMessage);
+        var worker = slaveProxy.setMsgProxy(this.config.worker, {debug : this.config.debug}, pubSub.publish.bind(pubSub), this.sendMessage.bind(this));
 
         if(worker) {
             logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
@@ -558,7 +558,7 @@ module.exports = function(config) {
     }
 };
 },{"./content_handler/slave_handler":1,"./event_dispatching/event_handler":2,"./messaging/slave":3,"./pub_sub":4,"./slave_proxy":6,"./utils/utils":7}],6:[function(require,module,exports){
-var logger = require('./utils/utils');
+var logger = require('./utils/utils').logger;
 
 var SlaveWorker = {
 
@@ -578,6 +578,7 @@ var SlaveWorker = {
         } else {
             return false;
         }
+        logger.debug = config.debug || false;
         this.publish = publish;
         this.sendMessage = sendMsg;
 
@@ -585,7 +586,7 @@ var SlaveWorker = {
             this.plugins = data.plugins;
         }
 
-        this.worker.addEventListener('message', this.handleProxyMsg);
+        this.worker.addEventListener('message', this.handleProxyMsg.bind(this));
         return this.worker;
     },
 
@@ -621,7 +622,10 @@ var SlaveWorker = {
         var self = this;
         this.plugins.forEach(function(plugin) {
             var data = plugin.handleMessage(event);
-            self.worker.postMessage(data);
+            self.worker.postMessage({
+                action: event.data.action,
+                data : data
+            });
         });
     },
 
@@ -633,30 +637,6 @@ var SlaveWorker = {
 
 module.exports = SlaveWorker;
 
-
-/* // Set worker message proxy
-        this.worker.addEventListener('message', function (event) {
-            if (event.data && event.data.action) {
-                if (event.data.action === 'Slave.Loaded') {
-                    logger.out('info', '[GG] Slave redirecting message from worker to master =>', event.data);
-                    self.sendMessage({
-                        action: 'Slave.Loaded',
-                        data: event.data.data
-                    });
-                } else {
-                    if(self.config.worker.plugins) {
-                        self.config.worker.plugins.forEach(function(plugin) {
-                            var data = plugin.handleMessage(event);
-                            console.info(data);
-                            self.worker.postMessage(data);
-                        });
-                    }
-                    logger.out('info', '[GG] Slave redirecting message from worker to slave =>', event.data);
-                    pubSub.publish(event.data.action, event.data);
-                }
-            }
-        });
-*/
 },{"./utils/utils":7}],7:[function(require,module,exports){
 var logger = {
     debug : false, //Verbosity setting

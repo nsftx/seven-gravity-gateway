@@ -1,11 +1,6 @@
 require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var logger = require('../utils/utils').logger;
 
-// Plugin supported drivers
-var DRIVERS = [
-    'localStorage', 'sessionStorage'
-];
-
 var Locker = {
     handleMessage: function(event) {
         var pluginPattern = new RegExp('^Plugin.Storage\\.', 'g'),
@@ -22,39 +17,107 @@ var Locker = {
         action = action.charAt(0).toLowerCase() + action.slice(1);
 
         if(this[action]) {
-            return this[action](event.data.data);
+            return this[action](event.data);
         } else {
             logger.out('info', '[GGP] Plugin Storage: Method isn`t supported.');   
             return false;
         }
     },
 
-    isSupported : function(driver) {
+    isSupported : function(data) {
+        var driver = data.driver;
+
         if(driver in window && window[driver]) {
+            logger.out('info', '[GGP] Plugin Storage: Driver' + driver +  ' is supported.');
             return true;
         } else {
+            logger.out('info', '[GGP] Plugin Storage: Driver' + driver +  ' isn`t supported.');
             return false;
         }
     },
 
-    key : function(num, driver) {
-        return window[driver].key(num);
+    key : function(data) {
+        var key = data.key,
+            driver = data.driver,
+            keyValue;
+
+        if(key && driver) {
+            keyValue =  window[driver].key(key);
+            return {
+                key : key,
+                keyValue : keyValue,
+                driver : driver
+            };
+        } else {
+            logger.out('info', '[GGP] Plugin Storage: Key ' + key + ' on ' + driver + ' doesn`t exist.');
+            return null;
+        }
     },
 
-    getItem : function(key, driver) {
-        return window[driver].getItem(key);
+    getItem : function(data) {
+        var keyName = data.keyName,
+            driver = data.driver,
+            keyValue;
+
+        if(keyName && driver) {
+            keyValue = window[driver].getItem(keyName);
+            return {
+                keyName : keyName,
+                keyValue : keyValue,
+                driver : driver
+            };
+        } else {
+            logger.out('error', '[GGP] Plugin Storage: keyName and storage driver must be provided.');
+            return null;
+        }
     },
 
-    setItem : function(key, value, driver) {
-        return window[driver].setItem(key, value);
+    setItem : function(data) {
+        var keyName = data.keyName,
+            keyValue = data.keyValue,
+            driver = data.driver;
+        
+        if(keyName && keyValue && driver) {
+            window[driver].setItem(keyName, keyValue);
+            return {
+                keyName : keyName,
+                keyValue : keyValue,
+                driver : driver
+            };
+        } else {
+            logger.out('error', '[GGP] Plugin Storage: keyName, keyValue and storage driver must be provided.');
+            return null;
+        }
     },
 
-    removeItem : function(key, driver) {
-        return window[driver].removeItem(key);
+    removeItem : function(data) {
+        var keyName = data.keyName,
+            driver = data.driver;
+        
+        if(keyName && driver) {
+            window[driver].removeItem(keyName);
+            return {
+                keyName : keyName,
+                driver : driver
+            };
+        } else {
+            logger.out('error', '[GGP] Plugin Storage: keyName and storage driver must be provided.');
+            return null;
+        }
     },
 
-    clear : function(driver) {
-        return window[driver].clear();
+    clear : function(data) {
+        var driver = data.driver;
+
+        if(driver) {
+            window[driver].clear();
+            return {
+                driver : driver
+            };
+        } else {
+            logger.out('error', '[GGP] Plugin Storage: storage driver must be provided.');
+            return null;
+        }
     }
 };
 

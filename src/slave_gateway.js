@@ -109,7 +109,7 @@ var slaveGateway = {
         var msgBlacklist = ['Slave.Resize'],
             self = this;
 
-        var worker = slaveProxy.setMsgProxy(this.config.worker, {debug : this.config.debug}, pubSub.publish, this.sendMessage);
+        var worker = slaveProxy.setMsgProxy(this.config.worker, {debug : this.config.debug}, pubSub.publish.bind(pubSub), this.sendMessage.bind(this));
 
         if(worker) {
             logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
