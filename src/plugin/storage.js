@@ -1,6 +1,16 @@
 var logger = require('../utils/utils').logger;
 
 var Locker = {
+
+    config : null,
+
+    setConfig : function(config) {
+        this.config = config;
+        if(config.debug) {
+            logger.debug = config.debug;
+        }
+    },
+
     handleMessage: function(event) {
         var pluginPattern = new RegExp('^Plugin.Storage\\.', 'g'),
             action = event.data.action;
@@ -27,10 +37,10 @@ var Locker = {
         var driver = data.driver;
 
         if(driver in window && window[driver]) {
-            logger.out('info', '[GGP] Plugin Storage: Driver' + driver +  ' is supported.');
+            logger.out('info', '[GGP] Plugin Storage: Driver ' + driver +  ' is supported.');
             return true;
         } else {
-            logger.out('info', '[GGP] Plugin Storage: Driver' + driver +  ' isn`t supported.');
+            logger.out('info', '[GGP] Plugin Storage: Driver ' + driver +  ' isn`t supported.');
             return false;
         }
     },

@@ -24,6 +24,9 @@ var SlaveWorker = {
 
         if(data.plugins) {
             this.plugins = data.plugins;
+            this.plugins.forEach(function(plugin) {
+                plugin.setConfig(config);
+            });
         }
 
         this.worker.addEventListener('message', this.handleProxyMsg.bind(this));
