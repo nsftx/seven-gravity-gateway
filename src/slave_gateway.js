@@ -131,15 +131,15 @@ var slaveGateway = {
     },
 
     subscribe : function(action, callback) {
-        pubSub.subscribe(action, callback);
+        return pubSub.subscribe(action, callback);
     },
 
     unsubscribe : function(action) {
-        pubSub.unsubscribe(action);
+        return pubSub.unsubscribe(action);
     },
 
     clearSubscriptions : function() {
-        pubSub.clearSubscriptions();
+        return pubSub.clearSubscriptions();
     },
 
     sendMessage : function(data, origin) {
