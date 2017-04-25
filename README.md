@@ -179,9 +179,9 @@ lang=javascript
 //Worker context
 
 self.postMessage({
-    action: 'Plugin.Storage.GetItem',
-    keyName: 'dummy',
-    driver :'localStorage',
+  action: 'Plugin.Storage.GetItem',
+  keyName: 'dummy',
+  driver :'localStorage',
 });
 ```
 
@@ -189,10 +189,10 @@ Worker will recieve message from plugin with data
 
 ```
 {
-    action: 'Plugin.Storage.GetItem',
-    keyName: 'dummy',
-    keyValue: '$value,
-    driver: 'localStorage'
+  action: 'Plugin.Storage.GetItem',
+  keyName: 'dummy',
+  keyValue: '$value,
+  driver: 'localStorage'
 }
 ```
 
