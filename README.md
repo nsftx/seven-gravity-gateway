@@ -106,7 +106,7 @@ Gateway({
     load: function,
     allowedOrigins : array,
     debug : bool,
-    worker : string || Worker instance
+    worker : object
     eventPropagation : object
     eventListeners : object
 });
@@ -118,10 +118,83 @@ Config:
 |load|Callback which will be triggered when product starts to load|function|Y|
 |allowedOrigins|Array of allowed URIs|array|N|
 |debug|Debug messages setting|bool|N|
-|worker|Optional web worker which will receive all messages except `Resize` event |string / Worker instance|N|
+|worker|Optional web worker configuration|object|N|
 |eventPropagation|Events which will be propagated to master frame|object|N|
 |eventListeners|Events which are required from master frame|object|N|
 
+`worker` property recieves obect with configuration:
+
+```
+worker: {
+  src : string | Worker instance,
+  plugins : array
+}
+```
+
+Worker src accepts string or Worker instance. Installed web worker will receive all messages except `Resize` event. Configuration accepts optional `plugins` property which accepts array of supported plugins. 
+
+====Plugins
+
+Gateway comes with predefined plugins which can be used only in combination with worker. In order to initialize the worker => plugin communication plugin reference needs to be passed inside worker plugin array.  Storage plugin can be included from dist file as simple script. Example:
+
+```
+lang=html
+
+<script src="../../node_modules/seven-gravity-gateway/dist/slave.js"></script>
+```
+
+```
+lang=javascript
+var storagePlugin = require('seven-gravity-gateway/plugin-storage');
+
+Gateway({
+  ...
+  worker : {
+    src : path / instance
+    plugins : [storagePlugin]
+  }
+})
+```
+
+===== Storage Plugin
+
+Currently only one plugin is supported and it is storage plugin. Storage plugin servers for storage manipulation from worker because `localStorage` and `sessionStorage` are undefined in Web Worker context. Plugin allows manipulation with `localStorage` and `sessionStorage`
+
+Storage plugin has same methods as [[ https://developer.mozilla.org/en-US/docs/Web/API/Storage | Storage Web API ]] in addition with `isSuppored` method. :
+
+  - key
+  - getItem
+  - setItem
+  - removeItem
+  - clear
+  - isSuppored
+
+Storage API is consumed with `Plugin.Storage.$methodName` - method name is capitalized
+
+Example of usage:
+
+```
+lang=javascript
+
+//Worker context
+
+self.postMessage({
+    action: 'Plugin.Storage.GetItem',
+    keyName: 'dummy',
+    driver :'localStorage',
+});
+```
+
+Worker will recieve message from plugin with data
+
+```
+{
+    action: 'Plugin.Storage.GetItem',
+    keyName: 'dummy',
+    keyValue: '$value,
+    driver: 'localStorage'
+}
+```
 
 ==Subscription==
 
