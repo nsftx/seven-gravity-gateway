@@ -28,7 +28,6 @@ describe('Subscribe/Unsubscribe funcionality', function() {
     });
 });
 
-
 describe('Publish funcionality', function() {
     var pubSub = require('../src/pub_sub');
 
@@ -62,7 +61,6 @@ describe('Publish funcionality', function() {
         assert.equal(result, false);
     });
 });
-
 
 describe('Subscription and callback execute', function() {
 
@@ -108,7 +106,6 @@ describe('Subscription and callback execute', function() {
         assert.equal(testVal1 === null, testVal2 === true);
     });
 })
-
 
 describe('Clear subscriptions', function() {
     var pubSub = require('../src/pub_sub');
