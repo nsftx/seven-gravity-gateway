@@ -271,8 +271,18 @@ lang=javascript
 {gatewayInstance}.unsubscribe('betslip.add’)
 ```
 
-Unsubscribe will remove registered action and its callback.
+Unsubscribe will remove subscribed event and all registered callbacks.
 
+=====3.3.5. Single listener unsubscribe
+
+Single listener can be unsubscribed if the subscription is referenced in variable by calling `remove` method. e.g.
+
+```
+lang=javascript
+var betslipAdd = Gateway.subscribe('Betslip.Add', callback);
+
+betslipAdd.remove(); //This will remove only this listener
+```
 
 ==Clear subscription==
 ```
