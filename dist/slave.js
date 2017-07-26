@@ -400,24 +400,20 @@ var slavePorthole = require('./messaging/slave'),
     slaveProxy = require('./slave_proxy');
 
 function validateInitialization(config) {
-    if(!config.productId || typeof config.productId !== 'string') {
-        logger.out('error', '[GG] Slave:', 'productId property is invalid or missing');
-        return false;
-    } else if(!config.data || typeof config.data !== 'object') {
-        logger.out('error', '[GG] Slave.' + config.productId + ':', 'data property is invalid or missing');
-        return false;
-    } else if(!config.load || typeof config.load !== 'function') {
-        logger.out('error', '[GG] Slave.' + config.productId + ':', 'load property is invalid or missing');
+    var slaveId = config.slaveId || config.productId;
+
+    if(!slaveId || typeof slaveId !== 'string') {
+        logger.out('error', '[GG] Slave:', 'slaveId/productId property is invalid or missing');
         return false;
     } else {
-        logger.out('info', '[GG] Slave.' + config.productId + ':', 'Initializing');
+        logger.out('info', '[GG] Slave.' + slaveId + ':', 'Initializing');
         return true;
     }
 }
 
 var slaveGateway = {
 
-    productId : '',
+    slaveId : '',
 
     config : null,
 
@@ -430,7 +426,7 @@ var slaveGateway = {
     init: function(config){
         this.initialized = true;
         this.config = config;
-        this.productId = config.productId;
+        this.slaveId = config.slaveId || config.productId;
         this.load = config.load;
         this.setAllowedDomains();
         //Set message handler
@@ -444,7 +440,7 @@ var slaveGateway = {
         if(this.config.worker) {
             this.setWorker();
         }
-        this.startProductInitialization();
+        this.startSlaveInitialization();
     },
     
     setAllowedDomains : function() {
@@ -455,7 +451,7 @@ var slaveGateway = {
         }
     },
 
-    startProductInitialization : function() {
+    startSlaveInitialization : function() {
         this.sendMessage({
             action: 'Slave.Init',
             data: this.config.data,
@@ -467,23 +463,23 @@ var slaveGateway = {
     handleMessage : function(event) {
         if(!event.data.msgSender || event.data.msgSender === this.msgSender) return false;
 
-        var productPattern,
-            platformPattern;
+        var slavePattern,
+            masterPattern;
 
         if(this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
-            logger.out('error', '[GG] Slave.' +  this.productId + ':' + ' Message origin is not allowed');
+            logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Message origin is not allowed');
             return false;
         }
 
-        productPattern = new RegExp('^Slave\\.', 'g');
-        platformPattern = new RegExp('^Master\\.', 'g');
+        slavePattern = new RegExp('^Slave\\.', 'g');
+        masterPattern = new RegExp('^Master\\.', 'g');
         // Check if message is reserved system message (Master and Slave messages)
-        if(productPattern.test(event.data.action) || platformPattern.test(event.data.action)) {
+        if(slavePattern.test(event.data.action) || masterPattern.test(event.data.action)) {
             this.handleProtectedMessage(event);
             return false;
         }
 
-        logger.out('info', '[GG] Slave.' +  this.productId + ':' + ' Master message received:', event.data);
+        logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Master message received:', event.data);
         pubSub.publish(event.data.action, event.data);
     },
 
@@ -495,7 +491,7 @@ var slaveGateway = {
         if (this[actionName]) {
             this[actionName](event);
         } else {
-            logger.out('warn', '[GG] Slave.' +  this.productId + ':', 'Actions with domain `Master` or `Slave` are protected!');
+            logger.out('warn', '[GG] Slave.' +  this.slaveId + ':', 'Actions with domain `Master` or `Slave` are protected!');
         }
     },
 
@@ -506,21 +502,21 @@ var slaveGateway = {
         var worker = slaveProxy.setMsgProxy(this.config.worker, {debug : this.config.debug}, pubSub.publish.bind(pubSub), this.sendMessage.bind(this));
 
         if(worker) {
-            logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');
+            logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Web worker initialized.');
             slavePorthole.setWorker(worker, msgBlacklist);
         } else {
-            logger.out('error', '[GG] Slave.' +  this.productId + ':', 'Web worker initialization failed. Provide instance of Worker or path to file');
+            logger.out('error', '[GG] Slave.' +  this.slaveId + ':', 'Web worker initialization failed. Provide instance of Worker or path to file');
             return false;
         }
     },
 
     slaveLoad : function(event) {
-        logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Starting to load.');
+        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Starting to load.');
         this.load(event.data);
     },
 
     masterEvent : function(event) {
-        logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Publish Master.Event event.', event.data);
+        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Publish Master.Event event.', event.data);
         pubSub.publish(event.data.action, event.data);
     },
 
@@ -537,7 +533,7 @@ var slaveGateway = {
     },
 
     sendMessage : function(data, origin) {
-        data.productId = this.productId;
+        data.slaveId = this.slaveId;
         data.msgSender = 'Slave';
         slavePorthole.sendMessage(data, origin);
     }

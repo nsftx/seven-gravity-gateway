@@ -20,19 +20,17 @@ describe('Testing master gateway instantiation', function() {
         assert.equal(instance, false);
     });
 
-    it('Instantiation should fail - data prop missing', function() {
+    it('Should return instance', function() {
         instance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
             products : {
                 'product': {
-                    frameId: 'product',
-                    scroll : true,
-                    loaded : function(){}
+                    frameId: 'product'
                 }
             }
         });
 
-        assert.equal(instance, false);
+        assert.equal(typeof instance, 'object');
     });
 
     it('Should return instance', function() {

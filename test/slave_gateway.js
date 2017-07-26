@@ -16,15 +16,12 @@ describe('Testing slave gateway instantiation', function() {
         assert.equal(productInstance, false);
     });
 
-    it('Instantiation should fail - load method missing', function() {
+    it('Should return instance', function() {
         productInstance = Gateway({
             productId : 'Product',
-            allowedOrigins : ['http://www.nsoft.ba'],
-            data : {
-                config : {}
-            }
+            allowedOrigins : ['http://www.nsoft.ba']
         });
-        assert.equal(productInstance, false);
+        assert.equal(typeof productInstance, 'object');
     });
 
     it('Should return instance', function() {
