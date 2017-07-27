@@ -1,24 +1,220 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var contentHandler = {
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define("gateway", [], factory);
+	else if(typeof exports === 'object')
+		exports["gateway"] = factory();
+	else
+		root["gravity"] = root["gravity"] || {}, root["gravity"]["gateway"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports) {
 
-    resetFrameSize : function(frameId) {
-        var frame = document.getElementById(frameId);
-        if(frame) {
-            frame.style.height = '0px';
-        }
-    },
+var logger = {
+    debug : false, //Verbosity setting
 
-    resize : function(frameId, event) {
-        var frame = document.getElementById(frameId);
-        if(frame) {
-            frame.style.height = event.data.height + 'px';
+    out : function(){
+        if(this.debug) {
+            //Convert to array
+            var args = Array.prototype.slice.call(arguments);
+            //First argument is notification type (log, error, warn, info)
+            var type = args.splice(0,1);
+
+            if(console[type]) {
+                console[type].apply(this, args);
+            } else {
+                console.log.apply(this, args);
+            }
         }
     }
 };
 
-module.exports = contentHandler;
-},{}],2:[function(require,module,exports){
-var logger = require('../utils/utils').logger;
+var throttle = function(fn, wait) {
+    var time = Date.now();
+    return function() {
+        if ((time + wait - Date.now()) < 0) {
+            fn();
+            time = Date.now();
+        }
+    };
+};
+
+
+module.exports = {
+    logger : logger,
+    throttle : throttle
+};
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var logger = __webpack_require__(0).logger;
+
+var pubSub = {
+
+    topics : {},
+
+    subscribe : function(action, callback) {
+        var self = this,
+            index;
+
+        if(action && typeof callback === 'function') {
+            if(!this.topics[action]) {
+                //Create array of actions for first time subscription
+                this.topics[action] = [];
+            }
+            index = this.topics[action].push(callback) - 1;
+
+            //Return remove to unsubscripe single susbcription
+            return {
+                remove: function() {
+                    delete self.topics[action][index];
+                }
+            };
+        } else {
+            logger.out('error', 'Subscribe failed - action property is invalid or missing.');
+            return false;
+        }
+    },
+
+    unsubscribe : function(action) {
+        if (!this.topics[action]) {
+            logger.out('error', 'Unsubscribe failed - topic ' + action + ' doesn´t exist');
+            return false;
+        } else {
+            delete this.topics[action];
+            return true;
+        }
+    },
+
+    publish : function(action, data) {
+        var topicAction = this.findAction(action);
+
+        if(!topicAction) {
+            logger.out('error', 'Publish failed - topic ' + action + ' doesn´t exist');
+            return false;
+        } else {
+            topicAction.forEach(function(callback) {
+                callback(data !== undefined ? data : {});
+            });
+        }
+
+    },
+
+    clearSubscriptions : function() {
+        this.topics = {};
+    },
+
+    findAction : function(actionName) {
+        var actionFound = this.topics.hasOwnProperty(actionName);
+
+        if(actionFound) {
+            return this.topics[actionName];
+        } else if (actionName !== '*') {
+            return this.checkWildcardActions(actionName);
+        } else {
+            return false;
+        }
+    },
+
+    checkWildcardActions : function(actionName) {
+        var pattern,
+            newAction,
+            namespaceArr = actionName.split('.');
+
+        namespaceArr.pop();
+
+        if(namespaceArr.length > 0) {
+            newAction = namespaceArr.join('.');
+            for (var topicName in this.topics) {
+                pattern = new RegExp('^' + newAction + '\\.\\*$', 'g');
+                if(pattern.test(topicName)){
+                    return this.topics[topicName];
+                }
+            }
+
+            return this.checkWildcardActions(newAction);
+        } else {
+            return this.findAction('*');
+        }
+    }
+};
+
+module.exports = pubSub;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var logger = __webpack_require__(0).logger;
 
 function EventHandler(config, eventCb, eventName) {
     this.MODIFIER_KEYS = {
@@ -147,12 +343,22 @@ module.exports = function (config, eventCb, eventName) {
     return new EventHandler(config, eventCb, eventName);
 };
 
-},{"../utils/utils":6}],3:[function(require,module,exports){
-var masterPorthole = require('./messaging/master'),
-    pubSub = require('./pub_sub'),
-    contentHandler = require('./content_handler/master_handler'),
-    logger = require('./utils/utils').logger,
-    eventHandler = require('./event_dispatching/event_handler');
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(4);
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var masterPorthole = __webpack_require__(5),
+    pubSub = __webpack_require__(1),
+    contentHandler = __webpack_require__(6),
+    logger = __webpack_require__(0).logger,
+    eventHandler = __webpack_require__(2);
 
 function validateSlavesConfig(slaves) {
     var configValid = true;
@@ -348,7 +554,11 @@ module.exports = function (config) {
         return false;
     }
 };
-},{"./content_handler/master_handler":1,"./event_dispatching/event_handler":2,"./messaging/master":4,"./pub_sub":5,"./utils/utils":6}],4:[function(require,module,exports){
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
 function Porthole() {}
 
 Porthole.prototype = {
@@ -362,135 +572,30 @@ Porthole.prototype = {
 };
 
 module.exports = new Porthole();
-},{}],5:[function(require,module,exports){
-var logger = require('./utils/utils').logger;
 
-var pubSub = {
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
 
-    topics : {},
+var contentHandler = {
 
-    subscribe : function(action, callback) {
-        var self = this,
-            index;
-
-        if(action && typeof callback === 'function') {
-            if(!this.topics[action]) {
-                //Create array of actions for first time subscription
-                this.topics[action] = [];
-            }
-            index = this.topics[action].push(callback) - 1;
-
-            //Return remove to unsubscripe single susbcription
-            return {
-                remove: function() {
-                    delete self.topics[action][index];
-                }
-            };
-        } else {
-            logger.out('error', 'Subscribe failed - action property is invalid or missing.');
-            return false;
+    resetFrameSize : function(frameId) {
+        var frame = document.getElementById(frameId);
+        if(frame) {
+            frame.style.height = '0px';
         }
     },
 
-    unsubscribe : function(action) {
-        if (!this.topics[action]) {
-            logger.out('error', 'Unsubscribe failed - topic ' + action + ' doesn´t exist');
-            return false;
-        } else {
-            delete this.topics[action];
-            return true;
-        }
-    },
-
-    publish : function(action, data) {
-        var topicAction = this.findAction(action);
-
-        if(!topicAction) {
-            logger.out('error', 'Publish failed - topic ' + action + ' doesn´t exist');
-            return false;
-        } else {
-            topicAction.forEach(function(callback) {
-                callback(data !== undefined ? data : {});
-            });
-        }
-
-    },
-
-    clearSubscriptions : function() {
-        this.topics = {};
-    },
-
-    findAction : function(actionName) {
-        var actionFound = this.topics.hasOwnProperty(actionName);
-
-        if(actionFound) {
-            return this.topics[actionName];
-        } else if (actionName !== '*') {
-            return this.checkWildcardActions(actionName);
-        } else {
-            return false;
-        }
-    },
-
-    checkWildcardActions : function(actionName) {
-        var pattern,
-            newAction,
-            namespaceArr = actionName.split('.');
-
-        namespaceArr.pop();
-
-        if(namespaceArr.length > 0) {
-            newAction = namespaceArr.join('.');
-            for (var topicName in this.topics) {
-                pattern = new RegExp('^' + newAction + '\\.\\*$', 'g');
-                if(pattern.test(topicName)){
-                    return this.topics[topicName];
-                }
-            }
-
-            return this.checkWildcardActions(newAction);
-        } else {
-            return this.findAction('*');
+    resize : function(frameId, event) {
+        var frame = document.getElementById(frameId);
+        if(frame) {
+            frame.style.height = event.data.height + 'px';
         }
     }
 };
 
-module.exports = pubSub;
-},{"./utils/utils":6}],6:[function(require,module,exports){
-var logger = {
-    debug : false, //Verbosity setting
+module.exports = contentHandler;
 
-    out : function(){
-        if(this.debug) {
-            //Convert to array
-            var args = Array.prototype.slice.call(arguments);
-            //First argument is notification type (log, error, warn, info)
-            var type = args.splice(0,1);
-
-            if(console[type]) {
-                console[type].apply(this, args);
-            } else {
-                console.log.apply(this, args);
-            }
-        }
-    }
-};
-
-var throttle = function(fn, wait) {
-    var time = Date.now();
-    return function() {
-        if ((time + wait - Date.now()) < 0) {
-            fn();
-            time = Date.now();
-        }
-    };
-};
-
-
-module.exports = {
-    logger : logger,
-    throttle : throttle
-};
-},{}],"seven-gravity-gateway/master":[function(require,module,exports){
-module.exports = require('./src/master_gateway');
-},{"./src/master_gateway":3}]},{},["seven-gravity-gateway/master"]);
+/***/ })
+/******/ ]);
+});

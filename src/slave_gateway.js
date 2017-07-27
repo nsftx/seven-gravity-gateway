@@ -102,8 +102,7 @@ var slaveGateway = {
     },
 
     setWorker: function(){
-        var msgBlacklist = ['Slave.Resize'],
-            self = this;
+        var msgBlacklist = ['Slave.Resize'];
 
         var worker = slaveProxy.setMsgProxy(this.config.worker, {debug : this.config.debug}, pubSub.publish.bind(pubSub), this.sendMessage.bind(this));
 

@@ -1,27 +1,29 @@
 var OBSERVED_EVENTS = [
-    {type: 'Animation Start',       eventName : ['animationstart','webkitAnimationStart']},
-    {type: 'Animation Iteration',   eventName : ['animationiteration','webkitAnimationIteration']},
-    {type: 'Animation End',         eventName : ['animationend','webkitAnimationEnd']},
-    {type: 'Input',                 eventName : 'input'},
-    {type: 'Resize',                eventName : 'resize'},
-    {type: 'Click',                 eventName : 'click'},
-    {type: 'Orientation Change',    eventName : 'orientationchange'},
-    {type: 'Print',                 eventName : ['afterprint', 'beforeprint']},
-    {type: 'Ready State Change',    eventName : 'readystatechange'},
-    {type: 'Touch Start',           eventName : 'touchstart'},
-    {type: 'Touch End',             eventName : 'touchend'},
-    {type: 'Touch Cancel',          eventName : 'touchcancel'},
-    {type: 'Transition Start',      eventName : ['transitionstart','webkitTransitionStart','MSTransitionStart','oTransitionStart','otransitionstart']},
-    {type: 'Transition Iteration',  eventName : ['transitioniteration','webkitTransitionIteration','MSTransitionIteration','oTransitionIteration','otransitioniteration']},
-    {type: 'Transition End',        eventName : ['transitionend','webkitTransitionEnd','MSTransitionEnd','oTransitionEnd','otransitionend']}],
-    INTERVAL_DURATION = 200,
-    intervalTimer = null;
+        {type: 'Animation Start',       eventName : ['animationstart','webkitAnimationStart']},
+        {type: 'Animation Iteration',   eventName : ['animationiteration','webkitAnimationIteration']},
+        {type: 'Animation End',         eventName : ['animationend','webkitAnimationEnd']},
+        {type: 'Input',                 eventName : 'input'},
+        {type: 'Resize',                eventName : 'resize'},
+        {type: 'Click',                 eventName : 'click'},
+        {type: 'Orientation Change',    eventName : 'orientationchange'},
+        {type: 'Print',                 eventName : ['afterprint', 'beforeprint']},
+        {type: 'Ready State Change',    eventName : 'readystatechange'},
+        {type: 'Touch Start',           eventName : 'touchstart'},
+        {type: 'Touch End',             eventName : 'touchend'},
+        {type: 'Touch Cancel',          eventName : 'touchcancel'},
+        {type: 'Transition Start',      eventName : ['transitionstart','webkitTransitionStart','MSTransitionStart','oTransitionStart','otransitionstart']},
+        {type: 'Transition Iteration',  eventName : ['transitioniteration','webkitTransitionIteration','MSTransitionIteration','oTransitionIteration','otransitioniteration']},
+        {type: 'Transition End',        eventName : ['transitionend','webkitTransitionEnd','MSTransitionEnd','oTransitionEnd','otransitionend']}
+    ],
+    INTERVAL_DURATION = 200;
 
 var contentHandler = {
 
     eventName : null,
 
     DOMReady : false,
+
+    intervalTimer: null,
 
     currentWidth : 0,
 
@@ -133,7 +135,7 @@ var contentHandler = {
     },
 
     runDirtyCheck : function() {
-        intervalTimer = setInterval(function() {
+        this.intervalTimer = setInterval(function() {
             this.handleContentChange();
         }.bind(this), INTERVAL_DURATION);
 

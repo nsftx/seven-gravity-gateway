@@ -1,5 +1,3 @@
-var logger = require('../utils/utils').logger;
-
 function Porthole() {
     this.worker = null;
     this.msgBlacklist = null;

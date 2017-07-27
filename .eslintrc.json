@@ -1,0 +1,20 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 5
+    },
+    "env": {
+        "browser": true,
+        "commonjs": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "quotes": ["error", "single"],
+        "indent": ["error", 4],
+        "semi": ["error", "always"],
+        "no-console": "off",
+        "eqeqeq" : ["error", "always"],
+        "no-undef": "error",
+        "no-unused-vars": "error",
+        "no-multi-assign": "error"
+    }
+}
