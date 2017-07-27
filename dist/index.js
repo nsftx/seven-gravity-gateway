@@ -416,8 +416,10 @@ var masterGateway = {
     },
 
     slaveLoad : function(slaveData) {
-        slaveData.data.action = 'Slave.Load';
-        this.sendMessage(slaveData.frameId, slaveData.data);
+        this.sendMessage(slaveData.frameId, {
+            action : 'Slave.Load',
+            data: slaveData.data || {}
+        });
     },
 
     slaveResize : function(event, slaveData) {

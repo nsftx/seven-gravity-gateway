@@ -69,7 +69,7 @@ module.exports = function (grunt) {
                     module: false,
                     exports: false,
                     require: false,
-                    console: false,
+                    console: false
                 }
             },
             files: [

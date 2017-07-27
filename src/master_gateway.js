@@ -4,15 +4,12 @@ var masterPorthole = require('./messaging/master'),
     logger = require('./utils/utils').logger,
     eventHandler = require('./event_dispatching/event_handler');
 
-function validateProductsConfig(products) {
+function validateSlavesConfig(slaves) {
     var configValid = true;
 
-    for (var slave in products) {
-        if (!products[slave].frameId || typeof products[slave].frameId !== 'string') {
+    for (var slave in slaves) {
+        if (!slaves[slave].frameId || typeof slaves[slave].frameId !== 'string') {
             logger.out('error', '[GG] Master:', 'frameId property is invalid or missing for ' + slave);
-            configValid = false;
-        } else if (!products[slave].data || typeof products[slave].data !== 'object') {
-            logger.out('error', '[GG] Master:', 'data property is invalid or missing for ' + slave);
             configValid = false;
         }
     }
@@ -21,10 +18,12 @@ function validateProductsConfig(products) {
 }
 
 function validateInitialization(config) {
-    if (!config.products || typeof config.products !== 'object') {
-        logger.out('error', '[GG] Master:', 'products object is invalid or missing');
+    var slaves = config.slaves || config.products;
+
+    if (!slaves || typeof slaves !== 'object') {
+        logger.out('error', '[GG] Master:', 'slaves/products object is invalid or missing');
         return false;
-    } else if (!validateProductsConfig(config.products)) {
+    } else if (!validateSlavesConfig(slaves)) {
         return false;
     } else {
         logger.out('info', '[GG] Master:', 'Initializing');
@@ -36,7 +35,7 @@ var masterGateway = {
 
     initialized: false,
 
-    products: {},
+    slaves: {},
 
     config: null,
 
@@ -47,7 +46,7 @@ var masterGateway = {
     init: function (config) {
         this.initialized = true;
         this.config = config;
-        this.products = config.products;
+        this.slaves = config.slaves || config.products;
         this.setAllowedDomains();
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
@@ -86,51 +85,55 @@ var masterGateway = {
     },
 
     handleProtectedMessage: function (event) {
-        if (!this.products[event.data.productId]) {
+        var slaveId = event.data.slaveId || event.data.productId;
+
+        if (!this.slaves[slaveId]) {
             return false;
         }
-        var productData = this.products[event.data.productId],
+        var slaveData = this.slaves[slaveId],
             actionName = event.data.action.replace('.', '');
         //Lowercase the first letter
         actionName = actionName.charAt(0).toLowerCase() + actionName.slice(1);
         if (this[actionName]) {
-            this[actionName](event, productData);
+            this[actionName](event, slaveData);
         } else {
             logger.out('warn', '[GG] Master:', 'Actions with domain `Master` or `Slave` are protected!');
         }
     },
 
-    slaveInit : function(event, productData) {
+    slaveInit : function(event, slaveData) {
         logger.out('info', '[GG] Master:', 'Starting to load slave.', event.data);
         //On every init reset the frame size
-        contentHandler.resetFrameSize(productData.frameId);
+        contentHandler.resetFrameSize(slaveData.frameId);
         // Run the slave init callback and notify slave to load
-        if (productData.init) {
-            productData.init(event.data);
+        if (slaveData.init) {
+            slaveData.init(event.data);
         }
         if(event.data.eventListeners) {
             //Curry the sendMessage function with frameId argument in this special case
-            eventHandler(event.data.eventListeners, this.sendMessage.bind(this, productData.frameId), 'Master.Event');
+            eventHandler(event.data.eventListeners, this.sendMessage.bind(this, slaveData.frameId), 'Master.Event');
         }
-        this.slaveLoad(productData);
+        this.slaveLoad(slaveData);
     },
 
-    slaveLoad : function(productData) {
-        productData.data.action = 'Slave.Load';
-        this.sendMessage(productData.frameId, productData.data);
+    slaveLoad : function(slaveData) {
+        this.sendMessage(slaveData.frameId, {
+            action : 'Slave.Load',
+            data: slaveData.data || {}
+        });
     },
 
-    slaveResize : function(event, productData) {
+    slaveResize : function(event, slaveData) {
         logger.out('info', '[GG] Master:', 'Resizing slave.', event.data);
-        contentHandler.resize(productData.frameId, event);
+        contentHandler.resize(slaveData.frameId, event);
     },
 
-    slaveLoaded : function(event, productData) {
-        if (!productData.loaded) {
+    slaveLoaded : function(event, slaveData) {
+        if (!slaveData.loaded) {
             return false;
         }
         logger.out('info', '[GG] Master:', 'Slave loaded.', event.data);
-        productData.loaded(event.data);
+        slaveData.loaded(event.data);
     },
 
     slaveEvent : function(event) {
