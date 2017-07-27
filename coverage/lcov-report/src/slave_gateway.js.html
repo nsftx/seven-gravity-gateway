@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">51.35% </span>
+        <span class="strong">50.72% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>38/74</span>
+        <span class='fraction'>35/69</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">60.87% </span>
+        <span class="strong">59.52% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>28/46</span>
+        <span class='fraction'>25/42</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">50% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>7/14</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">50.68% </span>
+        <span class="strong">50% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>37/73</span>
+        <span class='fraction'>34/68</span>
       </div>
     </div>
   </div>
@@ -203,24 +203,16 @@
 158
 159
 160
-161
-162
-163
-164
-165</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+161</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
@@ -352,9 +344,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -367,9 +359,9 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var slavePorthole = require('./messaging/slave'),
     pubSub = require('./pub_sub'),
@@ -379,24 +371,20 @@
     slaveProxy = require('./slave_proxy');
 &nbsp;
 function validateInitialization(config) {
-    if(!config.productId || typeof config.productId !== 'string') {
-        logger.out('error', '[GG] Slave:', 'productId property is invalid or missing');
-        return false;
-    } else <span class="missing-if-branch" title="if path not taken" >I</span>if(!config.data || typeof config.data !== 'object') {
-<span class="cstat-no" title="statement not covered" >        logger.out('error', '[GG] Slave.' + config.productId + ':', 'data property is invalid or missing');</span>
-<span class="cstat-no" title="statement not covered" >        return false;</span>
-    } else if(!config.load || typeof config.load !== 'function') {
-        logger.out('error', '[GG] Slave.' + config.productId + ':', 'load property is invalid or missing');
+    var slaveId = config.slaveId || config.productId;
+&nbsp;
+    if(!slaveId || typeof slaveId !== 'string') {
+        logger.out('error', '[GG] Slave:', 'slaveId/productId property is invalid or missing');
         return false;
     } else {
-        logger.out('info', '[GG] Slave.' + config.productId + ':', 'Initializing');
+        logger.out('info', '[GG] Slave.' + slaveId + ':', 'Initializing');
         return true;
     }
 }
 &nbsp;
 var slaveGateway = {
 &nbsp;
-    productId : '',
+    slaveId : '',
 &nbsp;
     config : null,
 &nbsp;
@@ -409,7 +397,7 @@ var slaveGateway = {
     init: function(config){
         this.initialized = true;
         this.config = config;
-        this.productId = config.productId;
+        this.slaveId = config.slaveId || config.productId;
         this.load = config.load;
         this.setAllowedDomains();
         //Set message handler
@@ -423,7 +411,7 @@ var slaveGateway = {
         <span class="missing-if-branch" title="if path not taken" >I</span>if(this.config.worker) {
 <span class="cstat-no" title="statement not covered" >            this.setWorker();</span>
         }
-        this.startProductInitialization();
+        this.startSlaveInitialization();
     },
     
     setAllowedDomains : function() {
@@ -434,7 +422,7 @@ var slaveGateway = {
         }
     },
 &nbsp;
-    startProductInitialization : function() {
+    startSlaveInitialization : function() {
         this.sendMessage({
             action: 'Slave.Init',
             data: this.config.data,
@@ -446,23 +434,23 @@ var slaveGateway = {
     handleMessage : function(event) {
         <span class="missing-if-branch" title="else path not taken" >E</span>if(!event.data.msgSender || event.data.msgSender === this.msgSender) return false;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        var productPattern,</span>
-            platformPattern;
+<span class="cstat-no" title="statement not covered" >        var slavePattern,</span>
+            masterPattern;
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        if(this.allowedOrigins !== '*' &amp;&amp; this.allowedOrigins.indexOf(event.origin) === -1) {</span>
-<span class="cstat-no" title="statement not covered" >            logger.out('error', '[GG] Slave.' +  this.productId + ':' + ' Message origin is not allowed');</span>
+<span class="cstat-no" title="statement not covered" >            logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Message origin is not allowed');</span>
 <span class="cstat-no" title="statement not covered" >            return false;</span>
         }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        productPattern = new RegExp('^Slave\\.', 'g');</span>
-<span class="cstat-no" title="statement not covered" >        platformPattern = new RegExp('^Master\\.', 'g');</span>
+<span class="cstat-no" title="statement not covered" >        slavePattern = new RegExp('^Slave\\.', 'g');</span>
+<span class="cstat-no" title="statement not covered" >        masterPattern = new RegExp('^Master\\.', 'g');</span>
         // Check if message is reserved system message (Master and Slave messages)
-<span class="cstat-no" title="statement not covered" >        if(productPattern.test(event.data.action) || platformPattern.test(event.data.action)) {</span>
+<span class="cstat-no" title="statement not covered" >        if(slavePattern.test(event.data.action) || masterPattern.test(event.data.action)) {</span>
 <span class="cstat-no" title="statement not covered" >            this.handleProtectedMessage(event);</span>
 <span class="cstat-no" title="statement not covered" >            return false;</span>
         }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        logger.out('info', '[GG] Slave.' +  this.productId + ':' + ' Master message received:', event.data);</span>
+<span class="cstat-no" title="statement not covered" >        logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Master message received:', event.data);</span>
 <span class="cstat-no" title="statement not covered" >        pubSub.publish(event.data.action, event.data);</span>
     },
 &nbsp;
@@ -474,7 +462,7 @@ var slaveGateway = {
 <span class="cstat-no" title="statement not covered" >        if (this[actionName]) {</span>
 <span class="cstat-no" title="statement not covered" >            this[actionName](event);</span>
         } else {
-<span class="cstat-no" title="statement not covered" >            logger.out('warn', '[GG] Slave.' +  this.productId + ':', 'Actions with domain `Master` or `Slave` are protected!');</span>
+<span class="cstat-no" title="statement not covered" >            logger.out('warn', '[GG] Slave.' +  this.slaveId + ':', 'Actions with domain `Master` or `Slave` are protected!');</span>
         }
     },
 &nbsp;
@@ -485,21 +473,21 @@ var slaveGateway = {
 <span class="cstat-no" title="statement not covered" >        var worker = slaveProxy.setMsgProxy(this.config.worker, {debug : this.config.debug}, pubSub.publish.bind(pubSub), this.sendMessage.bind(this));</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        if(worker) {</span>
-<span class="cstat-no" title="statement not covered" >            logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Web worker initialized.');</span>
+<span class="cstat-no" title="statement not covered" >            logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Web worker initialized.');</span>
 <span class="cstat-no" title="statement not covered" >            slavePorthole.setWorker(worker, msgBlacklist);</span>
         } else {
-<span class="cstat-no" title="statement not covered" >            logger.out('error', '[GG] Slave.' +  this.productId + ':', 'Web worker initialization failed. Provide instance of Worker or path to file');</span>
+<span class="cstat-no" title="statement not covered" >            logger.out('error', '[GG] Slave.' +  this.slaveId + ':', 'Web worker initialization failed. Provide instance of Worker or path to file');</span>
 <span class="cstat-no" title="statement not covered" >            return false;</span>
         }
     },
 &nbsp;
     slaveLoad : <span class="fstat-no" title="function not covered" >function(event) {</span>
-<span class="cstat-no" title="statement not covered" >        logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Starting to load.');</span>
+<span class="cstat-no" title="statement not covered" >        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Starting to load.');</span>
 <span class="cstat-no" title="statement not covered" >        this.load(event.data);</span>
     },
 &nbsp;
     masterEvent : <span class="fstat-no" title="function not covered" >function(event) {</span>
-<span class="cstat-no" title="statement not covered" >        logger.out('info', '[GG] Slave.' +  this.productId + ':', 'Publish Master.Event event.', event.data);</span>
+<span class="cstat-no" title="statement not covered" >        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Publish Master.Event event.', event.data);</span>
 <span class="cstat-no" title="statement not covered" >        pubSub.publish(event.data.action, event.data);</span>
     },
 &nbsp;
@@ -516,7 +504,7 @@ var slaveGateway = {
     },
 &nbsp;
     sendMessage : function(data, origin) {
-        data.productId = this.productId;
+        data.slaveId = this.slaveId;
         data.msgSender = 'Slave';
         slavePorthole.sendMessage(data, origin);
     }
@@ -541,7 +529,7 @@ module.exports = function(config) {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Apr 25 2017 10:15:14 GMT+0200 (CEST)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Jul 27 2017 15:39:33 GMT+0200 (CEST)
 </div>
 </div>
 <script src="../prettify.js"></script>
