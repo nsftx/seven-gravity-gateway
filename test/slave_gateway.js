@@ -2,7 +2,7 @@ var Gateway = require('../src/slave_gateway'),
     assert = require('assert'),
     dom = require('jsdom-global')(); //Inject dom in test because window deps
 
-describe('Testing slave gateway instantiation', function() {
+describe('Slave gateway instantiation', function() {
     var productInstance;
 
     it('Instantiation should fail - productId missing', function() {
@@ -39,5 +39,4 @@ describe('Testing slave gateway instantiation', function() {
     it('Instantiation should return existing instance', function() {
         assert.strictEqual(Gateway(), productInstance);
     });
-
 });

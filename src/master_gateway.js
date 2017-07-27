@@ -52,6 +52,21 @@ var masterGateway = {
         window.addEventListener('message', this.handleMessage.bind(this));
     },
 
+    addSlave : function(config) {
+        var slaveId = config.slaveId || config.productId;
+
+        if (!slaveId || typeof slaveId !== 'string') {
+            logger.out('error', '[GG] Master:', 'slaveId/productId property is invalid or missing for ' + config);
+            return false;
+        } else if (!config.frameId || typeof config.frameId !== 'string') {
+            logger.out('error', '[GG] Master:', 'frameId property is invalid or missing for ' + config);
+            return false;
+        }
+        //Delete slaveid prop for sake of standardization
+        delete config.slaveId;
+        this.slaves[slaveId] = config;
+    },
+
     setAllowedDomains: function () {
         if (this.config && this.config.allowedOrigins) {
             this.allowedOrigins = this.config.allowedOrigins;

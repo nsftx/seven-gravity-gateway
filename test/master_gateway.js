@@ -1,9 +1,9 @@
-var Gateway = require('../src/master_gateway'),
-    assert = require('assert'),
+var assert = require('assert'),
     dom = require('jsdom-global')(); //Inject dom in test because window deps
 
-describe('Testing master gateway instantiation', function() {
-    var instance;
+describe('Master gateway instantiation', function() {
+    var instance,
+        Gateway = require('../src/master_gateway');
 
     it('Instantiation should fail - frameId missing', function() {
         instance = Gateway({
@@ -33,6 +33,31 @@ describe('Testing master gateway instantiation', function() {
         assert.equal(typeof instance, 'object');
     });
 
+    it('Adding slaves on fly should fail - frameId missing', function() {
+        var result = instance.addSlave({
+            slaveId : 'dummy'
+        });
+
+        assert.equal(result, false);
+    });
+
+    it('Adding slaves on fly should fail - slaveId missing', function() {
+        var result = instance.addSlave({
+            frameId : 'dummy'
+        });
+
+        assert.equal(result, false);
+    });
+
+    it('Adding slaves on fly should pass', function() {
+        instance.addSlave({
+            frameId : 'dummy',
+            slaveId : 'dummy'
+        });
+
+        assert.equal(instance.slaves.hasOwnProperty('dummy'), true);
+    });
+
     it('Should return instance', function() {
         instance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
@@ -49,7 +74,7 @@ describe('Testing master gateway instantiation', function() {
         assert.equal(typeof instance, 'object');
     });
 
-    it('Instantiation should return existing instance', function() {
+    it('Should return existing instance', function() {
         assert.strictEqual(Gateway(), instance);
     });
 
