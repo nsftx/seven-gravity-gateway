@@ -58,6 +58,16 @@ describe('Master gateway instantiation', function() {
         assert.equal(instance.slaves.hasOwnProperty('dummy'), true);
     });
 
+    it('Removing slaves on fly should fail', function() {
+        var result = instance.removeSlave();
+        assert.equal(result, false);
+    });
+
+    it('Removing slaves on fly should pass', function() {
+        instance.removeSlave('dummy');
+        assert.equal(instance.slaves.hasOwnProperty('dummy'), false);
+    });
+
     it('Should return instance', function() {
         instance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],

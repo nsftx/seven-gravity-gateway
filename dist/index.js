@@ -408,7 +408,7 @@ var masterGateway = {
         window.addEventListener('message', this.handleMessage.bind(this));
     },
 
-    addSlave : function(config) {
+    addSlave: function(config) {
         var slaveId = config.slaveId || config.productId;
 
         if (!slaveId || typeof slaveId !== 'string') {
@@ -421,6 +421,16 @@ var masterGateway = {
         //Delete slaveid prop for sake of standardization
         delete config.slaveId;
         this.slaves[slaveId] = config;
+    },
+
+    removeSlave: function(slaveId) {
+        if(slaveId && this.slaves[slaveId]) {
+            delete this.slaves[slaveId];
+            logger.out('info', '[GG] Master:', 'slave: ' + slaveId + ' succesfully removed.');
+        } else {
+            logger.out('error', '[GG] Master:', 'Passed slaveId is invalid or it doesn`t exist.');
+            return false;
+        }
     },
 
     setAllowedDomains: function () {
