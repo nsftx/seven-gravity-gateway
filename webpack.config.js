@@ -22,7 +22,7 @@ module.exports = {
     output: {
         filename: '[name].js',
         path: __dirname + '/dist',
-        library: ['gravity', 'gateway'],
+        library: ['gravity', 'gateway', '[name]'],
         libraryTarget: 'umd',
         umdNamedDefine: true
     }

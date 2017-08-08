@@ -2,11 +2,11 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define("gateway", [], factory);
+		define("plugin-storage", [], factory);
 	else if(typeof exports === 'object')
-		exports["gateway"] = factory();
+		exports["plugin-storage"] = factory();
 	else
-		root["gravity"] = root["gravity"] || {}, root["gravity"]["gateway"] = factory();
+		root["gravity"] = root["gravity"] || {}, root["gravity"]["gateway"] = root["gravity"]["gateway"] || {}, root["gravity"]["gateway"]["plugin-storage"] = factory();
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
