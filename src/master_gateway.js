@@ -62,7 +62,7 @@ var masterGateway = {
             logger.out('error', '[GG] Master:', 'frameId property is invalid or missing for ' + config);
             return false;
         }
-        //Delete slaveid prop for sake of standardization
+        //Delete slaveId prop for sake of standardization
         delete config.slaveId;
         this.slaves[slaveId] = config;
     },
