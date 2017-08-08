@@ -13,22 +13,21 @@ You can install this package with **npm**:
 
 You can load module for use in browser or as node module.
 
-
 ==In browser use==
 
-For use in browser we can load it using embedded require module loader:
+Modules are exposed as UMD modules which we can be required as CommonJS or AMD modules, or simply injecting the script in HTML and using the global reference.
 
 Master gateway:
 
 ```
 lang=javascript
-var Gateway = require('master');
+var Gateway = window.gateway.master;
 ```
 Slave gateway:
 
 ```
 lang=javascript
-var Gateway = require('slave');
+var Gateway = window.gateway.slave;
 ```
 
 ==As node module==
@@ -63,7 +62,7 @@ Component is initialized by calling the module and passing the proper config obj
 
 Config:
 |Name|Description|Type|Required|
-|products|Object with details for all products|object|Y|
+|slaves/products|Object with details for all slaves/products|object|Y|
 |allowedOrigins|Array of allowed URIs which are allowed to exchange messages. Default value is '*'|array|N|
 |debug|Debug messages setting|bool|N|
 
@@ -71,51 +70,69 @@ Config:
 ```
 lang=javascript
 Gateway({
-    allowedOrigins : [],
-    debug : bool,
-    products : {
-         productId: {
-  	        frameId : frameId,
-	        data : {},
-	        init : function,
- 	        load : function,
-                loaded : function
-         }
+  allowedOrigins : [],
+  debug : bool,
+  slaves/products : {
+    slaveId/productId: {
+      frameId : frameId,
+      data : {},
+      init : function,
+      load : function,
+      loaded : function
     }
-);
+  }
+});
 ```
 
-`products` property must be an object with next properties:
+`slaves/products` property must be an object with next properties:
 
 |Name|Description|Type|Required|
 |frameId|DOM id where game frame is located|string|Y|
-|data|data passed to product to run the product load phase.|object|Y|
-|init|Callback which will be triggered when product is ready for load. It will be triggered when product is ready for load.|function|N|
-|loaded|Callback which will trigger when product is loaded|function|N|
+|data|data passed to slave to run the slave load phase.|object|N|
+|init|Callback which will be triggered when slave is ready for load. It will be triggered when slave is ready for load.|function|N|
+|loaded|Callback which will trigger when slave is loaded|function|N|
 
-Init and loaded methods can be used to indicate that product is in loading phase. e.g. start the loader on init and remove the loader on loaded event.
+Init and loaded methods can be used to indicate that slave is in loading phase. e.g. start the loader on init and remove the loader on loaded event.
 
+====Adding/Removing slaves on fly
+
+Slaves can be added after initialization on the fly using the method `addSlave`:
+
+```
+lang=javascript
+Gateway.addSlave({
+  frameId : 'dummy',
+  slaveId : 'dummy'
+});
+```
+
+`removeSlave` method will remove slave by passing the `slaveId` property:
+
+```
+lang=javascript
+Gateway.removeSlave('dummy');
+```
 
 ==Slave gateway==
 
 ```
 lang=javascript
 Gateway({
-    productId : string,
-    data : object,
-    load: function,
-    allowedOrigins : array,
-    debug : bool,
-    worker : object
-    eventPropagation : object
-    eventListeners : object
+  slaveId/productId : string,
+  data : object,
+  load: function,
+  allowedOrigins : array,
+  debug : bool,
+  worker : object
+  eventPropagation : object
+  eventListeners : object
 });
 ```
 Config:
 |Name|Description|Type|Required|
-|productId|must be an unique identifier of the product(unique game ID).|string|Y|
-|data|Data which will be passed to platform on init(config, routes...) |object|Y|
-|load|Callback which will be triggered when product starts to load|function|Y|
+|slaveId/productId|must be an unique identifier of the slave(unique game ID).|string|Y|
+|data|Data which will be passed to platform on init(config, routes...) |object|N|
+|load|Callback which will be triggered when slave starts to load|function|N|
 |allowedOrigins|Array of allowed URIs|array|N|
 |debug|Debug messages setting|bool|N|
 |worker|Optional web worker configuration|object|N|
@@ -140,12 +157,12 @@ Gateway comes with predefined plugins which can be used only in combination with
 ```
 lang=html
 
-<script src="../../node_modules/seven-gravity-gateway/dist/slave.js"></script>
+<script src="../../node_modules/seven-gravity-gateway/dist/plugin-storage.js"></script>
 ```
 
 ```
 lang=javascript
-var storagePlugin = require('seven-gravity-gateway/plugin-storage');
+var storagePlugin = window.gravity.plugin-storage;
 
 Gateway({
   ...
@@ -246,11 +263,11 @@ In order to dispatch the events from master to slave, slave needs to pass `event
 lang=javascript
 {gatewayInstance}.sendMessage(frameId, {
     action : 'betslip.add',
-    productId : $productId
+    slaveId/productId : $slaveId
 }, origin)
 ```
 
-Object must contain name of action and productId property. `productId` property is the unique id of the product to which message is dispatched. Origin param is the origin of sender. That origin must be enabled in slave gateway in order to process the message. If origin is obeyed origin will be set to ‘*’.
+Object must contain name of action and `slaveId/productId` property. `slaveId/productId` property is the unique id of the slaveId to which message is dispatched. Origin param is the origin of sender. That origin must be enabled in slave gateway in order to process the message. If origin is obeyed origin will be set to ‘*’.
 
 **Slave -> Master**
 
