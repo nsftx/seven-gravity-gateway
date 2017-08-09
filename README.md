@@ -62,7 +62,7 @@ Component is initialized by calling the module and passing the proper config obj
 
 Config:
 |Name|Description|Type|Required|
-|slaves/products|Object with details for all slaves/products|object|Y|
+|slaves/products|Object with details for all slaves/products|object|N|
 |allowedOrigins|Array of allowed URIs which are allowed to exchange messages. Default value is '*'|array|N|
 |debug|Debug messages setting|bool|N|
 
@@ -76,6 +76,7 @@ Gateway({
     slaveId/productId: {
       frameId : frameId,
       data : {},
+      autoResize : bool,
       init : function,
       load : function,
       loaded : function
@@ -89,6 +90,7 @@ Gateway({
 |Name|Description|Type|Required|
 |frameId|DOM id where game frame is located|string|Y|
 |data|data passed to slave to run the slave load phase.|object|N|
+|autoResize|should iframe foit to child's content size (default is true) |bool|N|
 |init|Callback which will be triggered when slave is ready for load. It will be triggered when slave is ready for load.|function|N|
 |loaded|Callback which will trigger when slave is loaded|function|N|
 
