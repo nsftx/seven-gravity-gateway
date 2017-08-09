@@ -1,3 +1,13 @@
+## 1.1.1 (2017-08-09)
+
+####Added
+
+- Add autoResize setting to master gateway(c52345ba5866)
+
+####Changed
+
+- Set slaves/products object as optional in master gateway(c52345ba5866)
+
 ## 1.1.0 (2017-08-08)
 
 ####Added
