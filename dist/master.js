@@ -374,12 +374,16 @@ function validateSlavesConfig(slaves) {
 }
 
 function validateInitialization(config) {
-    var slaves = config.slaves || config.products;
+    var slaves = config.slaves || config.products,
+        configValid;
 
     if (!slaves || typeof slaves !== 'object') {
-        logger.out('error', '[GG] Master:', 'slaves/products object is invalid or missing');
-        return false;
-    } else if (!validateSlavesConfig(slaves)) {
+        logger.out('warn', '[GG] Master:', 'slaves/products object is invalid or missing');
+    }
+
+    configValid = slaves ? validateSlavesConfig(slaves) : true;
+
+    if (!configValid) {
         return false;
     } else {
         logger.out('info', '[GG] Master:', 'Initializing');
@@ -400,9 +404,10 @@ var masterGateway = {
     msgSender: 'Master',
 
     init: function (config) {
+        var slaves = config.slaves || config.products;
         this.initialized = true;
         this.config = config;
-        this.slaves = config.slaves || config.products;
+        this.slaves = slaves || {};
         this.setAllowedDomains();
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
@@ -500,7 +505,8 @@ var masterGateway = {
     slaveLoad : function(slaveData) {
         this.sendMessage(slaveData.frameId, {
             action : 'Slave.Load',
-            data: slaveData.data || {}
+            data: slaveData.data || {},
+            autoResize : typeof slaveData.autoResize !== 'undefined' ? slaveData.autoResize : true
         });
     },
 

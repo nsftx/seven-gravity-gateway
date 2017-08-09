@@ -374,12 +374,16 @@ function validateSlavesConfig(slaves) {
 }
 
 function validateInitialization(config) {
-    var slaves = config.slaves || config.products;
+    var slaves = config.slaves || config.products,
+        configValid;
 
     if (!slaves || typeof slaves !== 'object') {
-        logger.out('error', '[GG] Master:', 'slaves/products object is invalid or missing');
-        return false;
-    } else if (!validateSlavesConfig(slaves)) {
+        logger.out('warn', '[GG] Master:', 'slaves/products object is invalid or missing');
+    }
+
+    configValid = slaves ? validateSlavesConfig(slaves) : true;
+
+    if (!configValid) {
         return false;
     } else {
         logger.out('info', '[GG] Master:', 'Initializing');
@@ -400,9 +404,10 @@ var masterGateway = {
     msgSender: 'Master',
 
     init: function (config) {
+        var slaves = config.slaves || config.products;
         this.initialized = true;
         this.config = config;
-        this.slaves = config.slaves || config.products;
+        this.slaves = slaves || {};
         this.setAllowedDomains();
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
@@ -500,7 +505,8 @@ var masterGateway = {
     slaveLoad : function(slaveData) {
         this.sendMessage(slaveData.frameId, {
             action : 'Slave.Load',
-            data: slaveData.data || {}
+            data: slaveData.data || {},
+            autoResize : typeof slaveData.autoResize !== 'undefined' ? slaveData.autoResize : true
         });
     },
 
@@ -651,12 +657,10 @@ var slaveGateway = {
         this.initialized = true;
         this.config = config;
         this.slaveId = config.slaveId || config.productId;
-        this.load = config.load;
+        this.load = config.load || null;
         this.setAllowedDomains();
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
-        //Pass the event callback, and event name
-        contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize');
         //Pass the key propagation config object, event callback, event name
         if(this.config.eventPropagation) {
             eventHandler(this.config.eventPropagation, this.sendMessage.bind(this), 'Slave.Event');
@@ -734,8 +738,14 @@ var slaveGateway = {
     },
 
     slaveLoad : function(event) {
-        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Starting to load.');
-        this.load(event.data);
+        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Starting to load.', event.data);
+        if(event.data.autoResize) {
+            //Pass the event callback, and event name
+            contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize');
+        }
+        if(this.load) {
+            this.load(event.data);
+        }
     },
 
     masterEvent : function(event) {
