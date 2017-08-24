@@ -90,7 +90,7 @@ Gateway({
 |Name|Description|Type|Required|
 |frameId|DOM id where game frame is located|string|Y|
 |data|data passed to slave to run the slave load phase.|object|N|
-|autoResize|should iframe foit to child's content size (default is true) |bool|N|
+|autoResize|should iframe fit to child's content size (default is true) |bool|N|
 |init|Callback which will be triggered when slave is ready for load. It will be triggered when slave is ready for load.|function|N|
 |loaded|Callback which will trigger when slave is loaded|function|N|
 

@@ -133,8 +133,11 @@ var masterGateway = {
 
     slaveInit : function(event, slaveData) {
         logger.out('info', '[GG] Master:', 'Starting to load slave.', event.data);
-        //On every init reset the frame size
-        contentHandler.resetFrameSize(slaveData.frameId);
+
+        if(typeof slaveData.autoResize !== 'undefined' && !Boolean(slaveData.autoResize)) {
+            //On every init reset the frame sizes
+            contentHandler.resetFrameSize(slaveData.frameId);
+        }
         // Run the slave init callback and notify slave to load
         if (slaveData.init) {
             slaveData.init(event.data);

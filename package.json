@@ -10,6 +10,9 @@
     "coverage": "istanbul cover _mocha test -- --recursive",
     "lint": "eslint src"
   },
+  "pre-commit": [
+    "test"
+  ],
   "repository": {
     "type": "git",
     "url": "ssh://git@phabricator.nsoft.ba/diffusion/GG/seven-gravity-gateway.git"
@@ -35,9 +38,10 @@
     "clean-webpack-plugin": "^0.1.16",
     "eslint": "^4.3.0",
     "istanbul": "^0.4.5",
-    "jsdom": "9.6.0",
-    "jsdom-global": "2.1.0",
+    "jsdom": "^9.6.0",
+    "jsdom-global": "^2.1.0",
     "mocha": "^3.1.0",
+    "pre-commit": "^1.2.2",
     "uglifyjs-webpack-plugin": "^0.4.6",
     "webpack": "^3.4.1"
   }
