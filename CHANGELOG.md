@@ -1,3 +1,9 @@
+## 1.1.4 (2017-09-06)
+
+####Fixed
+
+- Fix autoResize property on master frame (5cc275c84591)
+
 ## 1.1.1 (2017-08-09)
 
 ####Added
