@@ -531,11 +531,6 @@ var masterGateway = {
         pubSub.publish(event.data.action, event.data);
     },
 
-    slaveShown : function(event) {
-        logger.out('info', '[GG] Master:', 'Slave.Shown event received.', event.data);
-        pubSub.publish(event.data.action, event.data);
-    },
-
     subscribe: function (action, callback) {
         return pubSub.subscribe(action, callback);
     },

@@ -484,6 +484,11 @@ var slaveGateway = {
         }
     },
 
+    slaveShown : function(event) {
+        logger.out('info', '[GG] Slave:', 'Slave.Shown event received.', event.data);
+        pubSub.publish(event.data.action, event.data);
+    },
+
     masterEvent : function(event) {
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Publish Master.Event event.', event.data);
         pubSub.publish(event.data.action, event.data);
