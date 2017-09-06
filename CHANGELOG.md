@@ -1,3 +1,9 @@
+## 1.1.5 (2017-09-06)
+
+####Fixed
+
+- Fix module bundling for minified modules (18666b1001f8)
+
 ## 1.1.4 (2017-09-06)
 
 ####Fixed
