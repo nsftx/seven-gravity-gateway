@@ -134,7 +134,7 @@ var masterGateway = {
     slaveInit : function(event, slaveData) {
         logger.out('info', '[GG] Master:', 'Starting to load slave.', event.data);
 
-        if(typeof slaveData.autoResize !== 'undefined' && !Boolean(slaveData.autoResize)) {
+        if(typeof slaveData.autoResize !== 'undefined' && slaveData.autoResize !== true) {
             //On every init reset the frame sizes
             contentHandler.resetFrameSize(slaveData.frameId);
         }
@@ -152,7 +152,7 @@ var masterGateway = {
     slaveLoad : function(slaveData) {
         this.sendMessage(slaveData.frameId, {
             action : 'Slave.Load',
-            data: slaveData.data || {},
+            data: typeof slaveData.data === 'function' ? slaveData.data() : slaveData.data || {},
             autoResize : typeof slaveData.autoResize !== 'undefined' ? slaveData.autoResize : true
         });
     },
@@ -172,6 +172,11 @@ var masterGateway = {
 
     slaveEvent : function(event) {
         logger.out('info', '[GG] Master:', 'Slave.Event event received.', event.data);
+        pubSub.publish(event.data.action, event.data);
+    },
+
+    slaveShown : function(event) {
+        logger.out('info', '[GG] Master:', 'Slave.Shown event received.', event.data);
         pubSub.publish(event.data.action, event.data);
     },
 
