@@ -3,29 +3,34 @@ var Gateway = require('../src/slave_gateway'),
     dom = require('jsdom-global')(); //Inject dom in test because window deps
 
 describe('Slave gateway instantiation', function() {
-    var productInstance;
+    var slaveInstance;
+
+    it('Instantiation should fail - Configuration not passed', function() {
+        slaveInstance = Gateway();
+        assert.equal(slaveInstance, false);
+    });
 
     it('Instantiation should fail - productId missing', function() {
-        productInstance = Gateway({
+        slaveInstance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
             data : {
                 config : {}
             },
             load: function(){}
         });
-        assert.equal(productInstance, false);
+        assert.equal(slaveInstance, false);
     });
 
     it('Should return instance', function() {
-        productInstance = Gateway({
+        slaveInstance = Gateway({
             productId : 'Product',
             allowedOrigins : ['http://www.nsoft.ba']
         });
-        assert.equal(typeof productInstance, 'object');
+        assert.equal(typeof slaveInstance, 'object');
     });
 
     it('Should return instance', function() {
-        productInstance = Gateway({
+        slaveInstance = Gateway({
             productId : 'Product',
             allowedOrigins : ['http://www.nsoft.ba'],
             data : {
@@ -33,10 +38,10 @@ describe('Slave gateway instantiation', function() {
             },
             load: function(){}
         });
-        assert.equal(typeof productInstance, 'object');
+        assert.equal(typeof slaveInstance, 'object');
     });
 
     it('Instantiation should return existing instance', function() {
-        assert.strictEqual(Gateway(), productInstance);
+        assert.strictEqual(Gateway(), slaveInstance);
     });
 });

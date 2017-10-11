@@ -18,6 +18,10 @@ function validateSlavesConfig(slaves) {
 }
 
 function validateInitialization(config) {
+    if(!config) {
+        return false;
+    }
+
     var slaves = config.slaves || config.products,
         configValid;
 

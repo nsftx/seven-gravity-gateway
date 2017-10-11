@@ -6,6 +6,10 @@ var slavePorthole = require('./messaging/slave'),
     slaveProxy = require('./slave_proxy');
 
 function validateInitialization(config) {
+    if(!config) {
+        return false;
+    }
+    
     var slaveId = config.slaveId || config.productId;
 
     if(!slaveId || typeof slaveId !== 'string') {

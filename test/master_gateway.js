@@ -5,6 +5,11 @@ describe('Master gateway instantiation', function() {
     var instance,
         Gateway = require('../src/master_gateway');
 
+    it('Instantiation should fail - Configuration not passed', function() {
+        instance = Gateway();
+        assert.equal(instance, false);
+    });
+
     it('Instantiation should fail - frameId missing', function() {
         instance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
