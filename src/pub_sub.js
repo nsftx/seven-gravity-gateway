@@ -67,6 +67,10 @@ var pubSub = {
         }
     },
 
+    isSubscribed : function(actionName) {
+        return this.topics.hasOwnProperty(actionName);
+    },
+
     checkWildcardActions : function(actionName) {
         var pattern,
             newAction,

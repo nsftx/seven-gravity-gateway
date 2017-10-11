@@ -17,6 +17,16 @@ describe('Subscribe/Unsubscribe funcionality', function() {
         assert.equal(value, true);
     });
 
+    it('Is Subscribed: Should fail - Topic is not existent', function() {
+        var result = pubSub.isSubscribed('betslip.remove');
+        assert.equal(result, false);
+    });
+
+    it('Is Subscribed: Should pass - Topic exists', function() {
+        var result = pubSub.isSubscribed('betslip.add');
+        assert.equal(result, true);
+    });
+
     it('Unsubscribe: Should fail - Topic is not existent', function() {
         var result = pubSub.unsubscribe('betslip.remove');
         assert.equal(result, false);
