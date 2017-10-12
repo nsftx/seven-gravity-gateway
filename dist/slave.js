@@ -185,6 +185,10 @@ var pubSub = {
         }
     },
 
+    isSubscribed : function(actionName) {
+        return this.topics.hasOwnProperty(actionName);
+    },
+
     checkWildcardActions : function(actionName) {
         var pattern,
             newAction,
@@ -366,6 +370,10 @@ var slavePorthole = __webpack_require__(9),
     slaveProxy = __webpack_require__(11);
 
 function validateInitialization(config) {
+    if(!config) {
+        return false;
+    }
+    
     var slaveId = config.slaveId || config.productId;
 
     if(!slaveId || typeof slaveId !== 'string') {

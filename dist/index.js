@@ -185,6 +185,10 @@ var pubSub = {
         }
     },
 
+    isSubscribed : function(actionName) {
+        return this.topics.hasOwnProperty(actionName);
+    },
+
     checkWildcardActions : function(actionName) {
         var pattern,
             newAction,
@@ -374,6 +378,10 @@ function validateSlavesConfig(slaves) {
 }
 
 function validateInitialization(config) {
+    if(!config) {
+        return false;
+    }
+
     var slaves = config.slaves || config.products,
         configValid;
 
@@ -599,17 +607,22 @@ module.exports = new Porthole();
 var contentHandler = {
 
     resetFrameSize : function(frameId) {
-        var frame = document.getElementById(frameId);
-        if(frame) {
-            frame.style.height = '0px';
-        }
+        requestAnimationFrame(function() {
+            var frame = document.getElementById(frameId);
+            if(frame) {
+                frame.style.height = event.data.height + 'px';
+            }
+        })
     },
 
     resize : function(frameId, event) {
-        var frame = document.getElementById(frameId);
-        if(frame) {
-            frame.style.height = event.data.height + 'px';
-        }
+        requestAnimationFrame(function() {
+            var frame = document.getElementById(frameId);
+            if(frame) {
+                frame.style.height = event.data.height + 'px';
+            }
+        })
+
     }
 };
 
@@ -633,6 +646,10 @@ var slavePorthole = __webpack_require__(9),
     slaveProxy = __webpack_require__(11);
 
 function validateInitialization(config) {
+    if(!config) {
+        return false;
+    }
+    
     var slaveId = config.slaveId || config.productId;
 
     if(!slaveId || typeof slaveId !== 'string') {
