@@ -18,6 +18,16 @@ describe('Subscribe/Unsubscribe funcionality', function() {
         assert.equal(value, true);
     });
 
+    it('`On` for subscribe: Should be successful', function() {
+        var value = null;
+        pubSub.on('betslip.on', function() {
+                value = true;
+            }
+        );
+        pubSub.publish('betslip.on', 'Dummy Text');
+        assert.equal(value, true);
+    });
+
     it('Is Subscribed: Should fail - Topic is not existent', function() {
         var result = pubSub.isSubscribed('betslip.remove');
         assert.equal(result, false);
@@ -31,6 +41,16 @@ describe('Subscribe/Unsubscribe funcionality', function() {
     it('Unsubscribe: Should fail - Topic is not existent', function() {
         var result = pubSub.unsubscribe('betslip.remove');
         assert.equal(result, false);
+    });
+
+    it('`Off` for unsubscribe: Should be successful', function() {
+        var result;
+        pubSub.subscribe('betslip.off', function(){
+            //Placeholder
+        });
+
+        result = pubSub.off('betslip.off');
+        assert.equal(result, true);
     });
 
     it('Unsubscribe: Should be successful', function() {
@@ -63,8 +83,7 @@ describe('Publish funcionality', function() {
 
     it('Publish: Should be successful', function() {
         var value = null;
-        pubSub.subscribe('betslip.add',
-            function() {
+        pubSub.subscribe('betslip.add', function() {
                 value = true;
             }
         );
@@ -135,7 +154,7 @@ describe('Subscription and callback execute', function() {
 
         assert.equal(testVal1 === null, testVal2 === true);
     });
-})
+});
 
 describe('Clear subscriptions', function() {
     var pubSub = require('../src/pub_sub');

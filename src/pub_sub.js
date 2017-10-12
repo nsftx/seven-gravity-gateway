@@ -105,4 +105,8 @@ var pubSub = {
     }
 };
 
+//Add aliases
+pubSub.on = pubSub.subscribe;
+pubSub.off = pubSub.unsubscribe;
+
 module.exports = pubSub;
