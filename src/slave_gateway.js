@@ -157,6 +157,11 @@ var slaveGateway = {
     }
 };
 
+//Add aliases
+slaveGateway.on = slaveGateway.subscribe;
+slaveGateway.off = slaveGateway.unsubscribe;
+slaveGateway.fire = slaveGateway.sendMessage;
+
 module.exports = function(config) {
     if(config && config.debug === true) {
         logger.debug = true;

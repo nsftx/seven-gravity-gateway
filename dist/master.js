@@ -223,6 +223,10 @@ var pubSub = {
     }
 };
 
+//Add aliases
+pubSub.on = pubSub.subscribe;
+pubSub.off = pubSub.unsubscribe;
+
 module.exports = pubSub;
 
 /***/ }),
@@ -573,6 +577,11 @@ var masterGateway = {
         masterPorthole.sendMessage(frame, data, origin);
     }
 };
+
+//Add aliases
+masterGateway.on = masterGateway.subscribe;
+masterGateway.off = masterGateway.unsubscribe;
+masterGateway.fire = masterGateway.sendMessage;
 
 /**
  * Gateway is singleton

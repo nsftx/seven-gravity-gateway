@@ -223,6 +223,10 @@ var pubSub = {
     }
 };
 
+//Add aliases
+pubSub.on = pubSub.subscribe;
+pubSub.off = pubSub.unsubscribe;
+
 module.exports = pubSub;
 
 /***/ }),
@@ -531,6 +535,11 @@ var slaveGateway = {
         slavePorthole.sendMessage(data, origin);
     }
 };
+
+//Add aliases
+slaveGateway.on = slaveGateway.subscribe;
+slaveGateway.off = slaveGateway.unsubscribe;
+slaveGateway.fire = slaveGateway.sendMessage;
 
 module.exports = function(config) {
     if(config && config.debug === true) {

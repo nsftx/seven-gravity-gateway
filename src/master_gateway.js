@@ -203,6 +203,11 @@ var masterGateway = {
     }
 };
 
+//Add aliases
+masterGateway.on = masterGateway.subscribe;
+masterGateway.off = masterGateway.unsubscribe;
+masterGateway.fire = masterGateway.sendMessage;
+
 /**
  * Gateway is singleton
  * If it is already initialized return the Gateway otherwise return false
