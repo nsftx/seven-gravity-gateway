@@ -1,7 +1,8 @@
 var assert = require('assert');
 
 describe('Subscribe/Unsubscribe funcionality', function() {
-    var pubSub = require('../src/pub_sub');
+    var pubSub = require('../src/pub_sub'),
+        onceValue;
 
     it('Subscribe: Should fail - callback missing', function() {
         var result = pubSub.subscribe('betslip.add');
@@ -35,6 +36,25 @@ describe('Subscribe/Unsubscribe funcionality', function() {
     it('Unsubscribe: Should be successful', function() {
         var result = pubSub.unsubscribe('betslip.add');
         assert.equal(result, true);
+    });
+
+    it('Subscribe once: Should be succesfull', function() {
+        var result = pubSub.once('betslip.edit', function() {
+            onceValue = true;
+        });
+        var value = typeof result === 'object';
+
+        assert.equal(value, true);
+    });
+
+    it('Executing once subscription: Should be succesfull', function() {
+        pubSub.publish('betslip.edit', 'Dummy Text');
+        assert.equal(onceValue, true);
+    });
+
+    it('Once subscription doesn`t exists: Should be succesfull', function() {
+        var subscription = pubSub.isSubscribed('betslip.edit');
+        assert.equal(subscription, false);
     });
 });
 

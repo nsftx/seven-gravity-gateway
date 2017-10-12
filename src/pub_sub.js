@@ -15,16 +15,27 @@ var pubSub = {
             }
             index = this.topics[action].push(callback) - 1;
 
-            //Return remove to unsubscripe single susbcription
+            //Return remove to un subscribe from single subscription
             return {
                 remove: function() {
-                    delete self.topics[action][index];
+                    self.topics[action].splice(index, 1);
                 }
             };
         } else {
             logger.out('error', 'Subscribe failed - action property is invalid or missing.');
             return false;
         }
+    },
+
+    once : function(action, callback) {
+        var subscription = false;
+        if(typeof callback === 'function') {
+            subscription = this.subscribe(action, function() {
+                callback();
+                subscription.remove();
+            });
+        }
+        return subscription;
     },
 
     unsubscribe : function(action) {
@@ -68,7 +79,7 @@ var pubSub = {
     },
 
     isSubscribed : function(actionName) {
-        return this.topics.hasOwnProperty(actionName);
+        return this.topics.hasOwnProperty(actionName) && this.topics[actionName].length;
     },
 
     checkWildcardActions : function(actionName) {
