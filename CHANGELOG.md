@@ -1,3 +1,18 @@
+## 1.2.0 (2017-10-17)
+
+####Fixed
+
+- Fix exception when config is missing (T37777)
+
+####Changed
+
+- Remove resize event from list of listeners (d40d797d51e7)
+
+####Added
+
+- Add aliases for methods `subscribe`, `unsubscribe`, `sendMessage`, `sendMessageAsync` (T37777)
+- Add support for async message exchange (T37777)
+
 ## 1.1.5 (2017-09-06)
 
 ####Fixed
