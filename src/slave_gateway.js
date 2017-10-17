@@ -146,6 +146,10 @@ var slaveGateway = {
         return pubSub.once(action, callback);
     },
 
+    isSubscribed : function(action) {
+        return pubSub.isSubscribed(action);
+    },
+
     subscribe : function(action, callback) {
         return pubSub.subscribe(action, callback);
     },
