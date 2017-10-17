@@ -2,6 +2,7 @@ var masterPorthole = require('./messaging/master'),
     pubSub = require('./pub_sub'),
     contentHandler = require('./content_handler/master_handler'),
     logger = require('./utils/utils').logger,
+    uuidv4 = require('./utils/utils').uuidv4,
     eventHandler = require('./event_dispatching/event_handler');
 
 function validateSlavesConfig(slaves) {
@@ -95,7 +96,10 @@ var masterGateway = {
     },
 
     handleMessage: function (event) {
-        if (!event.data.msgSender || event.data.msgSender === this.msgSender) return false;
+        if (!event.data.msgSender || event.data.msgSender === this.msgSender) {
+            logger.out('warn', '[GG] Master: Event data missing sender info.', event);
+            return false;
+        }
 
         var masterPattern,
             slavePattern;
@@ -179,6 +183,10 @@ var masterGateway = {
         pubSub.publish(event.data.action, event.data);
     },
 
+    once: function (action, callback) {
+        return pubSub.once(action, callback);
+    },
+
     subscribe: function (action, callback) {
         return pubSub.subscribe(action, callback);
     },
@@ -197,16 +205,45 @@ var masterGateway = {
             logger.out('warn', '[GG] Master:', 'Frame ' + frameId + ' is non existent.');
             return false;
         }
-
         data.msgSender = this.msgSender;
         masterPorthole.sendMessage(frame, data, origin);
+    },
+
+    sendMessageAsync : function(frameId, data, origin, rejectDuration){
+        var self = this,
+            rejectTimeout = null,
+            subscription;
+
+        rejectDuration = rejectDuration || 0;
+
+        return new Promise(function(resolve, reject) {
+            data.asyncId = data.action + '_' + uuidv4();
+
+            subscription = self.once(data.asyncId, function(response) {
+                logger.out('info', '[GG] Master: Promise resolved for event ' + data.action, response);
+                clearTimeout(rejectTimeout);
+                rejectTimeout = null;
+                resolve(response);
+            });
+
+            if(rejectDuration) {
+                rejectTimeout = setTimeout(function() {
+                    logger.out('info', '[GG] Master: Promise rejected for event ' + data.action);
+                    subscription.remove();
+                    reject();
+                }, rejectDuration)
+            }
+
+            self.sendMessage(frameId, data, origin);
+        });
     }
 };
 
 //Add aliases
 masterGateway.on = masterGateway.subscribe;
 masterGateway.off = masterGateway.unsubscribe;
-masterGateway.fire = masterGateway.sendMessage;
+masterGateway.emit = masterGateway.sendMessage;
+masterGateway.emitAsync = masterGateway.sendMessageAsync;
 
 /**
  * Gateway is singleton

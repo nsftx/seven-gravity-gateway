@@ -3,6 +3,7 @@ var slavePorthole = require('./messaging/slave'),
     contentHandler = require('./content_handler/slave_handler'),
     logger = require('./utils/utils').logger,
     eventHandler = require('./event_dispatching/event_handler'),
+    uuidv4 = require('./utils/utils').uuidv4,
     slaveProxy = require('./slave_proxy');
 
 function validateInitialization(config) {
@@ -69,7 +70,10 @@ var slaveGateway = {
     },
 
     handleMessage : function(event) {
-        if(!event.data.msgSender || event.data.msgSender === this.msgSender) return false;
+        if(!event.data.msgSender || event.data.msgSender === this.msgSender){
+            logger.out('warn', '[GG] Slave.' +  this.slaveId + ': Event data missing sender info.', event);
+            return false;
+        }
 
         var slavePattern,
             masterPattern;
@@ -138,6 +142,10 @@ var slaveGateway = {
         pubSub.publish(event.data.action, event.data);
     },
 
+    once : function(action, callback) {
+        return pubSub.once(action, callback);
+    },
+
     subscribe : function(action, callback) {
         return pubSub.subscribe(action, callback);
     },
@@ -154,13 +162,43 @@ var slaveGateway = {
         data.slaveId = this.slaveId;
         data.msgSender = 'Slave';
         slavePorthole.sendMessage(data, origin);
+    },
+
+    sendMessageAsync : function(data, origin, rejectDuration){
+        var self = this,
+            rejectTimeout = null,
+            subscription;
+
+        rejectDuration = rejectDuration || 0;
+
+        return new Promise(function(resolve, reject) {
+            data.asyncId = data.action + '_' + uuidv4();
+
+            subscription = self.once(data.asyncId, function() {
+                logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise resolved for event ' + data.action);
+                clearTimeout(rejectTimeout);
+                rejectTimeout = null;
+                resolve();
+            });
+
+            if(rejectDuration) {
+                rejectTimeout = setTimeout(function() {
+                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise rejected for event ' + data.action);
+                    subscription.remove();
+                    reject();
+                }, rejectDuration)
+            }
+
+            self.sendMessage(data, origin);
+        });
     }
 };
 
 //Add aliases
 slaveGateway.on = slaveGateway.subscribe;
 slaveGateway.off = slaveGateway.unsubscribe;
-slaveGateway.fire = slaveGateway.sendMessage;
+slaveGateway.emit = slaveGateway.sendMessage;
+slaveGateway.emitAsync = slaveGateway.sendMessageAsync;
 
 module.exports = function(config) {
     if(config && config.debug === true) {

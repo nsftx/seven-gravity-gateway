@@ -106,10 +106,18 @@ var throttle = function(fn, wait) {
     };
 };
 
+var uuidv4 = function () {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0,
+            v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
 
 module.exports = {
     logger : logger,
-    throttle : throttle
+    throttle : throttle,
+    uuidv4 : uuidv4
 };
 
 /***/ }),
@@ -377,6 +385,7 @@ var masterPorthole = __webpack_require__(5),
     pubSub = __webpack_require__(1),
     contentHandler = __webpack_require__(6),
     logger = __webpack_require__(0).logger,
+    uuidv4 = __webpack_require__(0).uuidv4,
     eventHandler = __webpack_require__(2);
 
 function validateSlavesConfig(slaves) {
@@ -470,7 +479,10 @@ var masterGateway = {
     },
 
     handleMessage: function (event) {
-        if (!event.data.msgSender || event.data.msgSender === this.msgSender) return false;
+        if (!event.data.msgSender || event.data.msgSender === this.msgSender) {
+            logger.out('warn', '[GG] Master: Event data missing sender info.', event);
+            return false;
+        }
 
         var masterPattern,
             slavePattern;
@@ -554,6 +566,10 @@ var masterGateway = {
         pubSub.publish(event.data.action, event.data);
     },
 
+    once: function (action, callback) {
+        return pubSub.once(action, callback);
+    },
+
     subscribe: function (action, callback) {
         return pubSub.subscribe(action, callback);
     },
@@ -572,16 +588,45 @@ var masterGateway = {
             logger.out('warn', '[GG] Master:', 'Frame ' + frameId + ' is non existent.');
             return false;
         }
-
         data.msgSender = this.msgSender;
         masterPorthole.sendMessage(frame, data, origin);
+    },
+
+    sendMessageAsync : function(frameId, data, origin, rejectDuration){
+        var self = this,
+            rejectTimeout = null,
+            subscription;
+
+        rejectDuration = rejectDuration || 0;
+
+        return new Promise(function(resolve, reject) {
+            data.asyncId = data.action + '_' + uuidv4();
+
+            subscription = self.once(data.asyncId, function(response) {
+                logger.out('info', '[GG] Master: Promise resolved for event ' + data.action, response);
+                clearTimeout(rejectTimeout);
+                rejectTimeout = null;
+                resolve(response);
+            });
+
+            if(rejectDuration) {
+                rejectTimeout = setTimeout(function() {
+                    logger.out('info', '[GG] Master: Promise rejected for event ' + data.action);
+                    subscription.remove();
+                    reject();
+                }, rejectDuration)
+            }
+
+            self.sendMessage(frameId, data, origin);
+        });
     }
 };
 
 //Add aliases
 masterGateway.on = masterGateway.subscribe;
 masterGateway.off = masterGateway.unsubscribe;
-masterGateway.fire = masterGateway.sendMessage;
+masterGateway.emit = masterGateway.sendMessage;
+masterGateway.emitAsync = masterGateway.sendMessageAsync;
 
 /**
  * Gateway is singleton
@@ -663,6 +708,7 @@ var slavePorthole = __webpack_require__(9),
     contentHandler = __webpack_require__(10),
     logger = __webpack_require__(0).logger,
     eventHandler = __webpack_require__(2),
+    uuidv4 = __webpack_require__(0).uuidv4,
     slaveProxy = __webpack_require__(11);
 
 function validateInitialization(config) {
@@ -729,7 +775,10 @@ var slaveGateway = {
     },
 
     handleMessage : function(event) {
-        if(!event.data.msgSender || event.data.msgSender === this.msgSender) return false;
+        if(!event.data.msgSender || event.data.msgSender === this.msgSender){
+            logger.out('warn', '[GG] Slave.' +  this.slaveId + ': Event data missing sender info.', event);
+            return false;
+        }
 
         var slavePattern,
             masterPattern;
@@ -798,6 +847,10 @@ var slaveGateway = {
         pubSub.publish(event.data.action, event.data);
     },
 
+    once : function(action, callback) {
+        return pubSub.once(action, callback);
+    },
+
     subscribe : function(action, callback) {
         return pubSub.subscribe(action, callback);
     },
@@ -814,13 +867,43 @@ var slaveGateway = {
         data.slaveId = this.slaveId;
         data.msgSender = 'Slave';
         slavePorthole.sendMessage(data, origin);
+    },
+
+    sendMessageAsync : function(data, origin, rejectDuration){
+        var self = this,
+            rejectTimeout = null,
+            subscription;
+
+        rejectDuration = rejectDuration || 0;
+
+        return new Promise(function(resolve, reject) {
+            data.asyncId = data.action + '_' + uuidv4();
+
+            subscription = self.once(data.asyncId, function() {
+                logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise resolved for event ' + data.action);
+                clearTimeout(rejectTimeout);
+                rejectTimeout = null;
+                resolve();
+            });
+
+            if(rejectDuration) {
+                rejectTimeout = setTimeout(function() {
+                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise rejected for event ' + data.action);
+                    subscription.remove();
+                    reject();
+                }, rejectDuration)
+            }
+
+            self.sendMessage(data, origin);
+        });
     }
 };
 
 //Add aliases
 slaveGateway.on = slaveGateway.subscribe;
 slaveGateway.off = slaveGateway.unsubscribe;
-slaveGateway.fire = slaveGateway.sendMessage;
+slaveGateway.emit = slaveGateway.sendMessage;
+slaveGateway.emitAsync = slaveGateway.sendMessageAsync;
 
 module.exports = function(config) {
     if(config && config.debug === true) {
