@@ -35,7 +35,7 @@ var Gateway = window.gateway.slave;
 To load both modules:
 ```
 lang=javascript
-require('seven-gravity-gateway')
+import Gateway from 'seven-gravity-gateway';
 ```
 
 Result with be object with `master` and `slave` properties
@@ -45,13 +45,7 @@ We can load separately `master` or `slave` module by requiring:
 For master:
 ```
 lang=javascript
-require('seven-gravity-gateway/master')
-```
-
-For slave:
-```
-lang=javascript
-require('seven-gravity-gateway/slave')
+import Gateway from 'seven-gravity-gateway/master';
 ```
 
 =Usage=
@@ -229,7 +223,22 @@ lang=javascript
 
 It is possible to use namespaced subscriptions. e.g. If one of the products subscribes to !!betslip.*!! action with proper callback, events !!betslip.add!!, !!betslip.remove!! will trigger the !!betslip.*!! callback. It is possible to subscribe using !!*!! wildcard, meaning that every message will trigger registered callback.
 
+Service provides `isSubscribed` method which allows us to check if there is existing subscription(s) for event. Return value  is boolean.
+
+(NOTE) Alias: `on`
+
 IMPORTANT: Mesagess prefixed with Master and Slave are system reserved messages and therefore they will be ignored
+
+==One time subscription==
+
+It is possible to subscribe once by calling `once` method:
+
+```
+lang=javascript
+{gatewayInstance}.once('betslip.add',function)
+```
+
+After event `betslip.add` occurs, subscription will be automatically disposed.
 
 ==Event propagation==
 
@@ -282,6 +291,49 @@ lang=javascript
 
 Object must contain name of action. Origin param is the origin of sender. That origin must be enabled in platform gateway in order to process the message. If origin is obeyed origin will be set to ‘*’,
 
+(NOTE) Alias: `emit`
+
+==Async message exchange==
+
+It is possible to send master <-> slave messages with use of promises.
+
+**Master -> Slave**
+
+```
+lang=javascript
+{gatewayInstance}.sendAsyncMessage(frameId, {
+    action : 'betslip.add',
+}, origin, rejectTimeout).then(resolve, reject)
+```
+
+`rejectTimeout` is optional but it can be used for fallback if our promise is never resolved.
+
+**Slave -> Master**
+
+```
+lang=javascript
+{gatewayInstance}.sendAsyncMessage({
+    action : 'betslip.add',
+}, origin, rejectTimeout).then(resolve, reject)
+```
+
+Every async message has `asyncId` property which is combination of event + uuid. Responding to the initial event with that asyncId will 
+trigger promise resolve inside sender's frame. To be more clearer here is an example:
+
+```
+lang=javascript
+{gatewayInstance}.subscribe('betslip.add', (message) => {
+    if(message.asyncId) {
+        {gatewayInstance}.sendMessage(frameId, {
+            data: {},
+            action: message.asyncId,
+        }, '*'); 
+    }
+});
+```
+
+(NOTE) Alias: `emitAsync`
+
 ==Unsubscribe==
 
 Unsubscribe format:
@@ -291,6 +343,8 @@ lang=javascript
 ```
 
 Unsubscribe will remove subscribed event and all registered callbacks.
+
+(NOTE) Alias: `off`
 
 =====3.3.5. Single listener unsubscribe
 
