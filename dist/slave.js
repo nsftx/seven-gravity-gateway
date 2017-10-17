@@ -591,7 +591,6 @@ var OBSERVED_EVENTS = [
         {type: 'Animation Iteration',   eventName : ['animationiteration','webkitAnimationIteration']},
         {type: 'Animation End',         eventName : ['animationend','webkitAnimationEnd']},
         {type: 'Input',                 eventName : 'input'},
-        {type: 'Resize',                eventName : 'resize'},
         {type: 'Click',                 eventName : 'click'},
         {type: 'Orientation Change',    eventName : 'orientationchange'},
         {type: 'Print',                 eventName : ['afterprint', 'beforeprint']},
