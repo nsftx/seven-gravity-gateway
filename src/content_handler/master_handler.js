@@ -4,7 +4,7 @@ var contentHandler = {
         requestAnimationFrame(function() {
             var frame = document.getElementById(frameId);
             if(frame) {
-                frame.style.height = event.data.height + 'px';
+                frame.style.height = '0px';
             }
         })
     },
