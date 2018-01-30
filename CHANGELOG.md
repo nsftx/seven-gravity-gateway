@@ -1,3 +1,8 @@
+## 1.3.0 (2018-01-30)
+
+####Added
+- Add `getAll` and `sendToAll` to master API (rGG66f5c3c089b1)
+
 ## 1.2.6 (2018-01-29)
 
 ####Changed
