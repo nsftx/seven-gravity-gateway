@@ -1,7 +1,8 @@
 ## 1.3.0 (2018-01-30)
 
 ####Added
-- Add `getAll` and `sendToAll` to master API (rGG66f5c3c089b1)
+- Add `getAll` and `sendToAll` to master API (66f5c3c089b1)
+- Support `Slave.AddEvent` msg and add method for manual event extend (750243cc9c68)
 
 ## 1.2.6 (2018-01-29)
 
