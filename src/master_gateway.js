@@ -77,6 +77,10 @@ var masterGateway = {
         this.slaves[slaveId] = config;
     },
 
+    getAll: function () {
+        return this.slaves;
+    },
+
     removeSlave: function(slaveId) {
         if(slaveId && this.slaves[slaveId]) {
             delete this.slaves[slaveId];
@@ -240,6 +244,18 @@ var masterGateway = {
 
             self.sendMessage(frameId, data, origin);
         });
+    },
+
+    sendToAll: function (data, origin) {
+        var self = this;
+        if(!Object.keys(this.slaves).length) {
+            logger.out('info', '[GG] Master:', 'No slaves are registered', data);
+            return false;
+        }
+
+        for(var key in this.slaves) {
+            self.sendMessage(this.slaves[key].frameId, data, origin);
+        }
     }
 };
 

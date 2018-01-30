@@ -93,4 +93,29 @@ describe('Master gateway instantiation', function() {
         assert.strictEqual(Gateway(), instance);
     });
 
+    it('Send msg to all slaves should fail', function() {
+        var result;
+        instance.removeSlave('product');
+        result = instance.sendToAll('Test msg', '*');
+
+        assert.equal(result, false);
+    });
+
+    it('Send msg to all slaves should pass', function() {
+        var result;
+        instance.addSlave({
+            frameId : 'dummy',
+            slaveId : 'dummy'
+        });
+        result = instance.sendToAll('Test msg', '*');
+
+        assert.equal(result, undefined);
+    });
+
+    it('Get all slaves should pass', function () {
+        var result = instance.getAll();
+
+        assert.equal(Object.keys(result).length ,1);
+    })
+
 });
