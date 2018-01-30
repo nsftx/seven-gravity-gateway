@@ -10,14 +10,27 @@ function EventHandler(config, eventCb, eventName) {
     this.config = config;
     this.eventCallback = eventCb;
     this.eventName = eventName;
-    this.addEventListeners();
+    this.addEventListeners(config);
 }
 
 EventHandler.prototype = {
 
-    addEventListeners : function() {
-        for(var event in this.config) {
-            window.addEventListener(event, this.handleEvent.bind(this));
+    addEventListeners : function(config) {
+        var self = this;
+        for(var event in config) {
+            if(!this.config[event]) {
+                // Assing new event listener
+                window.addEventListener(event, this.handleEvent.bind(this));
+            } else {
+                // Extend current
+                if(Array.isArray(config[event])) {
+                    // Concat events and de duplicate them
+                    var events = this.config[event].concat(config[event]);
+                    self.config[event] = events.filter(function (item, pos) {
+                        return self.config.indexOf(item) === pos;
+                    });
+                }
+            }
         }
     },
 

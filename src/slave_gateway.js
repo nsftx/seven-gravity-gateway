@@ -69,6 +69,14 @@ var slaveGateway = {
         });
     },
 
+    addEventsForPropagation : function (config) {
+        if(typeof config !== 'object' || Array.isArray(config)) {
+            logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Invalid configuration for events passed');
+            return false;
+        }
+        eventHandler.addEventListeners(config);
+    },
+
     handleMessage : function(event) {
         if(!event.data.msgSender || event.data.msgSender === this.msgSender){
             logger.out('warn', '[GG] Slave.' +  this.slaveId + ': Event data missing sender info.', event);
@@ -135,6 +143,10 @@ var slaveGateway = {
     slaveShown : function(event) {
         logger.out('info', '[GG] Slave:', 'Slave.Shown event received.', event.data);
         pubSub.publish(event.data.action, event.data);
+    },
+
+    slaveAddEvents : function (config) {
+        this.addEventsForPropagation(config);
     },
 
     masterEvent : function(event) {
