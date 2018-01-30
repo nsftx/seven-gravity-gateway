@@ -74,7 +74,12 @@ var slaveGateway = {
             logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Invalid configuration for events passed');
             return false;
         }
-        eventHandler.addEventListeners(config);
+
+        if(eventHandler instanceof 'EventHandler') {
+            eventHandler.addEventListeners(config);
+        } else {
+            eventHandler(this.config.eventPropagation, this.sendMessage.bind(this), 'Slave.Event');
+        }
     },
 
     handleMessage : function(event) {
