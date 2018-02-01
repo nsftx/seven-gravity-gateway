@@ -1,3 +1,8 @@
+## 1.3.1 (2018-02-01)
+
+####Fixed
+- Fix event deduplication typo (T43667)
+
 ## 1.3.0 (2018-01-30)
 
 ####Added
