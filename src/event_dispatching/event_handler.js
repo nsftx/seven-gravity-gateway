@@ -27,7 +27,7 @@ EventHandler.prototype = {
                     // Concat events and de duplicate them
                     var events = this.config[event].concat(config[event]);
                     self.config[event] = events.filter(function (item, pos) {
-                        return self.config.indexOf(item) === pos;
+                        return events.indexOf(item) === pos;
                     });
                 }
             }
