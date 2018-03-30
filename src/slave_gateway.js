@@ -83,7 +83,8 @@ var slaveGateway = {
     },
 
     handleMessage : function(event) {
-        if(!event.data.msgSender || event.data.msgSender === this.msgSender){
+        if (event.data.plugin !== 'GravityGateway') return false;
+        if (!event.data.msgSender || event.data.msgSender === this.msgSender){
             logger.out('warn', '[GG] Slave.' +  this.slaveId + ': Event data missing sender info.', event);
             return false;
         }
@@ -194,6 +195,7 @@ var slaveGateway = {
     sendMessage : function(data, origin) {
         data.slaveId = this.slaveId;
         data.msgSender = 'Slave';
+        data.plugin = 'GravityGateway';
         slavePorthole.sendMessage(data, origin);
     },
 

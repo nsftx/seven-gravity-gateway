@@ -100,6 +100,7 @@ var masterGateway = {
     },
 
     handleMessage: function (event) {
+        if (event.data.plugin !== 'GravityGateway') return false;
         if (!event.data.msgSender || event.data.msgSender === this.msgSender) {
             logger.out('warn', '[GG] Master: Event data missing sender info.', event);
             return false;
@@ -226,6 +227,7 @@ var masterGateway = {
             return false;
         }
         data.msgSender = this.msgSender;
+        data.plugin = 'GravityGateway';
         masterPorthole.sendMessage(frame, data, origin);
     },
 
