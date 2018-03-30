@@ -83,7 +83,7 @@ var slaveGateway = {
     },
 
     handleMessage : function(event) {
-        if (event.data.plugin !== 'GravityGateway') return false;
+        if (event.plugin !== 'GravityGateway') return false;
         if (!event.data.msgSender || event.data.msgSender === this.msgSender){
             logger.out('warn', '[GG] Slave.' +  this.slaveId + ': Event data missing sender info.', event);
             return false;
@@ -92,10 +92,9 @@ var slaveGateway = {
         var slavePattern,
             masterPattern,
             originValid = false;
-
         if (this.allowedOrigins !== '*') {
             for(var i = 0; i < this.allowedOrigins.length; i++) {
-                if(event.origin.match(allowedOrigins[i])){
+                if(event.origin.match(this.allowedOrigins[i])){
                     originValid = true;
                     break;
                 }
