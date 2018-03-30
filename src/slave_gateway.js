@@ -89,9 +89,21 @@ var slaveGateway = {
         }
 
         var slavePattern,
-            masterPattern;
+            masterPattern,
+            originValid = false;
 
-        if(this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
+        if (this.allowedOrigins !== '*') {
+            for(var i = 0; i < this.allowedOrigins.length; i++) {
+                if(event.origin.match(allowedOrigins[i])){
+                    originValid = true;
+                    break;
+                }
+            }
+        } else {
+            originValid = true;
+        }
+
+        if(!originValid) {
             logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Message origin is not allowed');
             return false;
         }

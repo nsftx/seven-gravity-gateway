@@ -92,7 +92,7 @@ var masterGateway = {
     },
 
     setAllowedDomains: function () {
-        if (this.config && this.config.allowedOrigins) {
+        if (this.config && this.config.allowedOrigins && Array.isArray(this.config.allowedOrigins)) {
             this.allowedOrigins = this.config.allowedOrigins;
         } else {
             this.allowedOrigins = '*';
@@ -106,9 +106,21 @@ var masterGateway = {
         }
 
         var masterPattern,
-            slavePattern;
+            slavePattern,
+            originValid = false;
 
-        if (this.allowedOrigins !== '*' && this.allowedOrigins.indexOf(event.origin) === -1) {
+        if (this.allowedOrigins !== '*') {
+            for(var i = 0; i < this.allowedOrigins.length; i++) {
+                if(event.origin.match(allowedOrigins[i])){
+                    originValid = true;
+                    break;
+                }
+            }
+        } else {
+            originValid = true;
+        }
+
+        if(!originValid) {
             logger.out('error', '[GG] Master: Message origin is not allowed');
             return false;
         }
