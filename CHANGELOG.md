@@ -1,3 +1,12 @@
+## 1.4.0 (2018-03-30)
+
+####Added
+- Add option to declare domain for msg exchange(be46f36a0a4b)
+
+####Changed
+
+- Ignore spammy non gateway messages (ddedbaf07dd6)
+
 ## 1.3.1 (2018-02-01)
 
 ####Fixed
