@@ -10,32 +10,38 @@ function EventHandler(config, eventCb, eventName) {
     this.config = config;
     this.eventCallback = eventCb;
     this.eventName = eventName;
-    this.addEventListeners(config);
+    this.initEventListeners();
 }
 
 EventHandler.prototype = {
 
+    initEventListeners : function() {
+        for(var event in this.config) {
+            window.addEventListener(event, this.handleEvent.bind(this));
+        }
+    },
+
     addEventListeners : function(config) {
         var self = this;
+
         for(var event in config) {
             if(!this.config[event]) {
                 // Assing new event listener
+                this.config[event] = config[event];
                 window.addEventListener(event, this.handleEvent.bind(this));
-            } else {
-                // Extend current
-                if(Array.isArray(config[event])) {
-                    // Concat events and de duplicate them
-                    var events = this.config[event].concat(config[event]);
-                    self.config[event] = events.filter(function (item, pos) {
-                        return events.indexOf(item) === pos;
-                    });
-                }
+            } else if(this.config[event] && Array.isArray(config[event])) {
+                // Extend current - concat events and de duplicate them
+                var events = this.config[event].concat(config[event]);
+                self.config[event] = events.filter(function (item, pos) {
+                    return events.indexOf(item) === pos;
+                });
+            } else if (this.config[event] && !Array.isArray(config[event])){
+                window.addEventListener(event, this.handleEvent.bind(this));
             }
         }
     },
 
     handleEvent : function(e) {
-
         var eventType = e.type.toLowerCase();
 
         if(eventType === 'click') {
