@@ -1,3 +1,8 @@
+## 1.4.4 (2018-04-04)
+
+####Fixed
+- Revert resize event handler (T46818)
+
 ## 1.4.3 (2018-04-04)
 
 ####Fixed
