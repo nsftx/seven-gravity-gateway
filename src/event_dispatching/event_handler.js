@@ -10,16 +10,24 @@ function EventHandler(config, eventCb, eventName) {
     this.config = config;
     this.eventCallback = eventCb;
     this.eventName = eventName;
-    this.addEventListeners(config);
+    this.initEventListeners();
 }
 
 EventHandler.prototype = {
 
+    initEventListeners : function() {
+        for(var event in this.config) {
+            window.addEventListener(event, this.handleEvent.bind(this));
+        }
+    },
+
     addEventListeners : function(config) {
         var self = this;
+
         for(var event in config) {
             if(!this.config[event]) {
                 // Assing new event listener
+                this.config[event] = config[event];
                 window.addEventListener(event, this.handleEvent.bind(this));
             } else {
                 // Extend current
@@ -35,7 +43,6 @@ EventHandler.prototype = {
     },
 
     handleEvent : function(e) {
-
         var eventType = e.type.toLowerCase();
 
         if(eventType === 'click') {
