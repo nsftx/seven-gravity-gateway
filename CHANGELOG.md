@@ -1,3 +1,8 @@
+## 1.4.5 (2018-04-26)
+
+####Fixed
+- Ignore spammy non gateway messages vol 2(d4bde4dc2b21)
+
 ## 1.4.4 (2018-04-04)
 
 ####Fixed
