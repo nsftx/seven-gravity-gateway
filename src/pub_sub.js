@@ -49,17 +49,19 @@ var pubSub = {
     },
 
     publish : function(action, data) {
-        var topicAction = this.findAction(action);
+        var topicAction = this.findAction(action),
+            returnData = false;
 
         if(!topicAction) {
             logger.out('error', 'Publish failed - topic ' + action + ' doesn´t exist');
             return false;
         } else {
             topicAction.forEach(function(callback) {
-                callback(data !== undefined ? data : {});
+                returnData = callback(data !== undefined ? data : {});
             });
         }
 
+        if(returnData) return returnData;
     },
 
     clearSubscriptions : function() {

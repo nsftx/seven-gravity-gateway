@@ -106,6 +106,7 @@ var masterGateway = {
 
         var masterPattern,
             slavePattern,
+            returnData,
             originValid = false;
 
         if (this.allowedOrigins !== '*') {
@@ -134,7 +135,16 @@ var masterGateway = {
         }
 
         logger.out('info', '[GG] Master: Slave message received:', event.data);
-        pubSub.publish(event.data.action, event.data);
+        returnData = pubSub.publish(event.data.action, event.data);
+        // Return async id in message upon promise in original window can be resolved
+        if(returnData && event.data.async && event.data.uuid) {
+            this.sendMessage({
+                data: returnData,
+                action: event.data.action + '_' + event.data.uuid,
+                async: !!event.data.async,
+                uuid: event.data.uuid
+            });
+        } 
     },
 
     handleProtectedMessage: function (event) {
@@ -237,24 +247,27 @@ var masterGateway = {
         rejectDuration = rejectDuration || 0;
 
         return new Promise(function(resolve, reject) {
-            data.asyncId = data.action + '_' + uuidv4();
+            var event;
+            data.async = true;
+            data.uuid = uuidv4();
+            event = data.action + '_' + data.uuid;
 
-            subscription = self.once(data.asyncId, function(response) {
-                logger.out('info', '[GG] Master: Promise resolved for event ' + data.action, response);
+            subscription = self.once(event, function(response) {
                 clearTimeout(rejectTimeout);
                 rejectTimeout = null;
+                logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise resolved for event ' + event);
                 resolve(response);
             });
 
             if(rejectDuration) {
                 rejectTimeout = setTimeout(function() {
-                    logger.out('info', '[GG] Master: Promise rejected for event ' + data.action);
                     subscription.remove();
                     reject();
-                }, rejectDuration)
+                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise rejected for event ' + event);
+                }, rejectDuration);
             }
 
-            self.sendMessage(frameId, data, origin);
+            self.sendMessage(data, origin);
         });
     },
 
