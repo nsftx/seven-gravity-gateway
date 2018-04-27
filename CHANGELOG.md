@@ -1,3 +1,8 @@
+## 1.5.0 (2018-04-27)
+
+####Added
+- Make promise based communication easier (T47102)
+
 ## 1.4.5 (2018-04-26)
 
 ####Fixed
