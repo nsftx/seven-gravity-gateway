@@ -35,9 +35,6 @@ module.exports = [
             new Uglify({
                 include: /\.js$/i,
                 minimize: true
-            }),
-            new webpack.DefinePlugin({
-              VERSION: JSON.stringify(require("./package.json").version)
             })
         ],
         output: {
