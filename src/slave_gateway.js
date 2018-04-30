@@ -4,7 +4,8 @@ var slavePorthole = require('./messaging/slave'),
     logger = require('./utils/utils').logger,
     eventHandler = require('./event_dispatching/event_handler'),
     uuidv4 = require('./utils/utils').uuidv4,
-    slaveProxy = require('./slave_proxy');
+    slaveProxy = require('./slave_proxy'),
+    VERSION = require('../package.json').version;
 
 function validateInitialization(config) {
     if(!config) {
