@@ -144,7 +144,7 @@ var masterGateway = {
                 async: !!event.data.async,
                 uuid: event.data.uuid
             });
-        } 
+        }
     },
 
     handleProtectedMessage: function (event) {
@@ -166,6 +166,13 @@ var masterGateway = {
 
     slaveInit : function(event, slaveData) {
         logger.out('info', '[GG] Master:', 'Starting to load slave.', event.data);
+
+        // check slave and master versions
+        if(VERSION > slaveData.VERSION) {
+            logger.out('info', '[GG] Master:', 'Slave is outdated, please update to latest version - ' + VERSION);
+        } else if (VERSION < slaveData.VERSION) {
+            logger.out('info', '[GG] Master:', 'Master is outdated, please update to latest version - ' + slaveData.VERSION);
+        }
 
         if(typeof slaveData.autoResize === 'undefined' || slaveData.autoResize !== false) {
             //On every init reset the frame sizes

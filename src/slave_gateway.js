@@ -10,7 +10,7 @@ function validateInitialization(config) {
     if(!config) {
         return false;
     }
-    
+
     var slaveId = config.slaveId || config.productId;
 
     if(!slaveId || typeof slaveId !== 'string') {
@@ -51,7 +51,7 @@ var slaveGateway = {
         }
         this.startSlaveInitialization();
     },
-    
+
     setAllowedDomains : function() {
         if(this.config && this.config.allowedOrigins) {
             this.allowedOrigins = this.config.allowedOrigins;
@@ -65,7 +65,8 @@ var slaveGateway = {
             action: 'Slave.Init',
             data: this.config.data,
             eventPropagation : this.config.eventPropagation,
-            eventListeners : this.config.eventListeners
+            eventListeners : this.config.eventListeners,
+            VERSION: VERSION
         });
     },
 
@@ -126,7 +127,7 @@ var slaveGateway = {
                 async: !!event.data.async,
                 uuid: event.data.uuid
             });
-        } 
+        }
     },
 
     handleProtectedMessage : function(event) {

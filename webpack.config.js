@@ -1,5 +1,6 @@
 const Clean = require('clean-webpack-plugin');
 const Uglify = require('uglifyjs-webpack-plugin');
+const webpack = require('webpack');
 
 // Webpack accepts array of configurations
 // https://github.com/webpack/webpack/issues/1189#issuecomment-227133370
@@ -34,6 +35,9 @@ module.exports = [
             new Uglify({
                 include: /\.js$/i,
                 minimize: true
+            }),
+            new webpack.DefinePlugin({
+              VERSION: JSON.stringify(require("./package.json").version)
             })
         ],
         output: {
