@@ -1,3 +1,8 @@
+## 1.6.0 (2018-05-04)
+
+####Added
+- Show info about version compatibility (T47385)
+
 ## 1.5.0 (2018-04-27)
 
 ####Added
@@ -111,7 +116,7 @@
 
 ####Added
 
-- Expose modules global reference(95165d9d05ba, b48249fd6564) 
+- Expose modules global reference(95165d9d05ba, b48249fd6564)
 - Added option to add slaves on fly(9366ac2ac542)
 - Added option to remove slaves on fly(938746164bc6)
 
