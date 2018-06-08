@@ -247,6 +247,7 @@ slaveGateway.on = slaveGateway.subscribe;
 slaveGateway.off = slaveGateway.unsubscribe;
 slaveGateway.emit = slaveGateway.sendMessage;
 slaveGateway.emitAsync = slaveGateway.sendMessageAsync;
+slaveGateway.request = slaveGateway.sendMessageAsync;
 
 module.exports = function(config) {
     if(config && config.debug === true) {

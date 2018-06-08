@@ -297,6 +297,7 @@ masterGateway.on = masterGateway.subscribe;
 masterGateway.off = masterGateway.unsubscribe;
 masterGateway.emit = masterGateway.sendMessage;
 masterGateway.emitAsync = masterGateway.sendMessageAsync;
+masterGateway.request = masterGateway.sendMessageAsync;
 
 /**
  * Gateway is singleton
