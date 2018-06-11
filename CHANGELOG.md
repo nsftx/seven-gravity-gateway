@@ -1,3 +1,8 @@
+## 1.7.1 (2018-06-11)
+
+####Fixed
+- Fix event wildcard propagation (4720189473c2)
+
 ## 1.7.0 (2018-06-11)
 
 ####Added
