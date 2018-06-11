@@ -79,33 +79,21 @@ EventHandler.prototype = {
     },
 
     handleKeyboardEvent : function(e) {
-        var eventCode = e.which || e.keyCode,
-            eventKey = e.key || e.keyIdentifier,
-            eventList = this.config[e.type],
-            keyBinding;
+        var eventKey = e.key || e.keyIdentifier,
+            eventConfig = this.config[e.type];
 
-        for (var i = 0; i < eventList.length; i++) {
-            // Cast eventCode and eventKey to String for comparison
-            keyBinding = String(eventList[i]);
-            eventCode = String(eventCode);
-            eventKey = String(eventKey);
-            // Check if key is listed for propagation
-            if (keyBinding.indexOf(eventCode) !==-1 || keyBinding.indexOf(eventKey) !==-1) {
-                // Check if key is combined with modifier (Alt, Ctrl...)
-                if(keyBinding.indexOf('+') !== -1) {
-                    var modifier = this.getModifierKey(keyBinding);
-                    if(modifier && e[modifier] === true) {
-                        this.keyboardEventCallback(e);
-                        return;
-                    }
-                } else {
-                    this.keyboardEventCallback(e);
-                    return;
-                }
+        if (eventConfig === '*') {
+            this.keyboardEventCallback(e);
+            return;
+        } else if (Array.isArray(eventConfig)) {
+            this._handleListOfSubscribedEvents(e, eventConfig);
+        } else if (typeof eventConfig === 'object') {
+            if (eventConfig.types) {
+                this._handleListOfSubscribedEvents(e, eventConfig.types, eventConfig.blacklist);
             }
+        } else {
+            logger.out('info', 'Key ' + eventKey + ' is not marked for propagation.');
         }
-
-        logger.out('info', 'Key ' + eventKey + ' is not marked for propagation.');
     },
 
     getModifierKey : function(keyBinding) {
@@ -134,6 +122,49 @@ EventHandler.prototype = {
         };
 
         this.eventCallback(data);
+    },
+
+    _handleListOfSubscribedEvents: function(e, eventList, blacklist) {
+        var eventCode = e.which || e.keyCode,
+            eventKey = e.key || e.keyIdentifier,
+            eventBlacklist = blacklist || [],
+            keyBinding;
+
+        for (var i = 0; i < eventList.length; i++) {
+            // Cast eventCode and eventKey to String for comparison
+            keyBinding = String(eventList[i]);
+            eventCode = String(eventCode);
+            eventKey = String(eventKey);
+            // Check if key is listed for propagation
+            if (keyBinding.indexOf(eventCode) !==-1 || keyBinding.indexOf(eventKey) !==-1) {
+                // Check if key is combined with modifier (Alt, Ctrl...)
+                if(keyBinding.indexOf('+') !== -1) {
+                    var modifier = this.getModifierKey(keyBinding);
+                    // Key + Modifier is active and it's not blacklisted
+                    if(modifier && e[modifier] === true) {
+                        if(this._eventIsBlacklisted(eventBlacklist, keyBinding, modifier)) {
+                            return;
+                        }
+                        this.keyboardEventCallback(e);
+                        return;
+                    }
+                } else if(!this._eventIsBlacklisted(eventBlacklist, keyBinding)) {
+                    this.keyboardEventCallback(e);
+                    return;
+                }
+            }
+        }
+    },
+
+    _eventIsBlacklisted: function(eventBlacklist, keyBinding, modifier) {
+        var keyWithModifier;
+
+        if(!modifier) {
+            return eventBlacklist.indexOf(keyBinding) !== -1;
+        } else {
+            keyWithModifier = keyBinding + '+' + keyBinding;
+            return eventBlacklist.indexOf(keyWithModifier) !== -1;
+        }
     }
 };
 
