@@ -1,3 +1,8 @@
+## 1.7.0 (2018-06-11)
+
+####Added
+- Add wildcard to propagate all keyboard events (T49364)
+
 ## 1.6.0 (2018-05-04)
 
 ####Added
