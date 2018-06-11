@@ -79,20 +79,21 @@ EventHandler.prototype = {
     },
 
     handleKeyboardEvent : function(e) {
-        var eventKey = e.key || e.keyIdentifier,
-            eventConfig = this.config[e.type];
+        var eventConfig = this.config[e.type];
 
         if (eventConfig === '*') {
             this.keyboardEventCallback(e);
             return;
         } else if (Array.isArray(eventConfig)) {
-            this._handleListOfSubscribedEvents(e, eventConfig);
+            this._handleArrayOfSubscribedEvents(e, eventConfig);
         } else if (typeof eventConfig === 'object') {
-            if (eventConfig.types) {
-                this._handleListOfSubscribedEvents(e, eventConfig.types, eventConfig.blacklist);
+            if (eventConfig.types && Array.isArray(eventConfig.types)) {
+                this._handleArrayOfSubscribedEvents(e, eventConfig.types, eventConfig.blacklist);
+            } else if (eventConfig.types && eventConfig.types === '*') {
+                this._handleAllEvents(e, eventConfig.blacklist);
             }
         } else {
-            logger.out('info', 'Key ' + eventKey + ' is not marked for propagation.');
+            logger.out('error', 'Keyboard subsription format is invalid.');
         }
     },
 
@@ -124,25 +125,25 @@ EventHandler.prototype = {
         this.eventCallback(data);
     },
 
-    _handleListOfSubscribedEvents: function(e, eventList, blacklist) {
-        var eventCode = e.which || e.keyCode,
-            eventKey = e.key || e.keyIdentifier,
+    _handleArrayOfSubscribedEvents: function(e, eventList, blacklist) {
+        var eventCode = String(e.which || e.keyCode),
+            eventKey = String(e.key || e.keyIdentifier),
             eventBlacklist = blacklist || [],
+            modifier,
             keyBinding;
 
         for (var i = 0; i < eventList.length; i++) {
             // Cast eventCode and eventKey to String for comparison
             keyBinding = String(eventList[i]);
-            eventCode = String(eventCode);
-            eventKey = String(eventKey);
             // Check if key is listed for propagation
             if (keyBinding.indexOf(eventCode) !==-1 || keyBinding.indexOf(eventKey) !==-1) {
                 // Check if key is combined with modifier (Alt, Ctrl...)
                 if(keyBinding.indexOf('+') !== -1) {
-                    var modifier = this.getModifierKey(keyBinding);
+                    modifier = this.getModifierKey(keyBinding);
                     // Key + Modifier is active and it's not blacklisted
                     if(modifier && e[modifier] === true) {
                         if(this._eventIsBlacklisted(eventBlacklist, keyBinding, modifier)) {
+                            logger.out('info', 'Key ' + eventKey + ' is blacklisted for propagation.');
                             return;
                         }
                         this.keyboardEventCallback(e);
@@ -151,9 +152,47 @@ EventHandler.prototype = {
                 } else if(!this._eventIsBlacklisted(eventBlacklist, keyBinding)) {
                     this.keyboardEventCallback(e);
                     return;
+                } else {
+                    logger.out('info', 'Key ' + eventKey + ' is not listed for propagation.');
                 }
             }
         }
+    },
+
+    _handleAllEvents: function(e, blacklist) {
+        var eventCode = String(e.which || e.keyCode),
+            eventKey = String(e.key || e.keyIdentifier),
+            eventBlacklist = blacklist || [],
+            modifier,
+            blacklistedEventsReceived = [],
+            eventCodeWithModifier,
+            eventKeyWithModifier,
+            blacklistedEvent;
+
+        for (var i = 0; i < eventBlacklist.length; i++) {
+            blacklistedEvent = eventBlacklist[i];
+            modifier = this.getModifierKey(blacklistedEvent);
+            
+            if(!modifier) {
+                if(eventCode !== blacklistedEvent && eventKey !== blacklistedEvent) {
+                    blacklistedEventsReceived.push(blacklistedEvent);
+                }
+            } else if (modifier && e[modifier] === true){
+                eventCodeWithModifier = modifier + '+' + eventCode;
+                eventKeyWithModifier = modifier + '+' + eventKey;
+
+                if(eventCodeWithModifier !== blacklistedEvent && eventKeyWithModifier !== blacklistedEvent) {
+                    blacklistedEventsReceived.push(blacklistedEvent);
+                }
+            }
+        }
+
+        if(!blacklistedEventsReceived.length) {
+            this.keyboardEventCallback(e);
+        } else {
+            logger.out('info', 'Key ' + eventKey + ' is blacklisted for propagation.');
+        }
+        
     },
 
     _eventIsBlacklisted: function(eventBlacklist, keyBinding, modifier) {
@@ -162,7 +201,7 @@ EventHandler.prototype = {
         if(!modifier) {
             return eventBlacklist.indexOf(keyBinding) !== -1;
         } else {
-            keyWithModifier = keyBinding + '+' + keyBinding;
+            keyWithModifier = modifier + '+' + keyBinding;
             return eventBlacklist.indexOf(keyWithModifier) !== -1;
         }
     }
