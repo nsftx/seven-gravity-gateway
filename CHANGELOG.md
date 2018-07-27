@@ -1,3 +1,8 @@
+## 1.8.0 (2018-07-27)
+
+####Added
+- Add option to toggle slave event dispatching (T52050)
+
 ## 1.7.1 (2018-06-11)
 
 ####Fixed
