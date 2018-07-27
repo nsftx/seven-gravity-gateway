@@ -275,7 +275,7 @@ var masterGateway = {
                 }, rejectDuration);
             }
 
-            self.sendMessage(data, origin);
+            self.sendMessage(frameId, data, origin);
         });
     },
 
