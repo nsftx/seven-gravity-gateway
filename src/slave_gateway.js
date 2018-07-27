@@ -182,13 +182,13 @@ var slaveGateway = {
         pubSub.publish(event.data.action, event.data);
     },
 
-    masterSnoozeSlave: function(event) {
+    slaveSnooze: function(event) {
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are snoozed.', event.data);
         window.removeEventListener('message', this.handleMessage.bind(this));
         eventHandler.snoozeEvents(event.data);
     },
 
-    masterAwakeSlave: function(event) {
+    slaveAwake: function(event) {
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are awaked.', event.data);
         window.addEventListener('message', this.handleMessage.bind(this));
         eventHandler.awakeEvents(event.data);
