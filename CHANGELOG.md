@@ -1,3 +1,8 @@
+## 1.8.1 (2018-08-06)
+
+####Fixed
+- Fix event handler reference (T52834)
+
 ## 1.8.0 (2018-07-27)
 
 ####Added
