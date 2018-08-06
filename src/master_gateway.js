@@ -53,6 +53,8 @@ var masterGateway = {
 
     msgSender: 'Master',
 
+    eventHandler: null,
+
     init: function (config) {
         var slaves = config.slaves || config.products;
         this.initialized = true;
@@ -185,7 +187,7 @@ var masterGateway = {
         }
         if(event.data.eventListeners) {
             //Curry the sendMessage function with frameId argument in this special case
-            eventHandler(event.data.eventListeners, this.sendMessage.bind(this, slaveData.frameId), 'Master.Event');
+            this.eventHandler = eventHandler(event.data.eventListeners, this.sendMessage.bind(this, slaveData.frameId), 'Master.Event');
         }
         this.slaveLoad(slaveData);
     },

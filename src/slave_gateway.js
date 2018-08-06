@@ -33,6 +33,8 @@ var slaveGateway = {
 
     load : null,
 
+    eventHandler: null,
+
     msgSender : 'Slave',
 
     init: function(config){
@@ -45,7 +47,7 @@ var slaveGateway = {
         window.addEventListener('message', this.handleMessage.bind(this));
         //Pass the key propagation config object, event callback, event name
         if(this.config.eventPropagation) {
-            eventHandler(this.config.eventPropagation, this.sendMessage.bind(this), 'Slave.Event');
+            this.eventHandler = eventHandler(this.config.eventPropagation, this.sendMessage.bind(this), 'Slave.Event');
         }
         if(this.config.worker) {
             this.setWorker();
@@ -77,10 +79,10 @@ var slaveGateway = {
             return false;
         }
 
-        if(eventHandler instanceof 'EventHandler') {
-            eventHandler.addEventListeners(config);
+        if(this.eventHandler instanceof 'EventHandler') {
+            this.eventHandler.addEventListeners(config);
         } else {
-            eventHandler(this.config.eventPropagation, this.sendMessage.bind(this), 'Slave.Event');
+            this.eventHandler = eventHandler(this.config.eventPropagation, this.sendMessage.bind(this), 'Slave.Event');
         }
     },
 
@@ -183,15 +185,15 @@ var slaveGateway = {
     },
 
     slaveSnooze: function(event) {
-        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are snoozed.', event.data);
         window.removeEventListener('message', this.handleMessage.bind(this));
-        eventHandler.snoozeEvents(event.data);
+        this.eventHandler.snoozeEvents(event.data);
+        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are snoozed.', event.data);
     },
 
     slaveAwake: function(event) {
-        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are awaked.', event.data);
         window.addEventListener('message', this.handleMessage.bind(this));
-        eventHandler.awakeEvents(event.data);
+        this.eventHandler.awakeEvents(event.data);
+        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are awaked.', event.data);
     },
 
     once : function(action, callback) {
