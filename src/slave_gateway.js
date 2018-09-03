@@ -191,6 +191,9 @@ var slaveGateway = {
     },
 
     slaveAwake: function(event) {
+        // Prevent duplicate event listeners
+        window.removeEventListener('message', this.handleMessage.bind(this));
+        // Attach new listener
         window.addEventListener('message', this.handleMessage.bind(this));
         this.eventHandler.awakeEvents(event.data);
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are awaked.', event.data);
