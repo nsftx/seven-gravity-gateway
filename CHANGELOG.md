@@ -1,3 +1,8 @@
+## 1.8.3 (2018-09-03)
+
+####Fixed
+- Prevent event listener duplication (T53843)
+
 ## 1.8.2 (2018-08-06)
 
 - Bump version
