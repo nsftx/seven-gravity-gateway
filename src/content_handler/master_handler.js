@@ -6,7 +6,7 @@ var contentHandler = {
             if(frame) {
                 frame.style.height = '0px';
             }
-        })
+        });
     },
 
     resize : function(frameId, event) {
@@ -15,8 +15,7 @@ var contentHandler = {
             if(frame) {
                 frame.style.height = event.data.height + 'px';
             }
-        })
-
+        });
     }
 };
 
