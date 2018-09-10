@@ -45,6 +45,7 @@
     "jsdom": "^9.6.0",
     "jsdom-global": "^2.1.0",
     "mocha": "^3.1.0",
+    "sinon": "^6.2.0",
     "uglifyjs-webpack-plugin": "^0.4.6",
     "webpack": "^3.4.1"
   }

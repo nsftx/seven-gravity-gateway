@@ -1,5 +1,6 @@
 var assert = require('assert'),
-    dom = require('jsdom-global')(); //Inject dom in test because window deps
+    sinon = require('sinon'),
+    dom = require('jsdom-global')('<html><div id="test-frame">Hello world</div></html>');
 
 describe('Master gateway instantiation', function() {
     var instance,
@@ -118,4 +119,50 @@ describe('Master gateway instantiation', function() {
         assert.equal(Object.keys(result).length ,1);
     })
 
+});
+
+describe('Master gateway message exchange', function() {
+    var Gateway = require('../src/master_gateway'),
+        masterPorthole = require('../src/messaging/master');
+
+    afterEach(function () {
+        sinon.restore();
+    });
+
+    it('Should send message', function() {
+        var instance = Gateway({
+            allowedOrigins : ['http://www.nsoft.ba'],
+            products : {
+                'product': {
+                    frameId: 'product'
+                }
+            }
+        });
+        var spy = sinon.spy(masterPorthole, 'sendMessage');
+        instance.sendMessage('test-frame', {}, '*');
+        assert.equal(spy.called, true);
+    });
+
+    it('Should call subscribeToCallbacks', function() {
+        var instance = Gateway({
+            allowedOrigins : ['http://www.nsoft.ba'],
+            products : {
+                'product': {
+                    frameId: 'product'
+                }
+            }
+        });
+        var spy = sinon.spy(instance, 'subscribeToCallbacks');
+        instance.sendMessage('test-frame', {
+            callbacks : [
+                {
+                    title: 'Test method callbacks',
+                    callback: function() {
+                        // Code here
+                    }
+                }
+            ]
+        }, '*');
+        assert.equal(spy.called, true);
+    });
 });
