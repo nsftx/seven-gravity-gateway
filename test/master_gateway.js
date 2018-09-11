@@ -191,4 +191,32 @@ describe('Master gateway message exchange', function() {
         instance.sendMessage('test-frame', msgData, '*');
         expect(msgData.callbacks[0].cbHash).to.be.a('string');
     });
+
+    it('Should call parseCrossContextCallbacks', function() {
+        var instance = Gateway({
+            allowedOrigins : ['http://www.nsoft.ba'],
+            products : {
+                'product': {
+                    frameId: 'product'
+                }
+            }
+        });
+        var spy = sinon.spy(instance, 'parseCrossContextCallbacks');
+        var eventData = {
+            data: {
+                action: 'Widget.TestMsg',
+                msgSender: 'Slave',
+                callbacks : [
+                    {
+                        method: 1,
+                        cbHash: '123456'
+                    }
+                ]
+            },
+            origin: 'http://www.nsoft.ba'
+        }
+
+        instance.handleMessage(eventData);
+        assert.equal(spy.called, true);
+    });
 });
