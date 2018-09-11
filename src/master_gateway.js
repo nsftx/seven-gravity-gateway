@@ -279,6 +279,10 @@ var masterGateway = {
             data.async = true;
             data.uuid = uuidv4();
             event = data.action + '_' + data.uuid;
+            
+            if (data.callbacks && Array.isArray(data.callbacks)) {
+                this.subscribeCrossContextCallbacks(data);
+            }
 
             subscription = self.once(event, function(response) {
                 clearTimeout(rejectTimeout);
