@@ -219,4 +219,32 @@ describe('Master gateway message exchange', function() {
         instance.handleMessage(eventData);
         assert.equal(spy.called, true);
     });
+
+    it('parseCrossContextCallbacks should attach methods', function() {
+        var instance = Gateway({
+            allowedOrigins : ['http://www.nsoft.ba'],
+            products : {
+                'product': {
+                    frameId: 'product'
+                }
+            }
+        });
+        var eventData = {
+            data: {
+                action: 'Widget.TestMsg',
+                msgSender: 'Slave',
+                callbacks : [
+                    {
+                        method: 1,
+                        cbHash: '123456'
+                    }
+                ]
+            },
+            origin: 'http://www.nsoft.ba'
+        }
+
+        instance.handleMessage(eventData);
+        expect(eventData.data.callbacks[0]).to.have.property('method')
+        expect(eventData.data.callbacks[0]).to.have.property('methodAsync');
+    });
 });
