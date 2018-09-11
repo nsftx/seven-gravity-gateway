@@ -141,7 +141,7 @@ var masterGateway = {
         returnData = pubSub.publish(event.data.action, event.data);
         // Return async id in message upon promise in original window can be resolved
         if(returnData && event.data.async && event.data.uuid) {
-            this.sendMessage({
+            this.sendMessage(this.slaves[event.data.slaveId].frameId, {
                 data: returnData,
                 action: event.data.action + '_' + event.data.uuid,
                 async: !!event.data.async,
@@ -238,11 +238,29 @@ var masterGateway = {
         return pubSub.clearSubscriptions();
     },
 
+    subscribeCrossContextCallbacks: function(data) {
+        var event = data.action + '_' + (data.uuid ? data.uuid : uuidv4());
+        var self = this;
+        data.callbacks.forEach(function (def, idx) {
+            var cbHash = event + '_' + idx;
+            var subscribed;
+            if (!self.isSubscribed(cbHash)) {
+                subscribed = self.subscribe(cbHash, def.method);
+            }
+            if(subscribed) {
+                def.cbHash = cbHash;
+            }
+        });
+    },
+
     sendMessage: function (frameId, data, origin) {
         var frame = document.getElementById(frameId);
         if (!frame) {
             logger.out('warn', '[GG] Master:', 'Frame ' + frameId + ' is non existent.');
             return false;
+        }
+        if (data.callbacks && Array.isArray(data.callbacks)) {
+            this.subscribeCrossContextCallbacks(data);
         }
         data.msgSender = this.msgSender;
         data.plugin = 'GravityGateway';
