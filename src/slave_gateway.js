@@ -219,7 +219,25 @@ var slaveGateway = {
         return pubSub.clearSubscriptions();
     },
 
+    subscribeCrossContextCallbacks: function(data) {
+        var event = data.action + '_' + (data.uuid ? data.uuid : uuidv4());
+        var self = this;
+        data.callbacks.forEach(function (def, idx) {
+            var cbHash = event + '_' + idx;
+            var subscribed;
+            if (!self.isSubscribed(cbHash)) {
+                subscribed = self.subscribe(cbHash, def.method);
+            }
+            if(subscribed) {
+                def.cbHash = cbHash;
+            }
+        });
+    },
+
     sendMessage : function(data, origin) {
+        if (data.callbacks && Array.isArray(data.callbacks)) {
+            this.subscribeCrossContextCallbacks(data);
+        }
         data.slaveId = this.slaveId;
         data.msgSender = 'Slave';
         data.plugin = 'GravityGateway';
@@ -238,6 +256,10 @@ var slaveGateway = {
             data.async = true;
             data.uuid = uuidv4();
             event = data.action + '_' + data.uuid;
+
+            if (data.callbacks && Array.isArray(data.callbacks)) {
+                this.subscribeCrossContextCallbacks(data);
+            }
 
             subscription = self.once(event, function(response) {
                 clearTimeout(rejectTimeout);
