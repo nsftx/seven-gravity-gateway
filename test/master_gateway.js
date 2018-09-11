@@ -1,5 +1,6 @@
 var assert = require('assert'),
     sinon = require('sinon'),
+    expect = require('chai').expect,
     dom = require('jsdom-global')('<html><div id="test-frame">Hello world</div></html>');
 
 describe('Master gateway instantiation', function() {
@@ -143,7 +144,7 @@ describe('Master gateway message exchange', function() {
         assert.equal(spy.called, true);
     });
 
-    it('Should call subscribeToCallbacks', function() {
+    it('Should call subscribeCrossContextCallbacks', function() {
         var instance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
             products : {
@@ -152,17 +153,42 @@ describe('Master gateway message exchange', function() {
                 }
             }
         });
-        var spy = sinon.spy(instance, 'subscribeToCallbacks');
+        var spy = sinon.spy(instance, 'subscribeCrossContextCallbacks');
         instance.sendMessage('test-frame', {
+            action : 'Widget.TestMsg',
             callbacks : [
                 {
-                    title: 'Test method callbacks',
-                    callback: function() {
+                    title: 'Dummy msg',
+                    method: function() {
                         // Code here
                     }
                 }
             ]
         }, '*');
         assert.equal(spy.called, true);
+    });
+
+    it('Should succesfully subscribe cross context callbacks', function() {
+        var instance = Gateway({
+            allowedOrigins : ['http://www.nsoft.ba'],
+            products : {
+                'product': {
+                    frameId: 'product'
+                }
+            }
+        });
+        var msgData =  {
+            action : 'Widget.TestMsg',
+            callbacks : [
+                {
+                    title: 'Dummy msg',
+                    method: function() {
+                        // Code here
+                    }
+                }
+            ]
+        };
+        instance.sendMessage('test-frame', msgData, '*');
+        expect(msgData.callbacks[0].cbHash).to.be.a('string');
     });
 });
