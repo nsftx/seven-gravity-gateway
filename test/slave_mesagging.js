@@ -2,7 +2,7 @@ var porthole = require('../src/messaging/slave'),
     assert = require('assert'),
     dom = require('jsdom-global')();
 
-describe('Posting messages to platform.', function () {
+describe('Posting messages to master.', function () {
     it('Received value should be 3.14', function (done) {
         var messageHandler = function (e) {
             window.removeEventListener('message', messageHandler);

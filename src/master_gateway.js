@@ -175,13 +175,13 @@ var masterGateway = {
         var self = this;
         data.callbacks.forEach(function (def) {
             def.method = function() {
-                return self.sendMessage(self.slaves[event.data.slaveId].frameId, {
+                return self.sendMessage(self.slaves[data.slaveId].frameId, {
                     action: def.cbHash,
                     data: arguments[0] || false                    
                 });
             }
             def.methodAsync = function() {
-                return self.sendMessageAsync(self.slaves[event.data.slaveId].frameId, {
+                return self.sendMessageAsync(self.slaves[data.slaveId].frameId, {
                     action: def.cbHash,
                     data: arguments[0] || false                    
                 });

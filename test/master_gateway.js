@@ -247,4 +247,26 @@ describe('Master gateway message exchange', function() {
         expect(eventData.data.callbacks[0]).to.have.property('method')
         expect(eventData.data.callbacks[0]).to.have.property('methodAsync');
     });
+
+    it('parseCrossContextCallbacks should call sendMessageAsync', function() {
+        var instance = Gateway();
+        var spy = sinon.spy(instance, 'sendMessageAsync');
+        var eventData = {
+            data: {
+                action: 'Widget.TestMsg',
+                msgSender: 'Slave',
+                slaveId: 'dummy',
+                callbacks : [
+                    {
+                        method: 1,
+                        cbHash: '123456'
+                    }
+                ]
+            },
+            origin: 'http://www.nsoft.ba'
+        }
+        instance.handleMessage(eventData);
+        eventData.data.callbacks[0].methodAsync();
+        assert.equal(spy.called, true);
+    });
 });
