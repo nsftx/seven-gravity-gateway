@@ -253,6 +253,7 @@ var slaveGateway = {
             if(subscribed) {
                 def.cbHash = cbHash;
             }
+            delete def.method;
         });
     },
 

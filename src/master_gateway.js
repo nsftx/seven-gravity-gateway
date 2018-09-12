@@ -272,6 +272,7 @@ var masterGateway = {
             if(subscribed) {
                 def.cbHash = cbHash;
             }
+            delete def.method;
         });
     },
 
