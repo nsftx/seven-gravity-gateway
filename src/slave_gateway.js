@@ -137,7 +137,7 @@ var slaveGateway = {
         }
     },
 
-    handleProtectedMessage : function(event) {
+    handleProtectedMessage: function(event) {
         var actionName = event.data.action.replace('.', '');
         //Lowercase the first letter
         actionName = actionName.charAt(0).toLowerCase() + actionName.slice(1);
@@ -149,7 +149,7 @@ var slaveGateway = {
         }
     },
 
-    parseCrossContextCallbacks (data) {
+    parseCrossContextCallbacks: function(data) {
         var self = this;
         data.callbacks.forEach(function (def) {
             def.method = function() {
@@ -157,14 +157,14 @@ var slaveGateway = {
                     action: def.cbHash,
                     data: arguments[0] || false                    
                 });
-            }
+            };
             def.methodAsync = function() {
                 return self.sendMessageAsync({
                     action: def.cbHash,
                     data: arguments[0] || false                    
                 });
-            }
-        })
+            };
+        });
     },
 
     setWorker: function(){

@@ -171,7 +171,7 @@ var masterGateway = {
         }
     },
 
-    parseCrossContextCallbacks (data) {
+    parseCrossContextCallbacks: function(data) {
         var self = this;
         data.callbacks.forEach(function (def) {
             def.method = function() {
@@ -179,14 +179,14 @@ var masterGateway = {
                     action: def.cbHash,
                     data: arguments[0] || false                    
                 });
-            }
+            };
             def.methodAsync = function() {
                 return self.sendMessageAsync(self.slaves[data.slaveId].frameId, {
                     action: def.cbHash,
                     data: arguments[0] || false                    
                 });
-            }
-        })
+            };
+        });
     },
 
     slaveInit : function(event, slaveData) {
