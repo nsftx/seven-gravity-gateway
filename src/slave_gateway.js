@@ -120,6 +120,10 @@ var slaveGateway = {
             return false;
         }
 
+        if (event.data.callbacks && Array.isArray(event.data.callbacks)) {
+            this.parseCrossContextCallbacks(event.data);
+        }
+
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Master message received:', event.data);
         returnData = pubSub.publish(event.data.action, event.data);
         // Return async id in message upon promise in original window can be resolved
@@ -143,6 +147,24 @@ var slaveGateway = {
         } else {
             logger.out('warn', '[GG] Slave.' +  this.slaveId + ':', 'Actions with domain `Master` or `Slave` are protected!');
         }
+    },
+
+    parseCrossContextCallbacks (data) {
+        var self = this;
+        data.callbacks.forEach(function (def) {
+            def.method = function() {
+                return self.sendMessage({
+                    action: def.cbHash,
+                    data: arguments[0] || false                    
+                });
+            }
+            def.methodAsync = function() {
+                return self.sendMessageAsync({
+                    action: def.cbHash,
+                    data: arguments[0] || false                    
+                });
+            }
+        })
     },
 
     setWorker: function(){
