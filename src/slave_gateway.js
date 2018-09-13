@@ -127,14 +127,14 @@ var slaveGateway = {
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Master message received:', event.data);
         returnData = pubSub.publish(event.data.action, event.data);
         // Return async id in message upon promise in original window can be resolved
-        if(returnData && event.data.async && event.data.uuid) {
-            this.sendMessage({
-                data: returnData,
-                action: event.data.action + '_' + event.data.uuid,
-                async: !!event.data.async,
-                uuid: event.data.uuid
-            });
-        }
+        if(!event.data.async || !event.data.uuid) return false;
+        // Return subsription data, or just return ack message so promise can be resovled
+        this.sendMessage({
+            data: returnData || {ack: true},
+            action: event.data.action + '_' + event.data.uuid,
+            async: !!event.data.async,
+            uuid: event.data.uuid
+        });
     },
 
     handleProtectedMessage: function(event) {
