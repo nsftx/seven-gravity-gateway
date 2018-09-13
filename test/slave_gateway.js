@@ -162,4 +162,26 @@ describe('Slave gateway message exchange', function() {
         eventData.data.callbacks[0].methodAsync();
         assert.equal(spy.called, true);
     });
+
+    it('Should succesfully subscribe cross context callback', function() {
+        var instance = Gateway({
+            productId : 'Product',
+            allowedOrigins : ['http://www.nsoft.ba'],
+            data : {
+                config : {}
+            }
+        });
+        var msgData =  {
+            action : 'Widget.TestMsg',
+            callback : {
+                title: 'Dummy msg',
+                method: function() {
+                    // Code here
+                }
+            }
+            
+        };
+        instance.sendMessage(msgData, '*');
+        expect(msgData.callback.cbHash).to.be.a('string');
+    });
 });

@@ -263,17 +263,14 @@ var masterGateway = {
     subscribeCrossContextCallbacks: function(data) {
         var event = data.action + '_' + (data.uuid ? data.uuid : uuidv4());
         var self = this;
-        data.callbacks.forEach(function (def, idx) {
-            var cbHash = event + '_' + idx;
-            var subscribed;
-            if (!self.isSubscribed(cbHash)) {
-                subscribed = self.subscribe(cbHash, def.method);
-            }
-            if(subscribed) {
-                def.cbHash = cbHash;
-            }
-            delete def.method;
-        });
+
+        if(data.callbacks && Array.isArray(data.callbacks)) {
+            data.callbacks.forEach(function (def, idx) {
+                self._createCallbackSubscription(event, def, idx);
+            });
+        } else {
+            self._createCallbackSubscription(event, data.callback, 0);
+        }
     },
 
     sendMessage: function (frameId, data, origin) {
@@ -282,7 +279,7 @@ var masterGateway = {
             logger.out('warn', '[GG] Master:', 'Frame ' + frameId + ' is non existent.');
             return false;
         }
-        if (data.callbacks && Array.isArray(data.callbacks)) {
+        if (data.callbacks || data.callback) {
             this.subscribeCrossContextCallbacks(data);
         }
         data.msgSender = this.msgSender;
@@ -303,7 +300,7 @@ var masterGateway = {
             data.uuid = uuidv4();
             event = data.action + '_' + data.uuid;
             
-            if (data.callbacks && Array.isArray(data.callbacks)) {
+            if (data.callbacks || data.callback) {
                 this.subscribeCrossContextCallbacks(data);
             }
 
@@ -336,6 +333,20 @@ var masterGateway = {
         for(var key in this.slaves) {
             self.sendMessage(this.slaves[key].frameId, data, origin);
         }
+    },
+
+    _createCallbackSubscription : function(event, def, idx) {
+        var subscribed;
+        var cbHash = event + '_' + idx;
+        var self = this;
+
+        if (!self.isSubscribed(cbHash)) {
+            subscribed = self.subscribe(cbHash, def.method);
+        }
+        if (subscribed) {
+            def.cbHash = cbHash;
+        }
+        delete def.method;
     }
 };
 

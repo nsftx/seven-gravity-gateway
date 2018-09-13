@@ -269,4 +269,26 @@ describe('Master gateway message exchange', function() {
         eventData.data.callbacks[0].methodAsync();
         assert.equal(spy.called, true);
     });
+
+    it('Should succesfully subscribe cross context callback', function() {
+        var instance = Gateway({
+            allowedOrigins : ['http://www.nsoft.ba'],
+            products : {
+                'product': {
+                    frameId: 'product'
+                }
+            }
+        });
+        var msgData =  {
+            action : 'Widget.TestMsg',
+            callback : {
+                title: 'Dummy msg',
+                method: function() {
+                    // Code here
+                }
+            }
+        };
+        instance.sendMessage('test-frame', msgData, '*');
+        expect(msgData.callback.cbHash).to.be.a('string');
+    });
 });
