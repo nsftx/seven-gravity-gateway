@@ -8,13 +8,9 @@
     "build": "webpack",
     "test": "mocha test --recursive",
     "coverage": "istanbul cover _mocha test -- --recursive",
-    "lint": "eslint src"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint",
-      "pre-push": "npm run test"
-    }
+    "lint": "eslint src",
+    "precommit": "npm run lint",
+    "prepush": "npm run test"
   },
   "repository": {
     "type": "git",
