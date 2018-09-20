@@ -194,10 +194,10 @@ var masterGateway = {
         logger.out('info', '[GG] Master:', 'Starting to load slave.', event.data);
 
         // check slave and master versions
-        if((VERSION && !slaveData.VERSION) || (VERSION > slaveData.VERSION)) {
+        if((VERSION && !event.data.VERSION) || (VERSION > event.data.VERSION)) {
             logger.out('info', '[GG] Master:', 'Slave is outdated, please update to latest version - ' + VERSION);
-        } else if ((!VERSION && slaveData.VERSION) || (VERSION < slaveData.VERSION)) {
-            logger.out('info', '[GG] Master:', 'Master is outdated, please update to latest version - ' + slaveData.VERSION);
+        } else if ((!VERSION && event.data.VERSION) || (VERSION < event.data.VERSION)) {
+            logger.out('info', '[GG] Master:', 'Master is outdated, please update to latest version - ' + event.data.VERSION);
         }
 
         if(typeof slaveData.autoResize === 'undefined' || slaveData.autoResize !== false) {
