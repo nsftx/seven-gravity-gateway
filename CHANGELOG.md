@@ -1,3 +1,8 @@
+## 1.9.3 (2018-09-28)
+
+####Fixed
+- Prevent event listener duplication (T55602)
+
 ## 1.9.2 (2018-09-20)
 
 ####Fixed
