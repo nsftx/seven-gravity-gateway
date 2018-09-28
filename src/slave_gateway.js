@@ -43,8 +43,10 @@ var slaveGateway = {
         this.slaveId = config.slaveId || config.productId;
         this.load = config.load || null;
         this.setAllowedDomains();
+        //Save method reference for event listeners
+        this.handleMessage = this.handleMessage.bind(this);
         //Set message handler
-        window.addEventListener('message', this.handleMessage.bind(this));
+        window.addEventListener('message', this.handleMessage);
         //Pass the key propagation config object, event callback, event name
         if(this.config.eventPropagation) {
             this.eventHandler = eventHandler(this.config.eventPropagation, this.sendMessage.bind(this), 'Slave.Event');
@@ -207,16 +209,16 @@ var slaveGateway = {
     },
 
     slaveSnooze: function(event) {
-        window.removeEventListener('message', this.handleMessage.bind(this));
+        window.removeEventListener('message', this.handleMessage);
         this.eventHandler.snoozeEvents(event.data);
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are snoozed.', event.data);
     },
 
     slaveAwake: function(event) {
         // Prevent duplicate event listeners
-        window.removeEventListener('message', this.handleMessage.bind(this));
+        window.removeEventListener('message', this.handleMessage);
         // Attach new listener
-        window.addEventListener('message', this.handleMessage.bind(this));
+        window.addEventListener('message', this.handleMessage);
         this.eventHandler.awakeEvents(event.data);
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are awaked.', event.data);
     },
