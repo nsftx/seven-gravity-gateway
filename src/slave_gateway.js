@@ -37,6 +37,10 @@ var slaveGateway = {
 
     msgSender : 'Slave',
 
+    eventsSnoozed: false,
+
+    snoozeTimeout: null,
+
     init: function(config){
         this.initialized = true;
         this.config = config;
@@ -90,6 +94,10 @@ var slaveGateway = {
 
     handleMessage : function(event) {
         if (!event.data.msgSender || event.data.msgSender === this.msgSender){
+            return false;
+        }
+        if (this.eventsSnoozed) {
+            logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
             return false;
         }
 
@@ -209,17 +217,28 @@ var slaveGateway = {
     },
 
     slaveSnooze: function(event) {
-        window.removeEventListener('message', this.handleMessage);
-        this.eventHandler.snoozeEvents(event.data);
+        var data = event.data,
+            self = this;
+
+        this.eventsSnoozed = true;
+        if(data.timeout && typeof data.timeout === 'number') {
+            if(this.snoozeTimeout) {
+                clearTimeout(this.snoozeTimeout);
+                this.snoozeTimeout = null;
+            }
+            this.snoozeTimeout = setTimeout(function() {
+                self.eventsSnoozed = false;
+            }, data.timeout);
+        }
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are snoozed.', event.data);
     },
 
-    slaveAwake: function(event) {
-        // Prevent duplicate event listeners
-        window.removeEventListener('message', this.handleMessage);
-        // Attach new listener
-        window.addEventListener('message', this.handleMessage);
-        this.eventHandler.awakeEvents(event.data);
+    slaveAwake: function() {
+        if(this.snoozeTimeout) {
+            clearTimeout(this.snoozeTimeout);
+            this.snoozeTimeout = null;
+        }
+        this.eventsSnoozed = false;
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are awaked.', event.data);
     },
 
@@ -257,6 +276,10 @@ var slaveGateway = {
     },
 
     sendMessage : function(data, origin) {
+        if (this.eventsSnoozed) {
+            logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to send messages to Master frame.');
+            return false;
+        }
         if (data.callbacks || data.callback) {
             this.subscribeCrossContextCallbacks(data);
         }

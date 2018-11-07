@@ -10,8 +10,6 @@ function EventHandler(config, eventCb, eventName) {
     this.config = config;
     this.eventCallback = eventCb;
     this.eventName = eventName;
-    this.eventsSnoozed = false;
-    this.snoozeTimeout = null;
     this.initEventListeners();
 }
 
@@ -67,8 +65,6 @@ EventHandler.prototype = {
             totalHeight: window.innerHeight,
             totalWidth : window.innerWidth
         };
-
-        if (this.eventsSnoozed) return;
         this.eventCallback(data);
     },
 
@@ -77,8 +73,6 @@ EventHandler.prototype = {
             action : this.eventName,
             event : e.type
         };
-
-        if (this.eventsSnoozed) return;
         this.eventCallback(data);
     },
 
@@ -125,32 +119,7 @@ EventHandler.prototype = {
             metaKey : e.metaKey,
             ctrlKey : e.ctrlKey
         };
-
-        if (this.eventsSnoozed) return;
         this.eventCallback(data);
-    },
-
-    snoozeEvents: function(data) {
-        var self = this;
-        this.eventsSnoozed = true;
-
-        if(data.timeout && typeof data.timeout === 'number') {
-            if(this.snoozeTimeout) {
-                clearTimeout(this.snoozeTimeout);
-                this.snoozeTimeout = null;
-            }
-            this.snoozeTimeout = setTimeout(function() {
-                self.eventsSnoozed = false;
-            }, data.timeout);
-        }
-    },
-
-    awakeEvents: function() {
-        if(this.snoozeTimeout) {
-            clearTimeout(this.snoozeTimeout);
-            this.snoozeTimeout = null;
-        }
-        this.eventsSnoozed = false;
     },
 
     _handleArrayOfSubscribedEvents: function(e, eventList, blacklist) {
