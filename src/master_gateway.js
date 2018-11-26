@@ -109,7 +109,6 @@ var masterGateway = {
 
         var masterPattern,
             slavePattern,
-            returnData,
             originValid = false;
 
         if (this.allowedOrigins !== '*') {
@@ -135,8 +134,13 @@ var masterGateway = {
         if (slavePattern.test(event.data.action) || masterPattern.test(event.data.action)) {
             this.handleProtectedMessage(event);
             return false;
-        }
+        } else {
+            this.handleSubscribedMessage(event);
+        }    
+    },
 
+    handleSubscribedMessage: function (event) {
+        var returnData;
         if (event.data.callbacks && Array.isArray(event.data.callbacks)) {
             this.parseCrossContextCallbacks(event.data);
         }
@@ -152,7 +156,6 @@ var masterGateway = {
             async: !!event.data.async,
             uuid: event.data.uuid
         });
-    
     },
 
     handleProtectedMessage: function (event) {

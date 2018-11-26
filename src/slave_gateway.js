@@ -96,14 +96,9 @@ var slaveGateway = {
         if (!event.data.msgSender || event.data.msgSender === this.msgSender){
             return false;
         }
-        if (this.eventsSnoozed) {
-            logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
-            return false;
-        }
 
         var slavePattern,
             masterPattern,
-            returnData,
             originValid = false;
 
         if (this.allowedOrigins !== '*') {
@@ -127,13 +122,20 @@ var slaveGateway = {
         // Check if message is reserved system message (Master and Slave messages)
         if(slavePattern.test(event.data.action) || masterPattern.test(event.data.action)) {
             this.handleProtectedMessage(event);
+        } else {
+            this.handleSubscribedMessage(event);
+        }
+    },
+
+    handleSubscribedMessage: function(event) {
+        var returnData;
+        if (this.eventsSnoozed) {
+            logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
             return false;
         }
-
         if (event.data.callbacks && Array.isArray(event.data.callbacks)) {
             this.parseCrossContextCallbacks(event.data);
         }
-
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Master message received:', event.data);
         returnData = pubSub.publish(event.data.action, event.data);
         // Return async id in message upon promise in original window can be resolved
@@ -152,8 +154,10 @@ var slaveGateway = {
         //Lowercase the first letter
         actionName = actionName.charAt(0).toLowerCase() + actionName.slice(1);
 
-        if (this[actionName]) {
+        if ((this[actionName] && !this.eventsSnoozed) || actionName === 'slaveAwake') {
             this[actionName](event);
+        } else if (this.eventsSnoozed) {
+            logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
         } else {
             logger.out('warn', '[GG] Slave.' +  this.slaveId + ':', 'Actions with domain `Master` or `Slave` are protected!');
         }
