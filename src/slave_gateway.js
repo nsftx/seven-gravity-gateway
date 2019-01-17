@@ -129,7 +129,7 @@ var slaveGateway = {
 
     handleSubscribedMessage: function(event) {
         var returnData;
-        if (this.eventsSnoozed) {
+        if (this.eventsSnoozed && !event.data.enforceEvent) {
             logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
             return false;
         }
@@ -244,11 +244,6 @@ var slaveGateway = {
         }
         this.eventsSnoozed = false;
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are awaked.', event.data);
-    },
-
-    slaveForceEvent: function (event) {
-        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Force event even though snooze could be activated');
-        pubSub.publish(event.data.action, event.data);
     },
 
     once : function(action, callback) {
