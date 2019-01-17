@@ -6,7 +6,7 @@
   "homepage": "http://7platform.com",
   "scripts": {
     "build": "webpack",
-    "test": "mocha test --recursive",
+    "test": "./node_modules/.bin/mocha test --recursive",
     "coverage": "istanbul cover _mocha test -- --recursive",
     "lint": "eslint src",
     "precommit": "npm run lint",

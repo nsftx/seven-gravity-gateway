@@ -291,4 +291,45 @@ describe('Master gateway message exchange', function() {
         instance.sendMessage('test-frame', msgData, '*');
         expect(msgData.callback.cbHash).to.be.a('string');
     });
+
+    it('Should succesfully subscribe once', function() {
+        var instance = Gateway({
+            allowedOrigins : ['http://www.nsoft.ba'],
+            products : {
+                'product': {
+                    frameId: 'product'
+                }
+            }
+        });
+        var result = instance.once('betslip.toggle', function() {
+            onceValue = true;
+        });
+        var value = typeof result === 'object';
+        assert.equal(value, true);
+    });
+
+    it('Executing once subscription: Should be succesfull', function() {
+        var instance = Gateway({
+            allowedOrigins : ['http://www.nsoft.ba'],
+            products : {
+                'product': {
+                    frameId: 'product'
+                }
+            }
+        });
+        var eventData = {
+            data: {
+                action: 'betslip.toggle_bet',
+                msgSender: 'Slave',
+                slaveId: 'product'
+            },
+            origin: 'http://www.nsoft.ba'
+        };
+        instance.once('betslip.toggle_bet', function() {
+            onceValue = true;
+        });
+        assert.equal(instance.isSubscribed('betslip.toggle_bet'), true);
+        instance.handleMessage(eventData);
+        assert.equal(instance.isSubscribed('betslip.toggle_bet'), false);
+    });
 });

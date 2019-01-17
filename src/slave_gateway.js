@@ -246,6 +246,11 @@ var slaveGateway = {
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are awaked.', event.data);
     },
 
+    slaveForceEvent: function (event) {
+        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Force event even though snooze could be activated');
+        pubSub.publish(event.data.action, event.data);
+    },
+
     once : function(action, callback) {
         return pubSub.once(action, callback);
     },
