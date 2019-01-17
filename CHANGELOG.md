@@ -1,3 +1,8 @@
+## 1.10.0 (2019-01-17)
+
+####Added
+- Override snooze functionality (T60436)
+
 ## 1.9.5 (2018-11-26)
 
 ####Fixed
