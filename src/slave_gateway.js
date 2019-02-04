@@ -130,7 +130,7 @@ var slaveGateway = {
     handleSubscribedMessage: function(event) {
         var returnData;
         if (this.eventsSnoozed && !event.data.enforceEvent) {
-            logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
+            logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
             return false;
         }
         if (event.data.callbacks && Array.isArray(event.data.callbacks)) {
@@ -142,8 +142,9 @@ var slaveGateway = {
         if(!event.data.async || !event.data.uuid) return false;
         // Return subsription data, or just return ack message so promise can be resovled
         this.sendMessage({
-            data: returnData || {ack: true},
+            data: returnData || { ack: true },
             action: event.data.action + '_' + event.data.uuid,
+            enforceEvent: !!event.data.enforceEvent,
             async: !!event.data.async,
             uuid: event.data.uuid
         });
@@ -157,7 +158,7 @@ var slaveGateway = {
         if ((this[actionName] && !this.eventsSnoozed) || actionName === 'slaveAwake') {
             this[actionName](event);
         } else if (this.eventsSnoozed) {
-            logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
+            logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
         } else {
             logger.out('warn', '[GG] Slave.' +  this.slaveId + ':', 'Actions with domain `Master` or `Slave` are protected!');
         }
@@ -169,13 +170,15 @@ var slaveGateway = {
             def.method = function() {
                 return self.sendMessage({
                     action: def.cbHash,
-                    data: arguments[0] || false                    
+                    data: arguments[0] || false,
+                    enforceEvent: !!data.enforceEvent
                 });
             };
             def.methodAsync = function() {
                 return self.sendMessageAsync({
                     action: def.cbHash,
-                    data: arguments[0] || false                    
+                    data: arguments[0] || false,
+                    enforceEvent: !!data.enforceEvent                  
                 });
             };
         });
@@ -280,8 +283,8 @@ var slaveGateway = {
     },
 
     sendMessage : function(data, origin) {
-        if (this.eventsSnoozed) {
-            logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to send messages to Master frame.');
+        if (this.eventsSnoozed && !data.enforceEvent) {
+            logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to send messages to Master frame.');
             return false;
         }
         if (data.callbacks || data.callback) {
@@ -299,6 +302,11 @@ var slaveGateway = {
             subscription;
 
         rejectDuration = rejectDuration || 0;
+
+        if (this.eventsSnoozed && !data.enforceEvent) {
+            logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to send messages to Master frame.');
+            return false;
+        }
 
         return new Promise(function(resolve, reject) {
             var event;
