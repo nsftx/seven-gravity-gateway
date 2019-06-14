@@ -3,10 +3,11 @@ function Porthole() {}
 Porthole.prototype = {
 
     sendMessage: function(productFrame, data, domain) {
-        var targetWindow = productFrame.contentWindow || window,
-            windowDomain = domain || '*';
+        var targetWindow = productFrame.contentWindow || window;
+        var windowDomain = domain || '*';
+        var clonedData = JSON.parse(JSON.stringify(data)); // Strip down function from object
 
-        targetWindow.postMessage(data, windowDomain);
+        targetWindow.postMessage(clonedData, windowDomain);
     }
 };
 

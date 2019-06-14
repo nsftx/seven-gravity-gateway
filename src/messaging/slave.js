@@ -10,10 +10,11 @@ Porthole.prototype = {
     },
     sendMessage: function (data, domain) {
         var windowDomain = domain || '*';
-        window.parent.postMessage(data, windowDomain);
+        var clonedData = JSON.parse(JSON.stringify(data)); // Strip down function from object
+        window.parent.postMessage(clonedData, windowDomain);
 
-        if (this.worker && this.msgBlacklist.indexOf(data.action) === -1) {
-            this.worker.postMessage(data);
+        if (this.worker && this.msgBlacklist.indexOf(clonedData.action) === -1) {
+            this.worker.postMessage(clonedData);
         }
     }
 };
