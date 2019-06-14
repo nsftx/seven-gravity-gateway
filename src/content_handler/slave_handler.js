@@ -85,9 +85,11 @@ var contentHandler = {
 
     getElementOffset : function(element) {
         //Get body margin and padding
-        var styles = getComputedStyle(element),
-            contentHeight = 0;
-
+        var styles = getComputedStyle(element);
+        var contentHeight = 0;
+        if (!styles) { //Firefox returns null when style can’t be retrieved
+            return 0;
+        }
         contentHeight += parseInt(styles.getPropertyValue('margin-top'));
         contentHeight += parseInt(styles.getPropertyValue('margin-bottom'));
         contentHeight += parseInt(styles.getPropertyValue('padding-top'));
@@ -106,7 +108,7 @@ var contentHandler = {
             }
         }, 5);
     },
-    
+
     addContentListeners : function() {
         OBSERVED_EVENTS.forEach(function(event) {
             if(Array.isArray(event.eventName)) {
