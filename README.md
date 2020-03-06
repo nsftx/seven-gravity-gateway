@@ -1,4 +1,4 @@
-=Seven Gravity Gateway=
+# Seven Gravity Gateway
 
 This component serves as communication layer between master and slave frames. Gateway supports cross and same origin communication between frames on same page.
 
