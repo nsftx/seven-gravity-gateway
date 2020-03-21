@@ -29,6 +29,8 @@ var contentHandler = {
 
     currentHeight : 0,
 
+    bodyOffset: 0,
+
     init: function(eventCb, eventName) {
         this.eventCallback = eventCb;
         this.eventName = eventName;
@@ -49,8 +51,12 @@ var contentHandler = {
         }
 
         var windowWidth = window.innerWidth,
-            windowHeight = this.getContentHeight() + this.getElementOffset(document.body),
+            windowHeight,
             data;
+
+        // Calculate bodyOffset(margin + padding). Calculate it on every change
+        this.getBodyOffset();
+        windowHeight = this.getContentHeight() + bodyOffset;
 
         // Check to prevent unnecessary message dispatch even if size didn't change
         if(windowWidth !== this.currentWidth || windowHeight !== this.currentHeight) {
@@ -63,6 +69,10 @@ var contentHandler = {
             };
             this.eventCallback(data);
         }
+    },
+
+    getBodyOffset() {
+        this.bodyOffset = this.getElementOffset(document.body);
     },
 
     //Get offset height of iframe content
