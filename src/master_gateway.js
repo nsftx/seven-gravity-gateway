@@ -87,7 +87,7 @@ var masterGateway = {
     removeSlave: function(slaveId) {
         if(slaveId && this.slaves[slaveId]) {
             delete this.slaves[slaveId];
-            logger.out('info', '[GG] Master:', 'slave: ' + slaveId + ' succesfully removed.');
+            logger.out('info', '[GG] Master:', 'Slave: ' + slaveId + ' succesfully removed.');
         } else {
             logger.out('error', '[GG] Master:', 'Passed slaveId is invalid or it doesn`t exist.');
             return false;
@@ -109,7 +109,8 @@ var masterGateway = {
 
         var masterPattern,
             slavePattern,
-            originValid = false;
+            originValid = false,
+            slaveId = event.data.slaveId || event.data.productId;
 
         if (this.allowedOrigins !== '*') {
             for(var i = 0; i < this.allowedOrigins.length; i++) {
@@ -124,6 +125,11 @@ var masterGateway = {
 
         if(!originValid) {
             logger.out('error', '[GG] Master: Message origin is not allowed');
+            return false;
+        }
+
+        if (!this.slaves[slaveId]) {
+            logger.out('error', '[GG] Master: Slave: ' + slaveId + ' is not registered for use.');
             return false;
         }
 
@@ -159,11 +165,6 @@ var masterGateway = {
     },
 
     handleProtectedMessage: function (event) {
-        var slaveId = event.data.slaveId || event.data.productId;
-
-        if (!this.slaves[slaveId]) {
-            return false;
-        }
         var slaveData = this.slaves[slaveId],
             actionName = event.data.action.replace('.', '');
         //Lowercase the first letter
