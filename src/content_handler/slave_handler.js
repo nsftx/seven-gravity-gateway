@@ -56,7 +56,7 @@ var contentHandler = {
 
         // Calculate bodyOffset(margin + padding). Calculate it on every change
         this.getBodyOffset();
-        windowHeight = this.getContentHeight() + bodyOffset;
+        windowHeight = this.getContentHeight() + this.bodyOffset;
 
         // Check to prevent unnecessary message dispatch even if size didn't change
         if(windowWidth !== this.currentWidth || windowHeight !== this.currentHeight) {
@@ -71,7 +71,7 @@ var contentHandler = {
         }
     },
 
-    getBodyOffset() {
+    getBodyOffset : function() {
         this.bodyOffset = this.getElementOffset(document.body);
     },
 

@@ -165,8 +165,11 @@ var masterGateway = {
     },
 
     handleProtectedMessage: function (event) {
-        var slaveData = this.slaves[slaveId],
+        var slaveId = event.data.slaveId || event.data.productId,
+            slaveData,
             actionName = event.data.action.replace('.', '');
+        
+        slaveData = this.slaves[slaveId];
         //Lowercase the first letter
         actionName = actionName.charAt(0).toLowerCase() + actionName.slice(1);
         if (this[actionName]) {
