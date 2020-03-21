@@ -77,7 +77,7 @@ var contentHandler = {
 
         //Convert HTML collection to array and calc the first level child nodes height sum
         Array.prototype.forEach.call(bodyChildNodes, function(element){
-            contentHeight += element.offsetHeight + this.getElementOffset(element);
+            contentHeight += element.scrollHeight + this.getElementOffset(element);
         }.bind(this));
 
         return contentHeight;
