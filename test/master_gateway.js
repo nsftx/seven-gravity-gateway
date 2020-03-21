@@ -1,6 +1,7 @@
 var assert = require('assert'),
     sinon = require('sinon'),
     expect = require('chai').expect,
+    // eslint-disable-next-line
     dom = require('jsdom-global')('<html><div id="test-frame">Hello world</div></html>');
 
 describe('Master gateway instantiation', function() {
@@ -118,7 +119,7 @@ describe('Master gateway instantiation', function() {
         var result = instance.getAll();
 
         assert.equal(Object.keys(result).length ,1);
-    })
+    });
 
 });
 
@@ -206,6 +207,7 @@ describe('Master gateway message exchange', function() {
             data: {
                 action: 'Widget.TestMsg',
                 msgSender: 'Slave',
+                slaveId: 'dummy',
                 callbacks : [
                     {
                         method: 1,
@@ -214,7 +216,7 @@ describe('Master gateway message exchange', function() {
                 ]
             },
             origin: 'http://www.nsoft.ba'
-        }
+        };
 
         instance.handleMessage(eventData);
         assert.equal(spy.called, true);
@@ -224,8 +226,8 @@ describe('Master gateway message exchange', function() {
         var instance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
             products : {
-                'product': {
-                    frameId: 'product'
+                'dummy': {
+                    frameId: 'dummy'
                 }
             }
         });
@@ -233,6 +235,7 @@ describe('Master gateway message exchange', function() {
             data: {
                 action: 'Widget.TestMsg',
                 msgSender: 'Slave',
+                slaveId: 'dummy',
                 callbacks : [
                     {
                         method: 1,
@@ -241,10 +244,10 @@ describe('Master gateway message exchange', function() {
                 ]
             },
             origin: 'http://www.nsoft.ba'
-        }
+        };
 
         instance.handleMessage(eventData);
-        expect(eventData.data.callbacks[0]).to.have.property('method')
+        expect(eventData.data.callbacks[0]).to.have.property('method');
         expect(eventData.data.callbacks[0]).to.have.property('methodAsync');
     });
 
@@ -264,7 +267,7 @@ describe('Master gateway message exchange', function() {
                 ]
             },
             origin: 'http://www.nsoft.ba'
-        }
+        };
         instance.handleMessage(eventData);
         eventData.data.callbacks[0].methodAsync();
         assert.equal(spy.called, true);
@@ -296,13 +299,14 @@ describe('Master gateway message exchange', function() {
         var instance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
             products : {
-                'product': {
-                    frameId: 'product'
+                'dummy': {
+                    frameId: 'dummy'
                 }
             }
         });
         var result = instance.once('betslip.toggle', function() {
-            onceValue = true;
+            // eslint-disable-next-line
+            var onceValue = true;
         });
         var value = typeof result === 'object';
         assert.equal(value, true);
@@ -312,8 +316,8 @@ describe('Master gateway message exchange', function() {
         var instance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
             products : {
-                'product': {
-                    frameId: 'product'
+                'dummy': {
+                    frameId: 'dummy'
                 }
             }
         });
@@ -321,12 +325,13 @@ describe('Master gateway message exchange', function() {
             data: {
                 action: 'betslip.toggle_bet',
                 msgSender: 'Slave',
-                slaveId: 'product'
+                slaveId: 'dummy'
             },
             origin: 'http://www.nsoft.ba'
         };
         instance.once('betslip.toggle_bet', function() {
-            onceValue = true;
+            // eslint-disable-next-line
+            var  onceValue = true;
         });
         assert.equal(instance.isSubscribed('betslip.toggle_bet'), true);
         instance.handleMessage(eventData);

@@ -1,5 +1,5 @@
 var porthole = require('../src/messaging/master'),
-    assert = require('assert'),
+    // eslint-disable-next-line
     dom = require('jsdom-global')();
 
 describe('Posting messages to product in iframe.', function() {
@@ -9,8 +9,8 @@ describe('Posting messages to product in iframe.', function() {
         document.body.appendChild(iframe);
 
         iframe.contentWindow.addEventListener('message', function(e) {
-            if(e.data != '3.14') {
-                done(new Error("Value is " + e.data + ' but expected to be 3.14'));
+            if(e.data !== '3.14') {
+                done(new Error('Value is ' + e.data + ' but expected to be 3.14'));
             } else {
                 done();
             }

@@ -11,9 +11,8 @@ describe('Subscribe/Unsubscribe funcionality', function() {
 
     it('Subscribe: Should be successful', function() {
         var result = pubSub.subscribe('betslip.add', function() {
-                return true;
-            }
-        );
+            return true;
+        });
         var value = typeof result === 'object' && result !== null;
         assert.equal(value, true);
     });
@@ -21,9 +20,8 @@ describe('Subscribe/Unsubscribe funcionality', function() {
     it('`On` for subscribe: Should be successful', function() {
         var value = null;
         pubSub.on('betslip.on', function() {
-                value = true;
-            }
-        );
+            value = true;
+        });
         pubSub.publish('betslip.on', 'Dummy Text');
         assert.equal(value, true);
     });
@@ -84,9 +82,8 @@ describe('Publish funcionality', function() {
     it('Publish: Should be successful', function() {
         var value = null;
         pubSub.subscribe('betslip.add', function() {
-                value = true;
-            }
-        );
+            value = true;
+        });
 
         pubSub.publish('betslip.add', 'Dummy Text');
         assert.equal(value, true);
@@ -96,9 +93,8 @@ describe('Publish funcionality', function() {
     it('Publish: Should be successful - Publish namespaced action', function() {
         var value = null;
         pubSub.subscribe('ticket.*', function() {
-                value = true;
-            }
-        );
+            value = true;
+        });
 
         pubSub.publish('ticket.add');
         assert.equal(value, true);
@@ -117,12 +113,13 @@ describe('Subscription and callback execute', function() {
         var pubSub = require('../src/pub_sub');
         var testVal1 = null;
         var testVal2 = null;
-        var subscription1 = pubSub.subscribe('betslip.add',
+
+        pubSub.subscribe('betslip.add',
             function() {
                 testVal1 = true;
             }
         );
-        var subscription2 = pubSub.subscribe('betslip.add',
+        pubSub.subscribe('betslip.add',
             function() {
                 testVal2 = true;
             }
@@ -142,7 +139,7 @@ describe('Subscription and callback execute', function() {
                 testVal1 = true;
             }
         );
-        var subscription2 = pubSub.subscribe('betslip.add',
+        pubSub.subscribe('betslip.add',
             function() {
                 testVal2 = true;
             }
@@ -161,9 +158,8 @@ describe('Clear subscriptions', function() {
 
     it('Publish: Should fail - Topics are empty', function() {
         pubSub.subscribe('betslip.add', function() {
-                return true;
-            }
-        );
+            return true;
+        });
 
         pubSub.clearSubscriptions();
 

@@ -7,6 +7,11 @@
     "commonjs": true,
     "es6": true
   },
+  "globals": {
+    "it": true,
+    "afterEach": true,
+    "describe": true
+  },
   "extends": "eslint:recommended",
   "rules": {
     "quotes": [

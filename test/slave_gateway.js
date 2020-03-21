@@ -2,6 +2,7 @@ var Gateway = require('../src/slave_gateway'),
     assert = require('assert'),
     sinon = require('sinon'),
     expect = require('chai').expect,
+    // eslint-disable-next-line
     dom = require('jsdom-global')(); //Inject dom in test because window deps
 
 describe('Slave gateway instantiation', function() {
@@ -134,10 +135,10 @@ describe('Slave gateway message exchange', function() {
                 ]
             },
             origin: 'http://www.nsoft.ba'
-        }
+        };
 
         instance.handleMessage(eventData);
-        expect(eventData.data.callbacks[0]).to.have.property('method')
+        expect(eventData.data.callbacks[0]).to.have.property('method');
         expect(eventData.data.callbacks[0]).to.have.property('methodAsync');
     });
 
@@ -157,7 +158,7 @@ describe('Slave gateway message exchange', function() {
                 ]
             },
             origin: 'http://www.nsoft.ba'
-        }
+        };
         instance.handleMessage(eventData);
         eventData.data.callbacks[0].methodAsync();
         assert.equal(spy.called, true);
