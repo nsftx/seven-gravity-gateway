@@ -1,7 +1,7 @@
 {
   "name": "@nsoft/seven-gravity-gateway",
   "private": false,
-  "version": "1.10.4",
+  "version": "1.10.5",
   "description": "Seven Gravity Gateway",
   "homepage": "http://7platform.com",
   "scripts": {
