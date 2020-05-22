@@ -147,7 +147,7 @@ var masterGateway = {
 
     handleSubscribedMessage: function (event) {
         var returnData;
-        if (event.data.callbacks && Array.isArray(event.data.callbacks)) {
+        if (event.data.callback || event.data.callbacks) {
             this.parseCrossContextCallbacks(event.data);
         }
 
@@ -181,7 +181,8 @@ var masterGateway = {
 
     parseCrossContextCallbacks: function(data) {
         var self = this;
-        data.callbacks.forEach(function (def) {
+        var callbacks = data.callback ? [data.callback] : data.callbacks;
+        callbacks.forEach(function (def) {
             def.method = function() {
                 return self.sendMessage(self.slaves[data.slaveId].frameId, {
                     action: def.cbHash,
