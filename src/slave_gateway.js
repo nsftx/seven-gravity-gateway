@@ -315,7 +315,7 @@ var slaveGateway = {
             event = data.action + '_' + data.uuid;
 
             if (data.callbacks || data.callback) {
-                this.subscribeCrossContextCallbacks(data);
+                self.subscribeCrossContextCallbacks(data);
             }
             subscription = self.once(event, function(response) {
                 clearTimeout(rejectTimeout);
