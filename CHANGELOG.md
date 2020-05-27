@@ -1,3 +1,9 @@
+## 1.10.6 (2020-05-27)
+
+####Fixed
+- Handle callback in master when provided as object (#2)
+- Fix this not pointing to slave instance (#1)
+
 ## 1.10.0 (2019-01-17)
 
 ####Added
