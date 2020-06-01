@@ -48,6 +48,7 @@ var slaveGateway = {
         this.config = config;
         this.slaveId = config.slaveId || config.productId;
         this.load = config.load || null;
+        this.calculateFixedAndAbsoluteElements = config.calculateFixedAndAbsoluteElements || false;
         this.setAllowedDomains();
         //Save method reference for event listeners
         this.handleMessage = this.handleMessage.bind(this);
