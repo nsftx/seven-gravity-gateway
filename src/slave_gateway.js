@@ -41,6 +41,8 @@ var slaveGateway = {
 
     snoozeTimeout: null,
 
+    calculateFixedAndAbsoluteElements: false,
+
     init: function(config){
         this.initialized = true;
         this.config = config;
@@ -207,10 +209,13 @@ var slaveGateway = {
     },
 
     slaveLoad : function(event) {
+        var self = this;
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Starting to load.', event.data);
-        if(event.data.autoResize) {
+        if (event.data.autoResize) {
             //Pass the event callback, and event name
-            contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize');
+            contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize', {
+                calculateFixedAndAbsoluteElements: self.calculateFixedAndAbsoluteElements,
+            });
         }
         if(this.load) {
             this.load(event.data);

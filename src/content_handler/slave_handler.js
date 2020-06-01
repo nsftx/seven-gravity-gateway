@@ -31,12 +31,15 @@ var contentHandler = {
 
     bodyOffset: 0,
 
-    init: function(eventCb, eventName) {
+    options: false,
+
+    init: function(eventCb, eventName, options) {
         this.eventCallback = eventCb;
         this.eventName = eventName;
 
         this.addContentListeners();
         this.listenDOMReady();
+        this.options = options;
 
         if (window.MutationObserver || window.WebKitMutationObserver){
             this.setupMutationObserver();
@@ -75,10 +78,15 @@ var contentHandler = {
         this.bodyOffset = this.getElementOffset(document.body);
     },
 
+    isElementOutsidePageFlow: function(element) {
+        return element.style.position === 'absolute' || element.style.position === 'fixed';
+    },
+
     //Get offset height of iframe content
     getContentHeight : function() {
         var contentHeight = 0,
-            bodyChildNodes = document.querySelectorAll('body > *');
+            bodyChildNodes = document.querySelectorAll('body > *'),
+            self = this;
 
         //If iframe's body has no child nodes
         if(!bodyChildNodes.length) {
@@ -86,8 +94,12 @@ var contentHandler = {
         }
 
         //Convert HTML collection to array and calc the first level child nodes height sum
-        Array.prototype.forEach.call(bodyChildNodes, function(element){
-            if (element.style.position !== 'absolute' && element.style.position !== 'fixed') {
+        Array.prototype.forEach.call(bodyChildNodes, function(element) {
+            if (self.isElementOutsidePageFlow(element)) {
+                if (self.options && self.options.calculateFixedAndAbsoluteElements) {
+                    contentHeight += element.scrollHeight + this.getElementOffset(element);
+                }
+            } else {
                 contentHeight += element.scrollHeight + this.getElementOffset(element);
             }
         }.bind(this));
