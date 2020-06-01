@@ -129,6 +129,7 @@ var slaveGateway = {
 
     handleSubscribedMessage: function(event) {
         var returnData;
+        var self = this;
         if (this.eventsSnoozed && !event.data.enforceEvent) {
             logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
             return false;
@@ -137,17 +138,24 @@ var slaveGateway = {
             this.parseCrossContextCallbacks(event.data);
         }
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Master message received:', event.data);
-        returnData = pubSub.publish(event.data.action, event.data);
-        // Return async id in message upon promise in original window can be resolved
-        if(!event.data.async || !event.data.uuid) return false;
-        // Return subsription data, or just return ack message so promise can be resovled
-        this.sendMessage({
-            data: returnData || { ack: true },
-            action: event.data.action + '_' + event.data.uuid,
-            enforceEvent: !!event.data.enforceEvent,
-            async: !!event.data.async,
-            uuid: event.data.uuid
-        });
+        if (event.data.async && event.data.uuid) {
+            // Check if there is existing subscription on event(action + uuid)
+            if (self.isSubscribed(event.data.action)) {
+                returnData = pubSub.publish(event.data.action, event.data);
+                // Return subsription data, or just return ack message so promise can be resovled
+                this.sendMessage({
+                    data: returnData || { ack: true },
+                    action: event.data.action + '_' + event.data.uuid,
+                    enforceEvent: !!event.data.enforceEvent,
+                    async: !!event.data.async,
+                    uuid: event.data.uuid
+                });
+            }
+        } else {
+            pubSub.publish(event.data.action, event.data);
+            return false;
+        }
+        
     },
 
     handleProtectedMessage: function(event) {
