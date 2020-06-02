@@ -137,7 +137,7 @@ var slaveGateway = {
             logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
             return false;
         }
-        if (event.data.callbacks && Array.isArray(event.data.callbacks)) {
+        if (event.data.callback || event.data.callbacks) {
             this.parseCrossContextCallbacks(event.data);
         }
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Master message received:', event.data);
