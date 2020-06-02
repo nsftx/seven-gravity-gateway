@@ -41,11 +41,14 @@ var slaveGateway = {
 
     snoozeTimeout: null,
 
+    calculateFixedAndAbsoluteElements: false,
+
     init: function(config){
         this.initialized = true;
         this.config = config;
         this.slaveId = config.slaveId || config.productId;
         this.load = config.load || null;
+        this.calculateFixedAndAbsoluteElements = config.calculateFixedAndAbsoluteElements || false;
         this.setAllowedDomains();
         //Save method reference for event listeners
         this.handleMessage = this.handleMessage.bind(this);
@@ -129,25 +132,33 @@ var slaveGateway = {
 
     handleSubscribedMessage: function(event) {
         var returnData;
+        var self = this;
         if (this.eventsSnoozed && !event.data.enforceEvent) {
             logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
             return false;
         }
-        if (event.data.callbacks && Array.isArray(event.data.callbacks)) {
+        if (event.data.callback || event.data.callbacks) {
             this.parseCrossContextCallbacks(event.data);
         }
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Master message received:', event.data);
-        returnData = pubSub.publish(event.data.action, event.data);
-        // Return async id in message upon promise in original window can be resolved
-        if(!event.data.async || !event.data.uuid) return false;
-        // Return subsription data, or just return ack message so promise can be resovled
-        this.sendMessage({
-            data: returnData || { ack: true },
-            action: event.data.action + '_' + event.data.uuid,
-            enforceEvent: !!event.data.enforceEvent,
-            async: !!event.data.async,
-            uuid: event.data.uuid
-        });
+        if (event.data.async && event.data.uuid) {
+            // Check if there is existing subscription on event(action + uuid)
+            if (self.isSubscribed(event.data.action)) {
+                returnData = pubSub.publish(event.data.action, event.data);
+                // Return subsription data, or just return ack message so promise can be resovled
+                this.sendMessage({
+                    data: returnData || { ack: true },
+                    action: event.data.action + '_' + event.data.uuid,
+                    enforceEvent: !!event.data.enforceEvent,
+                    async: !!event.data.async,
+                    uuid: event.data.uuid
+                });
+            }
+        } else {
+            pubSub.publish(event.data.action, event.data);
+            return false;
+        }
+        
     },
 
     handleProtectedMessage: function(event) {
@@ -199,10 +210,13 @@ var slaveGateway = {
     },
 
     slaveLoad : function(event) {
+        var self = this;
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Starting to load.', event.data);
-        if(event.data.autoResize) {
+        if (event.data.autoResize) {
             //Pass the event callback, and event name
-            contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize');
+            contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize', {
+                calculateFixedAndAbsoluteElements: self.calculateFixedAndAbsoluteElements,
+            });
         }
         if(this.load) {
             this.load(event.data);
