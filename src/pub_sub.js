@@ -30,8 +30,8 @@ var pubSub = {
     once : function(action, callback) {
         var subscription = false;
         if(typeof callback === 'function') {
-            subscription = this.subscribe(action, function() {
-                callback();
+            subscription = this.subscribe(action, function(response) {
+                callback(response);
                 subscription.remove();
             });
         }
