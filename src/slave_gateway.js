@@ -133,7 +133,6 @@ var slaveGateway = {
     handleSubscribedMessage: function(event) {
         var returnData;
         var self = this;
-
         if (this.eventsSnoozed && !event.data.enforceEvent) {
             logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
             return false;
@@ -145,19 +144,15 @@ var slaveGateway = {
         if (event.data.async && event.data.uuid) {
             // Check if there is existing subscription on event(action + uuid)
             if (self.isSubscribed(event.data.action)) {
-                
-                event.data.resolve = function() {
-                    this.sendMessage({
-                        data: returnData || { ack: true },
-                        action: event.data.action + '_' + event.data.uuid,
-                        enforceEvent: !!event.data.enforceEvent,
-                        async: !!event.data.async,
-                        uuid: event.data.uuid
-                    });
-                };
-                pubSub.publish(event.data.action, event.data);
+                returnData = pubSub.publish(event.data.action, event.data);
                 // Return subsription data, or just return ack message so promise can be resovled
-               
+                this.sendMessage({
+                    data: returnData || { ack: true },
+                    action: event.data.action + '_' + event.data.uuid,
+                    enforceEvent: !!event.data.enforceEvent,
+                    async: !!event.data.async,
+                    uuid: event.data.uuid
+                });
             }
         } else {
             pubSub.publish(event.data.action, event.data);
