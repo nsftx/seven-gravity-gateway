@@ -81,7 +81,8 @@ var pubSub = {
     },
 
     isSubscribed : function(actionName) {
-        return !!(this.topics.hasOwnProperty(actionName) && this.topics[actionName].length);
+        return this.topics.hasOwnProperty('*') || 
+            !!(this.topics.hasOwnProperty(actionName) && this.topics[actionName].length);
     },
 
     checkWildcardActions : function(actionName) {

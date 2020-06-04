@@ -36,6 +36,14 @@ describe('Subscribe/Unsubscribe funcionality', function() {
         assert.equal(result, true);
     });
 
+    it('Is Subscribed: Should pass when global subscribe exist', function() {
+        pubSub.subscribe('*', function () {});
+        var isSubscribed = pubSub.isSubscribed('some.action');
+        assert.equal(isSubscribed, true);
+        console.log('here');
+        pubSub.unsubscribe('*');
+    });
+
     it('Unsubscribe: Should fail - Topic is not existent', function() {
         var result = pubSub.unsubscribe('betslip.remove');
         assert.equal(result, false);
