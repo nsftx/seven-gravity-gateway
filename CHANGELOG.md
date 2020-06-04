@@ -1,3 +1,8 @@
+## 1.11.0 (2020-06-04)
+
+####Changed
+- New approach to promise based communication (#5)
+
 ## 1.10.6 (2020-05-27)
 
 ####Fixed
