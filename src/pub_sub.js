@@ -30,8 +30,8 @@ var pubSub = {
     once : function(action, callback) {
         var subscription = false;
         if(typeof callback === 'function') {
-            subscription = this.subscribe(action, function() {
-                callback();
+            subscription = this.subscribe(action, function(response) {
+                callback(response);
                 subscription.remove();
             });
         }
@@ -81,7 +81,8 @@ var pubSub = {
     },
 
     isSubscribed : function(actionName) {
-        return !!(this.topics.hasOwnProperty(actionName) && this.topics[actionName].length);
+        return this.topics.hasOwnProperty('*') || 
+            !!(this.topics.hasOwnProperty(actionName) && this.topics[actionName].length);
     },
 
     checkWildcardActions : function(actionName) {

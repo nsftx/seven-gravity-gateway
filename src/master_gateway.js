@@ -141,12 +141,14 @@ var masterGateway = {
             this.handleProtectedMessage(event);
             return false;
         } else {
-            this.handleSubscribedMessage(event);
+            this.handleSubscribedMessage(slaveId, event);
         }    
     },
 
-    handleSubscribedMessage: function (event) {
-        var returnData;
+    handleSubscribedMessage: function (slaveId, event) {
+        var self = this;
+        var resolveOrReject;
+
         if (event.data.callback || event.data.callbacks) {
             this.parseCrossContextCallbacks(event.data);
         }
@@ -156,14 +158,24 @@ var masterGateway = {
         if (event.data.async && event.data.uuid) {
             // Check if there is existing subscription on event(action + uuid)
             if (self.isSubscribed(event.data.action)) {
-                returnData = pubSub.publish(event.data.action, event.data);
-                // Return subsription data, or just return ack message so promise can be resovled
-                this.sendMessage(this.slaves[event.data.slaveId].frameId, {
-                    data: returnData || {ack: true},
-                    action: event.data.action + '_' + event.data.uuid,
-                    async: !!event.data.async,
-                    uuid: event.data.uuid
-                });
+                resolveOrReject = function(flag, returnData){
+                    self.sendMessage(slaveId, {
+                        data: returnData || { ack: true },
+                        promiseResult: flag,
+                        action: event.data.action + '_' + event.data.uuid,
+                        enforceEvent: !!event.data.enforceEvent,
+                        async: !!event.data.async,
+                        uuid: event.data.uuid
+                    });
+                };
+
+                event.data.resolve = function(returnData) {
+                    resolveOrReject('resolve', returnData);
+                };
+                event.data.reject = function(returnData) {
+                    resolveOrReject('reject', returnData);
+                };
+                pubSub.publish(event.data.action, event.data);
             }
         } else {
             pubSub.publish(event.data.action, event.data);
@@ -322,15 +334,21 @@ var masterGateway = {
             subscription = self.once(event, function(response) {
                 clearTimeout(rejectTimeout);
                 rejectTimeout = null;
-                logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise resolved for event ' + event);
-                resolve(response);
+                if (response.promiseResult === 'resolve') {
+                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise resolved for event ' + event);
+                    resolve(response);
+                } else {
+                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise rejected for event ' + event);
+                    reject(response);
+                }
+               
             });
 
             if(rejectDuration) {
                 rejectTimeout = setTimeout(function() {
                     subscription.remove();
                     reject();
-                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise rejected for event ' + event);
+                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise rejected after timeout for event ' + event);
                 }, rejectDuration);
             }
 
