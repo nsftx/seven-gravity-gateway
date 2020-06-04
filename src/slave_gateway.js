@@ -131,8 +131,9 @@ var slaveGateway = {
     },
 
     handleSubscribedMessage: function(event) {
-        var returnData;
         var self = this;
+        var resolveOrReject;
+
         if (this.eventsSnoozed && !event.data.enforceEvent) {
             logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveAwake event in order to receive messages from Master frame.');
             return false;
@@ -144,15 +145,26 @@ var slaveGateway = {
         if (event.data.async && event.data.uuid) {
             // Check if there is existing subscription on event(action + uuid)
             if (self.isSubscribed(event.data.action)) {
-                returnData = pubSub.publish(event.data.action, event.data);
+                resolveOrReject = function(flag, returnData){
+                    self.sendMessage({
+                        data: returnData || { ack: true },
+                        promiseResult: flag,
+                        action: event.data.action + '_' + event.data.uuid,
+                        enforceEvent: !!event.data.enforceEvent,
+                        async: !!event.data.async,
+                        uuid: event.data.uuid
+                    });
+                };
+
+                event.data.resolve = function(returnData) {
+                    resolveOrReject('resolve', returnData);
+                };
+                event.data.reject = function(returnData) {
+                    resolveOrReject('reject', returnData);
+                };
+                pubSub.publish(event.data.action, event.data);
                 // Return subsription data, or just return ack message so promise can be resovled
-                this.sendMessage({
-                    data: returnData || { ack: true },
-                    action: event.data.action + '_' + event.data.uuid,
-                    enforceEvent: !!event.data.enforceEvent,
-                    async: !!event.data.async,
-                    uuid: event.data.uuid
-                });
+              
             }
         } else {
             pubSub.publish(event.data.action, event.data);

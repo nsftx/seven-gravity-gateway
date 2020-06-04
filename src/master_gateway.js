@@ -334,15 +334,21 @@ var masterGateway = {
             subscription = self.once(event, function(response) {
                 clearTimeout(rejectTimeout);
                 rejectTimeout = null;
-                logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise resolved for event ' + event);
-                resolve(response);
+                if (response.promiseResult === 'resolve') {
+                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise resolved for event ' + event);
+                    resolve(response);
+                } else {
+                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise rejected for event ' + event);
+                    reject(response);
+                }
+               
             });
 
             if(rejectDuration) {
                 rejectTimeout = setTimeout(function() {
                     subscription.remove();
                     reject();
-                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise rejected for event ' + event);
+                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise rejected after timeout for event ' + event);
                 }, rejectDuration);
             }
 
