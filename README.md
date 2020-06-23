@@ -37,3 +37,5 @@ To load **both modules**:
 ```lang=javascript
 import Gateway from '@nsoft/seven-gravity-gateway';
 ```
+
+For a detailed explanation about how GG works, check [Wiki](https://github.com/nsftx/seven-gravity-gateway/wiki).
