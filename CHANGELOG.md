@@ -1,3 +1,9 @@
+## 1.11.1 (2021-01-11)
+
+####Fixed
+- Add missing doc images (c0ec6e8e0d63147385cc8b8208752ab1dd157f05)
+- Removed broken links from `README.md` (03327b519777fc176aef61c13e151eaf4cf29876)
+
 ## 1.11.0 (2020-06-04)
 
 ####Changed
