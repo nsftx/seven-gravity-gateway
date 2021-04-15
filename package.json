@@ -24,9 +24,6 @@
     "gravity",
     "gateway"
   ],
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
   "author": "Ivan Pandzic <pandzic.ivan@nsoft.ba>",
   "contributors": [
     "Jadranko Dragoje <dragoje.jadranko@nsoft.ba>"

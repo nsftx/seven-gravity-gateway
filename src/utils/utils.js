@@ -9,9 +9,9 @@ var logger = {
             var type = args.splice(0,1);
 
             if(console[type]) {
-                console[type].call(console, args);
+                console[type].apply(console, args);
             } else {
-                console.log.call(console, args);
+                console.log.apply(console, args);
             }
         }
     }
