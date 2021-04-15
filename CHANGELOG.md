@@ -1,3 +1,9 @@
+## 1.12.0 (2021-04-15)
+
+####Changed
+- Change logger implementation so it works on Chrome 50 (73ac30a8e3231fb78bc3dd0fbbd15dcef1ad76c4)
+
+
 ## 1.11.1 (2021-01-11)
 
 ####Fixed
