@@ -5,6 +5,7 @@
   "description": "Seven Gravity Gateway",
   "homepage": "https://github.com/nsftx/seven-gravity-gateway",
   "scripts": {
+    "prepublish": "npm run build",
     "build": "webpack",
     "serve": "webpack -w",
     "test": "mocha test --recursive",
