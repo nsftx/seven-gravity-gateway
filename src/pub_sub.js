@@ -31,7 +31,7 @@ var pubSub = {
         var subscription = false;
         if(typeof callback === 'function') {
             subscription = this.subscribe(action, function(response) {
-                callback(response);
+                callback(response.data);
                 subscription.remove();
             });
         }
