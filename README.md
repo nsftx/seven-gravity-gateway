@@ -10,31 +10,31 @@ This component serves as communication layer between parent and child frames. Ga
 
 GG consists of 2 modules: Master and Slave module. Master module is intended for frames which will integrate 3rd party product via iframe. Slave module is intended for applications which will be integrated in some 3rd party frame.
 
-Modules are exposed as UMD modules which we can be required as CommonJS or AMD modules, or simply injecting the script in HTML and using the global reference. Script is available over `nsoft.cdn` and it is public. GG can also be imported from `node_modules`.
+Modules are exposed as UMD modules which we can be required as CommonJS or AMD modules, or simply injecting the script in HTML and using the global reference.
 
 **Master gateway:**
 
-```lang=javascript
+```javascript
 var Gateway = window.gravity.gateway.master;
 ```
 or
-```lang=javascript
+```javascript
 import Gateway from '@nsoft/seven-gravity-gateway/master';
 ```
 
 **Slave gateway:**
 
-```lang=javascript
+```javascript
 var Gateway = window.gravity.gateway.slave;
 ```
 or
-```lang=javascript
+```javascript
 import Gateway from '@nsoft/seven-gravity-gateway/slave';
 ```
 
 
 To load **both modules**:
-```lang=javascript
+```javascript
 import Gateway from '@nsoft/seven-gravity-gateway';
 ```
 
