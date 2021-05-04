@@ -1,8 +1,18 @@
+## 1.13.0 (2021-05-04)
+
+####Added
+
+- Project now have CODEOWNERS (#12)
+- `test:watch` can be used to watch code changes and run tests (#12)
+
+####Fixed
+
+- Async callback in Slave now returns only what is resolved in a parent frame (#11)
+
 ## 1.12.0 (2021-04-15)
 
 ####Changed
 - Change logger implementation so it works on Chrome 50 (73ac30a8e3231fb78bc3dd0fbbd15dcef1ad76c4)
-
 
 ## 1.11.1 (2021-01-11)
 
