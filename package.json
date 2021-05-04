@@ -3,11 +3,12 @@
   "private": false,
   "version": "1.12.0",
   "description": "Seven Gravity Gateway",
-  "homepage": "http://7platform.com",
+  "homepage": "https://github.com/nsftx/seven-gravity-gateway",
   "scripts": {
     "build": "webpack",
     "serve": "webpack -w",
-    "test": "./node_modules/.bin/mocha test --recursive",
+    "test": "mocha test --recursive",
+    "test:watch": "mocha test -w --recursive",
     "coverage": "istanbul cover _mocha test -- --recursive",
     "lint": "eslint src",
     "precommit": "npm run lint",
@@ -15,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@phabricator.nsoft.ba/diffusion/GG/seven-gravity-gateway.git"
+    "url": "git@github.com:nsftx/seven-gravity-gateway.git"
   },
   "keywords": [
     "nsoft",
