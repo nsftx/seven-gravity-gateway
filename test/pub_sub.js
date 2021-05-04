@@ -1,4 +1,5 @@
 var assert = require('assert');
+var sinon = require('sinon');
 
 describe('Subscribe/Unsubscribe funcionality', function() {
     var pubSub = require('../src/pub_sub'),
@@ -81,6 +82,28 @@ describe('Subscribe/Unsubscribe funcionality', function() {
     it('Once subscription doesn`t exists: Should be succesfull', function() {
         var subscription = pubSub.isSubscribed('betslip.edit');
         assert.equal(subscription, false);
+    });
+
+    it('Once subscription callback: Should execute callback', function() {
+        var callback = sinon.spy();
+        pubSub.once('Tickets.Validate', callback);
+        pubSub.publish('Tickets.Validate');
+        assert.equal(callback.called, true);
+    });
+
+    it('Once subscription callback: Should execute callback with passed data', function() {
+        var eventData = {
+            action: 'Tickets.Validate',
+            msgSender: 'Slave',
+            slaveId: 'Dummy',
+            data: {
+                ticket: false
+            }
+        };
+        var callback = sinon.spy();
+        pubSub.once('Tickets.Validate', callback);
+        pubSub.publish('Tickets.Validate', eventData);
+        assert.strictEqual(callback.getCall(0).calledWith(eventData.data), true);
     });
 });
 
