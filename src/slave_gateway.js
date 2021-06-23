@@ -39,7 +39,7 @@ var slaveGateway = {
 
     eventsMuted: false,
 
-    snoozeTimeout: null,
+    muteTimeout: null,
 
     calculateFixedAndAbsoluteElements: false,
 
@@ -135,7 +135,7 @@ var slaveGateway = {
         var resolveOrReject;
 
         if (this.eventsMuted && !event.data.enforceEvent) {
-            logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveUnmute event in order to receive messages from Master frame.');
+            logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are muted. Use slaveUnmute event in order to receive messages from Master frame.');
             return false;
         }
         if (event.data.callback || event.data.callbacks) {
@@ -181,7 +181,7 @@ var slaveGateway = {
         if ((this[actionName] && !this.eventsMuted) || actionName === 'slaveUnmute') {
             this[actionName](event);
         } else if (this.eventsMuted) {
-            logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveUnmute event in order to receive messages from Master frame.');
+            logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are muted. Use slaveUnmute event in order to receive messages from Master frame.');
         } else {
             logger.out('warn', '[GG] Slave.' +  this.slaveId + ':', 'Actions with domain `Master` or `Slave` are protected!');
         }
@@ -255,21 +255,21 @@ var slaveGateway = {
 
         this.eventsMuted = true;
         if(data.timeout && typeof data.timeout === 'number') {
-            if(this.snoozeTimeout) {
-                clearTimeout(this.snoozeTimeout);
-                this.snoozeTimeout = null;
+            if(this.muteTimeout) {
+                clearTimeout(this.muteTimeout);
+                this.muteTimeout = null;
             }
-            this.snoozeTimeout = setTimeout(function() {
+            this.muteTimeout = setTimeout(function() {
                 self.eventsMuted = false;
             }, data.timeout);
         }
-        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are snoozed.', event.data);
+        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are muted.', event.data);
     },
 
     slaveUnmute: function() {
-        if(this.snoozeTimeout) {
-            clearTimeout(this.snoozeTimeout);
-            this.snoozeTimeout = null;
+        if(this.muteTimeout) {
+            clearTimeout(this.muteTimeout);
+            this.muteTimeout = null;
         }
         this.eventsMuted = false;
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are unmuted.', event.data);
@@ -310,7 +310,7 @@ var slaveGateway = {
 
     sendMessage : function(data, origin) {
         if (this.eventsMuted && !data.enforceEvent) {
-            logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveUnmute event in order to send messages to Master frame.');
+            logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are muted. Use slaveUnmute event in order to send messages to Master frame.');
             return false;
         }
         if (data.callbacks || data.callback) {
@@ -330,7 +330,7 @@ var slaveGateway = {
         rejectDuration = rejectDuration || 0;
 
         if (this.eventsMuted && !data.enforceEvent) {
-            logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are snoozed. Use slaveUnmute event in order to send messages to Master frame.');
+            logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are muted. Use slaveUnmute event in order to send messages to Master frame.');
             return false;
         }
 
