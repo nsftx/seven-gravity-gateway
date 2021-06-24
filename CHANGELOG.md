@@ -1,3 +1,11 @@
+## 1.14.0 (2021-06-24)
+
+#### Changed
+
+ - Renamed events: 
+     - `Slave.Snooze` -> `Slave.Mute`
+     - `Slave.Awake` -> `Slave.Unmute`
+
 ## 1.13.0 (2021-05-04)
 
 ####Added
