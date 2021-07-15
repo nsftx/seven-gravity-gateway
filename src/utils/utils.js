@@ -7,7 +7,7 @@ var logger = {
         //First argument is notification type (critical, error, log, warn, info)
         var type = args.splice(0,1);
 
-        if (type === 'critical') {
+        if (type && type[0] === 'critical') {
             console.error.apply(console, args);
             return;
         }
