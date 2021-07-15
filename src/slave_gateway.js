@@ -15,7 +15,7 @@ function validateInitialization(config) {
     var slaveId = config.slaveId || config.productId;
 
     if(!slaveId || typeof slaveId !== 'string') {
-        logger.out('error', '[GG] Slave:', 'slaveId/productId property is invalid or missing');
+        logger.out('critical', '[GG] Slave:', 'slaveId/productId property is invalid or missing');
         return false;
     } else {
         logger.out('info', '[GG] Slave.' + slaveId + ':', 'Initializing');
@@ -116,7 +116,7 @@ var slaveGateway = {
         }
 
         if(!originValid) {
-            logger.out('error', '[GG] Slave.' +  this.slaveId + ':' + ' Message origin is not allowed');
+            logger.out('critical', '[GG] Slave.' +  this.slaveId + ':' + ' Message origin is not allowed');
             return false;
         }
 
