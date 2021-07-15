@@ -4,7 +4,7 @@ var logger = {
     out : function(){
         //Convert to array
         var args = Array.prototype.slice.call(arguments);
-        //First argument is notification type (log, error, warn, info)
+        //First argument is notification type (critical, error, log, warn, info)
         var type = args.splice(0,1);
 
         if (type === 'critical') {
