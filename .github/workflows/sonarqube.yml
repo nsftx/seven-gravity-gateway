@@ -1,0 +1,36 @@
+name: NSoft SonarQube Analysis
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+jobs:
+  sq_scan_job:
+    runs-on: ubuntu-latest
+    name: SonarQube scan
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup sonarqube
+        uses: warchant/setup-sonar-scanner@v3
+      - name: Run sonarqube
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run:
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+          echo "$GITHUB_EVENT_NAME" &&
+          sonar-scanner
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.branch.name=${GITHUB_REF#refs/heads/};
+          elif [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+          echo "$GITHUB_EVENT_NAME" &&
+          sonar-scanner
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
+          -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+          -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
+          -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }};
+          fi
