@@ -11,7 +11,7 @@ function validateSlavesConfig(slaves) {
 
     for (var slave in slaves) {
         if (!slaves[slave].frameId || typeof slaves[slave].frameId !== 'string') {
-            logger.out('error', '[GG] Master:', 'frameId property is invalid or missing for ' + slave);
+            logger.out('critical', '[GG] Master:', 'frameId property is invalid or missing for ' + slave);
             configValid = false;
         }
     }
@@ -69,10 +69,10 @@ var masterGateway = {
         var slaveId = config.slaveId || config.productId;
 
         if (!slaveId || typeof slaveId !== 'string') {
-            logger.out('error', '[GG] Master:', 'slaveId/productId property is invalid or missing for ' + config);
+            logger.out('critical', '[GG] Master:', 'slaveId/productId property is invalid or missing for ' + config);
             return false;
         } else if (!config.frameId || typeof config.frameId !== 'string') {
-            logger.out('error', '[GG] Master:', 'frameId property is invalid or missing for ' + config);
+            logger.out('critical', '[GG] Master:', 'frameId property is invalid or missing for ' + config);
             return false;
         }
         //Delete slaveId prop for sake of standardization
@@ -124,12 +124,12 @@ var masterGateway = {
         }
 
         if(!originValid) {
-            logger.out('error', '[GG] Master: Message origin is not allowed');
+            logger.out('critical', '[GG] Master: Message origin is not allowed');
             return false;
         }
 
         if (!this.slaves[slaveId]) {
-            logger.out('error', '[GG] Master: Slave: ' + slaveId + ' is not registered for use.');
+            logger.out('critical', '[GG] Master: Slave: ' + slaveId + ' is not registered for use.');
             return false;
         }
 
