@@ -103,7 +103,7 @@ describe('Subscribe/Unsubscribe funcionality', function() {
         var callback = sinon.spy();
         pubSub.once('Tickets.Validate', callback);
         pubSub.publish('Tickets.Validate', eventData);
-        assert.strictEqual(callback.getCall(0).calledWith(eventData.data), true);
+        assert.strictEqual(callback.getCall(0).calledWith(eventData), true);
     });
 });
 
