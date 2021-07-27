@@ -14,6 +14,11 @@ function validateSlavesConfig(slaves) {
             logger.out('critical', '[GG] Master:', 'frameId property is invalid or missing for ' + slave);
             configValid = false;
         }
+
+        if (!slaves[slave].slaveId || typeof slaves[slave].slaveId !== 'string') {
+            logger.out('critical', '[GG] Master:', 'slaveId property is invalid or missing for ' + slave);
+            configValid = false;
+        }
     }
 
     return configValid;
@@ -309,6 +314,7 @@ var masterGateway = {
         }
 
         var frame = document.getElementById(slave.frameId);
+
         if (!frame) {
             logger.out('warn', '[GG] Master:', 'IFrame element under ID ' + slave.frameId + ' is non existent.');
             return false;
