@@ -9,7 +9,7 @@
     "build": "webpack",
     "serve": "webpack -w",
     "test": "mocha test --recursive",
-    "test:watch": "mocha test -w --recursive",
+    "test:watch": "mocha test -w --recursive --inspect",
     "coverage": "istanbul cover _mocha test -- --recursive",
     "lint": "eslint src",
     "precommit": "npm run lint",
