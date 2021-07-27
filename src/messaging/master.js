@@ -1,7 +1,13 @@
 function Porthole() {}
 
 Porthole.prototype = {
-
+    /**
+     * Emit message to IFrame element or current window
+     *
+     * @param {HTMLIFrameElement} productFrame
+     * @param {Object} data
+     * @param {String} domain
+     */
     sendMessage: function(productFrame, data, domain) {
         var targetWindow = productFrame.contentWindow || window;
         var windowDomain = domain || '*';
