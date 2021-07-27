@@ -1,12 +1,12 @@
 var assert = require('assert'),
     sinon = require('sinon'),
     expect = require('chai').expect,
+    instance = null,
     // eslint-disable-next-line
     dom = require('jsdom-global')('<html><div id="test-frame">Hello world</div></html>');
 
 describe('Master gateway instantiation', function() {
-    var instance,
-        Gateway = require('../src/master_gateway');
+    var Gateway = require('../src/master_gateway');
 
     it('Instantiation should fail - Configuration not passed', function() {
         instance = Gateway();
@@ -33,7 +33,8 @@ describe('Master gateway instantiation', function() {
             allowedOrigins : ['http://www.nsoft.ba'],
             products : {
                 'product': {
-                    frameId: 'product'
+                    frameId: 'test-frame',
+                    slaveId: 'product'
                 }
             }
         });
@@ -59,7 +60,7 @@ describe('Master gateway instantiation', function() {
 
     it('Adding slaves on fly should pass', function() {
         instance.addSlave({
-            frameId : 'dummy',
+            frameId : 'test-frame',
             slaveId : 'dummy'
         });
 
@@ -107,7 +108,7 @@ describe('Master gateway instantiation', function() {
     it('Send msg to all slaves should pass', function() {
         var result;
         instance.addSlave({
-            frameId : 'dummy',
+            frameId : 'test-frame',
             slaveId : 'dummy'
         });
         result = instance.sendToAll('Test msg', '*');
@@ -132,30 +133,14 @@ describe('Master gateway message exchange', function() {
     });
 
     it('Should send message', function() {
-        var instance = Gateway({
-            allowedOrigins : ['http://www.nsoft.ba'],
-            products : {
-                'product': {
-                    frameId: 'product'
-                }
-            }
-        });
         var spy = sinon.spy(masterPorthole, 'sendMessage');
-        instance.sendMessage('test-frame', {}, '*');
+        instance.sendMessage('dummy', {}, '*');
         assert.equal(spy.called, true);
     });
 
     it('Should call subscribeCrossContextCallbacks', function() {
-        var instance = Gateway({
-            allowedOrigins : ['http://www.nsoft.ba'],
-            products : {
-                'product': {
-                    frameId: 'product'
-                }
-            }
-        });
         var spy = sinon.spy(instance, 'subscribeCrossContextCallbacks');
-        instance.sendMessage('test-frame', {
+        instance.sendMessage('dummy', {
             action : 'Widget.TestMsg',
             callbacks : [
                 {
@@ -170,14 +155,6 @@ describe('Master gateway message exchange', function() {
     });
 
     it('Should succesfully subscribe cross context callbacks', function() {
-        var instance = Gateway({
-            allowedOrigins : ['http://www.nsoft.ba'],
-            products : {
-                'product': {
-                    frameId: 'product'
-                }
-            }
-        });
         var msgData =  {
             action : 'Widget.TestMsg',
             callbacks : [
@@ -189,19 +166,11 @@ describe('Master gateway message exchange', function() {
                 }
             ]
         };
-        instance.sendMessage('test-frame', msgData, '*');
+        instance.sendMessage('dummy', msgData, '*');
         expect(msgData.callbacks[0].cbHash).to.be.a('string');
     });
 
     it('Should call parseCrossContextCallbacks', function() {
-        var instance = Gateway({
-            allowedOrigins : ['http://www.nsoft.ba'],
-            products : {
-                'product': {
-                    frameId: 'product'
-                }
-            }
-        });
         var spy = sinon.spy(instance, 'parseCrossContextCallbacks');
         var eventData = {
             data: {
@@ -223,14 +192,6 @@ describe('Master gateway message exchange', function() {
     });
 
     it('parseCrossContextCallbacks should attach methods', function() {
-        var instance = Gateway({
-            allowedOrigins : ['http://www.nsoft.ba'],
-            products : {
-                'dummy': {
-                    frameId: 'dummy'
-                }
-            }
-        });
         var eventData = {
             data: {
                 action: 'Widget.TestMsg',
@@ -252,7 +213,6 @@ describe('Master gateway message exchange', function() {
     });
 
     it('parseCrossContextCallbacks should call sendMessageAsync', function() {
-        var instance = Gateway();
         var spy = sinon.spy(instance, 'sendMessageAsync');
         var eventData = {
             data: {
@@ -274,14 +234,6 @@ describe('Master gateway message exchange', function() {
     });
 
     it('Should succesfully subscribe cross context callback', function() {
-        var instance = Gateway({
-            allowedOrigins : ['http://www.nsoft.ba'],
-            products : {
-                'product': {
-                    frameId: 'product'
-                }
-            }
-        });
         var msgData =  {
             action : 'Widget.TestMsg',
             callback : {
@@ -291,19 +243,11 @@ describe('Master gateway message exchange', function() {
                 }
             }
         };
-        instance.sendMessage('test-frame', msgData, '*');
+        instance.sendMessage('dummy', msgData, '*');
         expect(msgData.callback.cbHash).to.be.a('string');
     });
 
     it('Should succesfully subscribe once', function() {
-        var instance = Gateway({
-            allowedOrigins : ['http://www.nsoft.ba'],
-            products : {
-                'dummy': {
-                    frameId: 'dummy'
-                }
-            }
-        });
         var result = instance.once('betslip.toggle', function() {
             // eslint-disable-next-line
             var onceValue = true;
@@ -313,14 +257,6 @@ describe('Master gateway message exchange', function() {
     });
 
     it('Executing once subscription: Should be succesfull', function() {
-        var instance = Gateway({
-            allowedOrigins : ['http://www.nsoft.ba'],
-            products : {
-                'dummy': {
-                    frameId: 'dummy'
-                }
-            }
-        });
         var eventData = {
             data: {
                 action: 'betslip.toggle_bet',
