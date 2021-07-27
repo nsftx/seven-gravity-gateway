@@ -202,13 +202,13 @@ var masterGateway = {
         var callbacks = data.callback ? [data.callback] : data.callbacks;
         callbacks.forEach(function (def) {
             def.method = function() {
-                return self.sendMessage(self.slaves[data.slaveId].frameId, {
+                return self.sendMessage(data.slaveId, {
                     action: def.cbHash,
                     data: arguments[0] || false                    
                 });
             };
             def.methodAsync = function() {
-                return self.sendMessageAsync(self.slaves[data.slaveId].frameId, {
+                return self.sendMessageAsync(data.slaveId, {
                     action: def.cbHash,
                     data: arguments[0] || false                    
                 });
@@ -238,11 +238,11 @@ var masterGateway = {
             //Curry the sendMessage function with frameId argument in this special case
             this.eventHandler = eventHandler(event.data.eventListeners, this.sendMessage.bind(this, slaveData.frameId), 'Master.Event');
         }
-        this.slaveLoad(slaveData);
+        this.slaveLoad(event.data.slaveId, slaveData);
     },
 
-    slaveLoad : function(slaveData) {
-        this.sendMessage(slaveData.frameId, {
+    slaveLoad : function(slaveId, slaveData) {
+        this.sendMessage(slaveId, {
             action : 'Slave.Load',
             data: typeof slaveData.data === 'function' ? slaveData.data() : slaveData.data || {},
             autoResize : typeof slaveData.autoResize !== 'undefined' ? slaveData.autoResize : true
@@ -300,10 +300,17 @@ var masterGateway = {
         }
     },
 
-    sendMessage: function (frameId, data, origin) {
-        var frame = document.getElementById(frameId);
+    sendMessage: function (slaveId, data, origin) {
+        var slave = this.slaves[slaveId];
+
+        if (!slave) {
+            logger.out('warn', '[GG] Master:', 'Slave is not registered: ' + slaveId + '.');
+            return false;
+        }
+
+        var frame = document.getElementById(slave.frameId);
         if (!frame) {
-            logger.out('warn', '[GG] Master:', 'Frame ' + frameId + ' is non existent.');
+            logger.out('warn', '[GG] Master:', 'IFrame element under ID ' + slave.frameId + ' is non existent.');
             return false;
         }
         if (data.callbacks || data.callback) {
@@ -314,7 +321,7 @@ var masterGateway = {
         masterPorthole.sendMessage(frame, data, origin);
     },
 
-    sendMessageAsync : function(frameId, data, origin, rejectDuration){
+    sendMessageAsync : function(slaveId, data, origin, rejectDuration){
         var self = this,
             rejectTimeout = null,
             subscription;
@@ -352,7 +359,7 @@ var masterGateway = {
                 }, rejectDuration);
             }
 
-            self.sendMessage(frameId, data, origin);
+            self.sendMessage(slaveId, data, origin);
         });
     },
 
@@ -364,7 +371,7 @@ var masterGateway = {
         }
 
         for(var key in this.slaves) {
-            self.sendMessage(this.slaves[key].frameId, data, origin);
+            self.sendMessage(key, data, origin);
         }
     },
 
