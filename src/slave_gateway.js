@@ -348,10 +348,10 @@ var slaveGateway = {
                 rejectTimeout = null;
                 if (response.promiseResult === 'resolve') {
                     logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise resolved for event ' + event);
-                    resolve(response);
+                    resolve(response.data);
                 } else {
                     logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise rejected for event ' + event);
-                    reject(response);
+                    reject(response.data);
                 }
             });
 
