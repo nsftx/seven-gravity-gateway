@@ -1,14 +1,23 @@
+## 1.14.2 (2021-08-10)
+
+#### Fixed
+
+- Fix async message not resolving promise (#19) 
 ## 1.14.1 (2021-07-16)
 
 #### Added
 
- - Implemented critical log level for errors that will cause cross-frame communication malfunction
+- Implemented critical log level independent of debug option (#18)
+
+#### Changed
+
+- Changed log level to critical on errors regarding allowed origins and slaveId mismatch (invalid value) which are definite dealbreakers in cross-frame communication (#18)
 
 ## 1.14.0 (2021-06-24)
 
 #### Changed
 
- - Renamed events: 
+- Renamed events: 
      - `Slave.Snooze` -> `Slave.Mute`
      - `Slave.Awake` -> `Slave.Unmute`
 
