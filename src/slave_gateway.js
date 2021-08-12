@@ -178,7 +178,7 @@ var slaveGateway = {
         //Lowercase the first letter
         actionName = actionName.charAt(0).toLowerCase() + actionName.slice(1);
 
-        if ((this[actionName] && !this.eventsMuted) || actionName === 'slaveUnmute') {
+        if ((this[actionName] && !this.eventsMuted) || actionName === 'slaveUnmute' || actionName === 'slaveAwake') {
             this[actionName](event);
         } else if (this.eventsMuted) {
             logger.out('info', '[GG] Slave.' +  this.slaveId + ':' + ' Events are muted. Use slaveUnmute event in order to receive messages from Master frame.');
@@ -273,6 +273,14 @@ var slaveGateway = {
         }
         this.eventsMuted = false;
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are unmuted.', event.data);
+    },
+
+    slaveSnooze: function(event) {
+        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are snoozed.', event.data);
+    },
+
+    slaveAwake: function() {
+        logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are awaked.', event.data);
     },
 
     once : function(action, callback) {
