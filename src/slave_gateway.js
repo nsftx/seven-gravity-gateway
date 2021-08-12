@@ -277,10 +277,13 @@ var slaveGateway = {
 
     slaveSnooze: function(event) {
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are snoozed.', event.data);
+        pubSub.publish(event.data.action, event.data);
     },
 
-    slaveAwake: function() {
+    slaveAwake: function(event) {
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are awaked.', event.data);
+        pubSub.publish(event.data.action, event.data);
+
     },
 
     once : function(action, callback) {
