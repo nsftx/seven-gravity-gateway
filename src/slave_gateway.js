@@ -283,7 +283,6 @@ var slaveGateway = {
     slaveAwake: function(event) {
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Slave events are awaked.', event.data);
         pubSub.publish(event.data.action, event.data);
-
     },
 
     once : function(action, callback) {
