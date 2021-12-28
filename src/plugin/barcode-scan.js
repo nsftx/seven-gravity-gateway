@@ -3,7 +3,7 @@ var config = {
     prefix: 'space',
     regex: {
         pattern: /^[A-Za-z0-9.\-%]$/,
-        flags: 'ig'
+        flags: 'i'
     }
 };
 var codeLoaded = ''; // Code to be passed to ticket check
