@@ -7,3 +7,4 @@ dist/
 .history
 coverage
 .history
+.nyc_output
