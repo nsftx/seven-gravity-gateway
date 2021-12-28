@@ -185,13 +185,17 @@ var masterGateway = {
     handleProtectedMessage: function (event) {
         var slaveId = event.data.slaveId || event.data.productId,
             slaveData,
-            actionName = event.data.action.replace('.', '');
+            actionName = event.data.action.replace('.', ''),
+            whitelistedEvents = ['slaveScanFinished'];
         
         slaveData = this.slaves[slaveId];
         //Lowercase the first letter
         actionName = actionName.charAt(0).toLowerCase() + actionName.slice(1);
         if (this[actionName]) {
             this[actionName](event, slaveData);
+        } else if(whitelistedEvents.indexOf(actionName) !== -1) {
+            logger.out('info', '[GG] Master:', 'Slave.' + slaveId + ':', 'Received scanned code.', event.data);
+            pubSub.publish(event.data.action, event.data);
         } else {
             logger.out('warn', '[GG] Master:', 'Actions with domain `Master` or `Slave` are protected!');
         }
