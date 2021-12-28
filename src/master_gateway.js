@@ -61,8 +61,6 @@ var masterGateway = {
         this.config = config;
         this.slaves = slaves || {};
         this.setAllowedDomains();
-        console.log('here');
-        console.log(window.document.body.innerHTML);
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
     },
