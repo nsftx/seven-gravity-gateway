@@ -61,6 +61,12 @@ var slaveGateway = {
         if(this.config.worker) {
             this.setWorker();
         }
+
+        if(this.config.plugins && this.config.plugins.length) {
+            this.config.plugins.forEach(function(plugin) {
+                plugin.setUpOnce(this);
+            }.bind(this));
+        }
         this.startSlaveInitialization();
     },
 
@@ -230,6 +236,13 @@ var slaveGateway = {
                 calculateFixedAndAbsoluteElements: self.calculateFixedAndAbsoluteElements,
             });
         }
+
+        if(this.config.plugins && this.config.plugins.length) {
+            this.config.plugins.forEach(function(plugin) {
+                plugin.onLoad(this, event.data);
+            }.bind(this));
+        }
+
         if(this.load) {
             this.load(event.data);
         }
