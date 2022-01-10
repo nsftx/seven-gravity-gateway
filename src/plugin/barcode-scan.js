@@ -6,7 +6,10 @@ var config = {
         flags: 'i'
     }
 };
-var codeLoaded = ''; // Code to be passed to ticket check
+var scanResult = {
+    code: '',
+    finished: false
+}; // Code to be passed to ticket check
 var currentTime = 0; // time current key is received (time based scanning)
 var previousKey = {
     receivedAt: null,
@@ -31,22 +34,23 @@ function processKeyEvent(e) {
         && difference !== currentTime 
         && !isPrefixTriggered)
         || e.repeat) {
-        codeLoaded = '';
+        scanResult.code = '';
         previousEventReceived = Date.now();
         previousKey.receivedAt = Date.now();
         previousKey.event = e;
-        return false;
+        scanResult.finished = false;
+        return scanResult;
     }
 
     // let's add previous char to list of scanned codes if time passed
     // before previous and current is below treshold
     // this will happen if scan barcode without space prefix
-    if (codeLoaded.length === 0
+    if (scanResult.code.length === 0
         && !isPrefixTriggered
         && (previousKey.event && (currentTime - previousKey.receivedAt) < (config.treshold * 2))
         && whitelistedKeys.test(previousKey.event.key)
     ) {
-        codeLoaded += previousKey.event.key;
+        scanResult.code += previousKey.event.key;
         previousKey.event = null;
         previousKey.receivedAt = 0;
     }
@@ -57,23 +61,23 @@ function processKeyEvent(e) {
 
     // we need moove focus out of any input to body so we don't enter 
     // codes from scaner but we don't know if first char is from scan so don't move focus when first code is entered
-    if (codeLoaded.length !== 0 && document.activeElement && document.activeElement.tagName.toLocaleLowerCase() !== 'body') {
+    if (scanResult.code.length !== 0 && document.activeElement && document.activeElement.tagName.toLocaleLowerCase() !== 'body') {
         document.activeElement.blur();
     }
 
     if (whitelistedKeys.test(e.key)) {
-        codeLoaded += e.key;
+        scanResult.code += e.key;
         previousKey.event = null;
     }
 
     if (e.key.toLowerCase() === 'enter') {
         previousEventReceived = 0;
 
-        if (codeLoaded.length) {
-            return codeLoaded;
+        if (scanResult.code.length) {
+            scanResult.finished = true;
         }
     }
-    return true;
+    return scanResult;
 }
 
 function isPrefixBased(e) {
@@ -85,18 +89,18 @@ function Scan() {
 }
 
 Scan.prototype.setUpOnce = function(slave) {
-    var isScan = false;
     window.document.addEventListener('keydown', function(e) {
-        isScan = processKeyEvent(e);
-        if (typeof isScan === 'string' || isScan instanceof String) {
+        var result = processKeyEvent(e);
+        console.log(result);
+        if (result.finished) {
             slave.emit({
                 action: 'Slave.ScanFinished',
                 data: {
-                    code: isScan
+                    code: result.code
                 }
             });
-            codeLoaded = '';
-            isScan = false;
+            scanResult.code = '';
+            scanResult.finished = false;
         }
     });
 };
