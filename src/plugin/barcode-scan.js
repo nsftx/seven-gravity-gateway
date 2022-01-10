@@ -35,8 +35,8 @@ function processKeyEvent(e) {
         && !isPrefixTriggered)
         || e.repeat) {
         scanResult.code = '';
-        previousEventReceived = Date.now();
-        previousKey.receivedAt = Date.now();
+        previousEventReceived = currentTime;
+        previousKey.receivedAt = currentTime;
         previousKey.event = e;
         scanResult.finished = false;
         return scanResult;
