@@ -41,7 +41,6 @@ describe('Subscribe/Unsubscribe funcionality', function() {
         pubSub.subscribe('*', function () {});
         var isSubscribed = pubSub.isSubscribed('some.action');
         assert.equal(isSubscribed, true);
-        console.log('here');
         pubSub.unsubscribe('*');
     });
 

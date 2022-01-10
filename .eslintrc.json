@@ -5,13 +5,10 @@
   "env": {
     "browser": true,
     "commonjs": true,
-    "es6": true
+    "es6": true,
+    "mocha": true
   },
-  "globals": {
-    "it": true,
-    "afterEach": true,
-    "describe": true
-  },
+  "globals": {},
   "extends": "eslint:recommended",
   "rules": {
     "quotes": [
