@@ -2,7 +2,7 @@ var assert = require('assert'),
     sinon = require('sinon'),
     Gateway = require('../src/slave_gateway'),
     BarcodeScan = require('../plugin-barcode-scan'),
-    barcodeScanPplugin = new BarcodeScan();
+    barcodeScanPlugin = new BarcodeScan();
 
 
 describe('Barcode scan', function() {
