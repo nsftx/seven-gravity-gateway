@@ -95,7 +95,6 @@ Scan.prototype.setUpOnce = function(slave) {
             });
             codeLoaded = '';
             isScan = false;
-            return;
         }
     });
 };
