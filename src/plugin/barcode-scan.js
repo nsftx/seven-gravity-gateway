@@ -91,7 +91,6 @@ function Scan() {
 Scan.prototype.setUpOnce = function(slave) {
     window.document.addEventListener('keydown', function(e) {
         var result = processKeyEvent(e);
-        console.log(result);
         if (result.finished) {
             slave.emit({
                 action: 'Slave.ScanFinished',
