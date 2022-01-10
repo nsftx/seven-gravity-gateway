@@ -80,7 +80,9 @@ function isPrefixBased(e) {
     return e.code.toLowerCase() === config.prefix;
 }
 
-function Scan() {}
+function Scan() {
+    // This is intentional
+}
 
 Scan.prototype.setUpOnce = function(slave) {
     var isScan = false;
