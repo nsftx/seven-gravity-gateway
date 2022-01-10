@@ -18,7 +18,7 @@ describe('Barcode scan', function() {
 
     it('on init should attach keydonw listener on document', function() {
         var spy = sinon.spy(window.document, 'addEventListener');
-        barcodeScanPplugin.setUpOnce(slaveInstance);
+        barcodeScanPlugin.setUpOnce(slaveInstance);
         assert.equal(spy.called, true);
     });
 
