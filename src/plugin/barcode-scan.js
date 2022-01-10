@@ -19,7 +19,7 @@ function processKeyEvent(e) {
     var whitelistedKeys = new RegExp(config.regex.pattern, config.regex.flags); // Array of key codes whose values wont't be concat with ticketId (enter, shift, space, arrow down)
     var isPrefixTriggered = isPrefixBased(e);
 
-    currentTime = new Date().getTime();
+    currentTime = Date.now();
     difference = currentTime - previousEventReceived;
     previousEventReceived= currentTime;
 
