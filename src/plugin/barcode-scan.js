@@ -41,14 +41,14 @@ function processKeyEvent(e) {
     // let's add previous char to list of scanned codes if time passed
     // before previous and current is below treshold
     // this will happen if scan barcode without space prefix
-    if (codeLoaded.length === 0 
-        && !isPrefixTriggered 
-        && (previousKey.event && (currentTime - previousKey.receivedAt) < (config.treshold * 2))) {
-        if (whitelistedKeys.test(previousKey.event.key)) {
-            codeLoaded += previousKey.event.key;
-            previousKey.event = null;
-            previousKey.receivedAt = 0;
-        }
+    if (codeLoaded.length === 0
+        && !isPrefixTriggered
+        && (previousKey.event && (currentTime - previousKey.receivedAt) < (config.treshold * 2))
+        && whitelistedKeys.test(previousKey.event.key)
+    ) {
+        codeLoaded += previousKey.event.key;
+        previousKey.event = null;
+        previousKey.receivedAt = 0;
     }
 
     e.preventDefault();
