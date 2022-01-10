@@ -5,3 +5,6 @@ npm-debug.log
 dist/
 *.sublime-*
 .history
+coverage
+.history
+.nyc_output

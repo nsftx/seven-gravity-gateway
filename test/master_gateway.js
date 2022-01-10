@@ -1,13 +1,14 @@
 var assert = require('assert'),
     sinon = require('sinon'),
-    expect = require('chai').expect,
-    // eslint-disable-next-line
-    dom = require('jsdom-global')('<html><div id="test-frame">Hello world</div></html>');
+    expect = require('chai').expect;
 
 describe('Master gateway instantiation', function() {
     var instance,
         Gateway = require('../src/master_gateway');
 
+    before(function () {
+        this.jsdom = require('jsdom-global')('<html><div id="test-frame">Hello world</div></html>');
+    });
     it('Instantiation should fail - Configuration not passed', function() {
         instance = Gateway();
         assert.equal(instance, false);
