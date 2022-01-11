@@ -24,7 +24,7 @@ function processKeyEvent(e) {
 
     currentTime = Date.now();
     difference = currentTime - previousEventReceived;
-    previousEventReceived= currentTime;
+    previousEventReceived = currentTime;
 
     // Too much difference between characters - which means that this is not scan mode.
     // First time, difference is equal to current time, so we will extract that from check.
@@ -35,7 +35,6 @@ function processKeyEvent(e) {
         && !isPrefixTriggered)
         || e.repeat) {
         scanResult.code = '';
-        previousEventReceived = currentTime;
         previousKey.receivedAt = currentTime;
         previousKey.event = e;
         scanResult.finished = false;
