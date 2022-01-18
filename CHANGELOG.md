@@ -1,3 +1,8 @@
+## 1.15.0 (2022-01-18)
+
+#### Added
+
+- New barcode scanner plugin (#23) 
 ## 1.14.2 (2021-08-10)
 
 #### Fixed
