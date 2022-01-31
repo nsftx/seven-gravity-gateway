@@ -1,3 +1,9 @@
+## 1.15.1 (2022-01-20)
+
+#### Updated
+- Update `path-parse` (#22)
+- Update `hosted-git-info` (#15)
+
 ## 1.15.0 (2022-01-18)
 
 #### Added
