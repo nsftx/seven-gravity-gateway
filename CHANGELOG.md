@@ -1,3 +1,9 @@
+## 1.16.0 (2022-02-09)
+
+#### Fixed
+
+- Fix scroll event data top and left properties in non-quirks mode (#26)
+
 ## 1.15.1 (2022-01-20)
 
 #### Updated
