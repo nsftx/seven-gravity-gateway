@@ -41,6 +41,13 @@ function processKeyEvent(e) {
         return scanResult;
     }
 
+    // in case when we recive space,
+    // we want to strip any previous char,
+    // this will happen if we have scanner with hardcoded prefix (e.g. ctrl+b)
+    if (isPrefixTriggered) {
+        scanResult.code = '';
+    }
+
     // let's add previous char to list of scanned codes if time passed
     // before previous and current is below treshold
     // this will happen if scan barcode without space prefix
