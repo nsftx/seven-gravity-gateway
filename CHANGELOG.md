@@ -1,3 +1,9 @@
+## 1.16.3 (2022-05-11)
+
+#### Fixed
+
+- Fix barcode plugin not working with custom prefix (#32)
+
 ## 1.16.0 (2022-02-09)
 
 #### Fixed
