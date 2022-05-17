@@ -1,8 +1,18 @@
+## 1.16.3 (2022-05-17)
+#### Added
+
+- Added logs to barcode plugin (#34)
 ## 1.16.3 (2022-05-11)
 
 #### Fixed
 
 - Fix barcode plugin not working with custom prefix (#32)
+
+## 1.16.2 (2022-02-21)
+
+### Updated
+- Update ini (#28)
+- Update tar (#27)
 
 ## 1.16.0 (2022-02-09)
 
