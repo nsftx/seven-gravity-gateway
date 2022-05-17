@@ -1,3 +1,5 @@
+var logger = require('../utils/utils').logger;
+
 var config = {
     treshold: 100,
     prefix: 'space',
@@ -25,7 +27,7 @@ function processKeyEvent(e) {
     currentTime = Date.now();
     difference = currentTime - previousEventReceived;
     previousEventReceived = currentTime;
-
+    logger.out('debug', '[GGP] Plugin Barcode: Processing code.', e.code, e.key, e.repeat);
     // Too much difference between characters - which means that this is not scan mode.
     // First time, difference is equal to current time, so we will extract that from check.
     // We also prevent scan trigger if somone holds key (e.repeat).
@@ -40,7 +42,7 @@ function processKeyEvent(e) {
         scanResult.finished = false;
         return scanResult;
     }
-
+    logger.out('debug', '[GGP] Plugin Barcode: Possible scan mode.');
     // in case when we recive space,
     // we want to strip any previous char,
     // this will happen if we have scanner with hardcoded prefix (e.g. ctrl+b)
@@ -56,6 +58,7 @@ function processKeyEvent(e) {
         && (previousKey.event && (currentTime - previousKey.receivedAt) < (config.treshold * 2))
         && whitelistedKeys.test(previousKey.event.key)
     ) {
+        logger.out('debug', '[GGP] Plugin Barcode: Adding previous key.', e.code, e.key);
         scanResult.code += previousKey.event.key;
         previousKey.event = null;
         previousKey.receivedAt = 0;
@@ -68,10 +71,12 @@ function processKeyEvent(e) {
     // we need moove focus out of any input to body so we don't enter 
     // codes from scaner but we don't know if first char is from scan so don't move focus when first code is entered
     if (scanResult.code.length !== 0 && document.activeElement && document.activeElement.tagName.toLocaleLowerCase() !== 'body') {
+        logger.out('debug', '[GGP] Plugin Barcode: Blur from active element.');
         document.activeElement.blur();
     }
 
     if (whitelistedKeys.test(e.key)) {
+        logger.out('debug', '[GGP] Plugin Barcode: Adding key.', e.code, e.key);
         scanResult.code += e.key;
         previousKey.event = null;
     }
@@ -98,6 +103,7 @@ Scan.prototype.setUpOnce = function(slave) {
     window.document.addEventListener('keydown', function(e) {
         var result = processKeyEvent(e);
         if (result.finished) {
+            logger.out('info', '[GGP] Plugin Barcode: Scan finished.', result);
             slave.emit({
                 action: 'Slave.ScanFinished',
                 data: {
