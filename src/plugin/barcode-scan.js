@@ -1,7 +1,7 @@
 var logger = require('../utils/utils').logger;
 
 var config = {
-    treshold: 100,
+    treshold: 50,
     prefix: 'space',
     regex: {
         pattern: /^[A-Za-z0-9.\-%]$/,
@@ -19,10 +19,13 @@ var previousKey = {
 };
 var previousEventReceived = Date.now();  // time when previous event was received (time based scanning)
 var difference = 0;
+var inScanMode = false;
+var secureTimerOff = null;
 
 function processKeyEvent(e) {
     var whitelistedKeys = new RegExp(config.regex.pattern, config.regex.flags); // Array of key codes whose values wont't be concat with ticketId (enter, shift, space, arrow down)
     var isPrefixTriggered = isPrefixBased(e);
+    var treshold = config.treshold;
 
     currentTime = Date.now();
     difference = currentTime - previousEventReceived;
@@ -35,11 +38,16 @@ function processKeyEvent(e) {
         difference
     );
 
+    if (inScanMode) {
+        treshold += 100;
+        logger.out('debug', '[GGP] Plugin Barcode: Set treshold to:', treshold);
+    }
+
     // Too much difference between characters - which means that this is not scan mode.
     // First time, difference is equal to current time, so we will extract that from check.
     // We also prevent scan trigger if somone holds key (e.repeat).
     // Last flag is when space is trigered as first char, we want to enter in scan mode 
-    if ((difference > config.treshold 
+    if ((difference > treshold
         && difference !== currentTime 
         && !isPrefixTriggered)
         || e.repeat) {
@@ -50,7 +58,7 @@ function processKeyEvent(e) {
         logger.out('debug', '[GGP] Plugin Barcode: Reset.',
             difference,
             isPrefixTriggered,
-            config.treshold
+            treshold
         );
         return scanResult;
     }
@@ -61,6 +69,11 @@ function processKeyEvent(e) {
     if (isPrefixTriggered) {
         logger.out('debug', '[GGP] Plugin Barcode: Space triggered, reset final code.');
         scanResult.code = '';
+        inScanMode = true;
+        secureTimerOff = setTimeout(function(){
+            inScanMode = false;
+            logger.out('debug', '[GGP] Plugin Barcode: Secure timer off triggered.');
+        }, 2000);
     }
 
     // let's add previous char to list of scanned codes if time passed
@@ -68,7 +81,7 @@ function processKeyEvent(e) {
     // this will happen if scan barcode without space prefix
     if (scanResult.code.length === 0
         && !isPrefixTriggered
-        && (previousKey.event && (currentTime - previousKey.receivedAt) < (config.treshold * 2))
+        && (previousKey.event && (currentTime - previousKey.receivedAt) < (treshold * 2))
         && whitelistedKeys.test(previousKey.event.key)
     ) {
         logger.out('debug', '[GGP] Plugin Barcode: Adding previous key.', e.code, e.key);
@@ -99,6 +112,8 @@ function processKeyEvent(e) {
 
         if (scanResult.code.length) {
             scanResult.finished = true;
+            inScanMode = false;
+            clearTimeout(secureTimerOff);
         }
     }
     return scanResult;

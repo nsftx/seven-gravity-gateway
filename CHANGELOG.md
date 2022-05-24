@@ -1,8 +1,13 @@
-## 1.16.4 (2022-05-23)
+## 1.16.5 (2022-06-25)
+#### Fixed
+
+- Fixed barcode plugin not picking up codes on low end machines (#37)
+
+## 1.16.5 (2022-06-24)
 #### Added
 
 - Added logs to track diff between keydown's inside barcode plugin (#36)
-## 1.16.3 (2022-05-17)
+## 1.16.4 (2022-05-17)
 #### Added
 
 - Added logs to barcode plugin (#34)
