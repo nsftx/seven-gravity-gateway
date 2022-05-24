@@ -54,10 +54,10 @@ describe('Barcode scan', function() {
         })));
     });
 
-    it('xxshould emit Slave.ScanFinished when scan is finished without prefix', function() {
+    it('should emit Slave.ScanFinished when scan is finished without prefix', function() {
         var spy = sinon.spy(slaveInstance, 'emit');
-        var keys = ['Ctrl', 'b', { 'key': ' ', 'code': 'Space' }, '8', 'x', '2', 'l', 'h', '2', 'g', '0', '2'];
-        var result = '8x2lh2g02';
+        var keys = ['Ctrl', 'b', '8', 'x', '2', 'l', 'h', '2', 'g', '0', '2'];
+        var result = 'b8x2lh2g02';
         var enterEvent = new KeyboardEvent('keydown', {'key': 'Enter', 'code': 'Enter'});
         keys.forEach(function(c) {
             var key;
@@ -79,5 +79,38 @@ describe('Barcode scan', function() {
                 code: result
             }
         })));
+    });
+
+    it('should emit Slave.ScanFinished when diff between keys is higher than default value', function(done) {
+        var spy = sinon.spy(slaveInstance, 'emit');
+        var keys = ['Ctrl', 'b', { 'key': ' ', 'code': 'Space' }, '8', 'x', '2', 'l', 'h', '2', 'g', '0', '2'];
+        var result = '8x2lh2g02';
+        var enterEvent = new KeyboardEvent('keydown', {'key': 'Enter', 'code': 'Enter'});
+        var event = new KeyboardEvent('keydown', {'code': 'space'});
+        // document.dispatchEvent(event);
+        keys.forEach(function(c) {
+            var key;
+            var code;
+            if( Object.prototype.toString.call(c) === '[object Object]' ) {
+                key = c.key;
+                code = c.code;
+            } else {
+                key = c;
+                code = `Key${c.toUpperCase()}`;
+            }
+            var event = new KeyboardEvent('keydown', { 'key': key, 'code': code });
+            document.dispatchEvent(event);
+        });
+
+        setTimeout(function() {
+            document.dispatchEvent(enterEvent);
+            assert(spy.calledWith(sinon.match({
+                action: 'Slave.ScanFinished',
+                data: {
+                    code: result
+                }
+            })));
+            done();
+        }, 100);
     });
 });
