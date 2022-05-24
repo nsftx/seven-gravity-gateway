@@ -1,7 +1,7 @@
 var logger = require('../utils/utils').logger;
 
 var config = {
-    treshold: 100,
+    treshold: 50,
     prefix: 'space',
     regex: {
         pattern: /^[A-Za-z0-9.\-%]$/,
