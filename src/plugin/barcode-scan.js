@@ -27,7 +27,14 @@ function processKeyEvent(e) {
     currentTime = Date.now();
     difference = currentTime - previousEventReceived;
     previousEventReceived = currentTime;
-    logger.out('debug', '[GGP] Plugin Barcode: Processing code.', e.code, e.key, e.repeat);
+
+    logger.out('debug', '[GGP] Plugin Barcode: Processing code.',
+        e.code,
+        e.key,
+        e.repeat,
+        difference
+    );
+
     // Too much difference between characters - which means that this is not scan mode.
     // First time, difference is equal to current time, so we will extract that from check.
     // We also prevent scan trigger if somone holds key (e.repeat).
@@ -40,6 +47,11 @@ function processKeyEvent(e) {
         previousKey.receivedAt = currentTime;
         previousKey.event = e;
         scanResult.finished = false;
+        logger.out('debug', '[GGP] Plugin Barcode: Reset.',
+            difference,
+            isPrefixTriggered,
+            config.treshold
+        );
         return scanResult;
     }
     logger.out('debug', '[GGP] Plugin Barcode: Possible scan mode.');
@@ -47,6 +59,7 @@ function processKeyEvent(e) {
     // we want to strip any previous char,
     // this will happen if we have scanner with hardcoded prefix (e.g. ctrl+b)
     if (isPrefixTriggered) {
+        logger.out('debug', '[GGP] Plugin Barcode: Space triggered, reset final code.');
         scanResult.code = '';
     }
 

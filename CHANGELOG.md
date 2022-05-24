@@ -1,3 +1,7 @@
+## 1.16.4 (2022-05-23)
+#### Added
+
+- Added logs to track diff between keydown's inside barcode plugin (#36)
 ## 1.16.3 (2022-05-17)
 #### Added
 
