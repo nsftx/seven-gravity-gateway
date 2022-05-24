@@ -86,8 +86,6 @@ describe('Barcode scan', function() {
         var keys = ['Ctrl', 'b', { 'key': ' ', 'code': 'Space' }, '8', 'x', '2', 'l', 'h', '2', 'g', '0', '2'];
         var result = '8x2lh2g02';
         var enterEvent = new KeyboardEvent('keydown', {'key': 'Enter', 'code': 'Enter'});
-        var event = new KeyboardEvent('keydown', {'code': 'space'});
-        // document.dispatchEvent(event);
         keys.forEach(function(c) {
             var key;
             var code;
