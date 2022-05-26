@@ -35,7 +35,9 @@ function processKeyEvent(e) {
         e.code,
         e.key,
         e.repeat,
-        difference
+        difference,
+        currentTime,
+        previousEventReceived
     );
 
     if (inScanMode) {
@@ -108,8 +110,6 @@ function processKeyEvent(e) {
     }
 
     if (e.key.toLowerCase() === 'enter') {
-        previousEventReceived = 0;
-
         if (scanResult.code.length) {
             scanResult.finished = true;
             inScanMode = false;
