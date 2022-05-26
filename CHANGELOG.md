@@ -1,4 +1,9 @@
-## 1.16.5 (2022-06-25)
+## 1.16.7 (2022-06-25)
+#### Fixed
+
+- Fixed barcode plugin stoping propagation of keydown after scan is finished (#38)
+
+## 1.16.6 (2022-06-25)
 #### Fixed
 
 - Fixed barcode plugin not picking up codes on low end machines (#37)
