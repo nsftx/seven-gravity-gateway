@@ -111,4 +111,39 @@ describe('Barcode scan', function() {
             done();
         }, 100);
     });
+
+    it('should not stop propagatin after scan is finished', function(done) {
+        var spy = sinon.spy(slaveInstance, 'emit');
+        var keys = ['Ctrl', 'b', { 'key': ' ', 'code': 'Space' }, '8', 'x', '2', 'l', 'h', '2', 'g', '0', '2'];
+        var result = '8x2lh2g02';
+        var enterEvent = new KeyboardEvent('keydown', {'key': 'Enter', 'code': 'Enter'});
+        var onKeyDownCallback = sinon.spy();
+        window.document.addEventListener('keydown', onKeyDownCallback);
+        keys.forEach(function(c) {
+            var key;
+            var code;
+            if( Object.prototype.toString.call(c) === '[object Object]' ) {
+                key = c.key;
+                code = c.code;
+            } else {
+                key = c;
+                code = `Key${c.toUpperCase()}`;
+            }
+            var event = new KeyboardEvent('keydown', { 'key': key, 'code': code });
+            document.dispatchEvent(event);
+        });
+
+        document.dispatchEvent(enterEvent);
+        assert(spy.calledWith(sinon.match({
+            action: 'Slave.ScanFinished',
+            data: {
+                code: result
+            }
+        })));
+        setTimeout(function() {
+            document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter', 'code': 'Enter'}));
+            assert(onKeyDownCallback.called);
+            done();
+        }, 51);
+    });
 });
