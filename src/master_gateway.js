@@ -54,12 +54,16 @@ var masterGateway = {
     msgSender: 'Master',
 
     eventHandler: null,
-
+    
     init: function (config) {
         var slaves = config.slaves || config.products;
         this.initialized = true;
         this.config = config;
-        this.slaves = slaves || {};
+        if (slaves) {
+            slaves.forEach(function(slave) {
+                this.addSlave(slave);
+            });
+        }
         this.setAllowedDomains();
         //Set message handler
         window.addEventListener('message', this.handleMessage.bind(this));
@@ -259,11 +263,12 @@ var masterGateway = {
     },
 
     slaveLoaded : function(event, slaveData) {
-        if (!slaveData.loaded) {
+        if (!slaveData.loaded || this.slaves[slaveData.frameId].isLoaded) {
             return false;
         }
         logger.out('info', '[GG] Master:', 'Slave loaded.', event.data);
         slaveData.loaded(event.data);
+        this.slaves[slaveData.frameId].isLoaded = true;
     },
 
     slaveEvent : function(event) {
