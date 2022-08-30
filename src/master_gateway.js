@@ -60,9 +60,11 @@ var masterGateway = {
         this.initialized = true;
         this.config = config;
         if (slaves) {
-            slaves.forEach(function(slave) {
-                this.addSlave(slave);
-            });
+            for (var slave in slaves) {
+                if (slaves.hasOwnProperty(slave)) {
+                    this.addSlave(slaves[slave]);
+                }
+            }
         }
         this.setAllowedDomains();
         //Set message handler
