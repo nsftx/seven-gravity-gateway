@@ -59,6 +59,8 @@ var masterGateway = {
         var slaves = config.slaves || config.products;
         this.initialized = true;
         this.config = config;
+        this.slaves = {};
+
         if (slaves) {
             for (var slave in slaves) {
                 if (slaves.hasOwnProperty(slave)) {
@@ -266,6 +268,7 @@ var masterGateway = {
 
     slaveLoaded : function(event, slaveData) {
         if (!slaveData.loaded || this.slaves[slaveData.frameId].isLoaded) {
+            logger.out('warn', '[GG] Master:', 'Slave is already loaded!', event.data);
             return false;
         }
         logger.out('info', '[GG] Master:', 'Slave loaded.', event.data);
