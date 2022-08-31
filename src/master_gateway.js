@@ -267,7 +267,9 @@ var masterGateway = {
     },
 
     slaveLoaded : function(event, slaveData) {
-        if (!slaveData.loaded || this.slaves[slaveData.frameId].isLoaded) {
+        if (!slaveData.loaded) {
+            return false;
+        } else if (this.slaves[slaveData.frameId].isLoaded) {
             logger.out('warn', '[GG] Master:', 'Slave is already loaded!', event.data);
             return false;
         }
