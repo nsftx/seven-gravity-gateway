@@ -82,11 +82,11 @@ describe('Master gateway instantiation', function() {
             frameId : 'dummy',
             slaveId : 'dummy',
         });
-        instance.slaves['dummy'].isLoaded = true;
         var slaveData = {
             frameId : 'dummy',
             loaded: function () {},
         };
+        instance.slaveLoaded({}, slaveData);
         var value = instance.slaveLoaded({}, slaveData);
         assert.equal(value, false);
     });
