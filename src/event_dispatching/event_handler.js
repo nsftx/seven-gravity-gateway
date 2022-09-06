@@ -57,11 +57,14 @@ EventHandler.prototype = {
     },
 
     handleScrollEvent : function(e) {
+        var scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
+        var scrollLeft = window.scrollX || document.documentElement.scrollLeft || document.body.scrollLeft;
+
         var data = {
             action : this.eventName,
             event : e.type,
-            top: window.document.body.scrollTop,
-            left:  window.document.body.scrollLeft,
+            top: scrollTop,
+            left:  scrollLeft,
             totalHeight: window.innerHeight,
             totalWidth : window.innerWidth
         };

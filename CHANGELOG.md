@@ -1,3 +1,50 @@
+## 1.16.7 (2022-06-25)
+#### Fixed
+
+- Fixed barcode plugin stoping propagation of keydown after scan is finished (#38)
+
+## 1.16.6 (2022-06-25)
+#### Fixed
+
+- Fixed barcode plugin not picking up codes on low end machines (#37)
+
+## 1.16.5 (2022-06-24)
+#### Added
+
+- Added logs to track diff between keydown's inside barcode plugin (#36)
+## 1.16.4 (2022-05-17)
+#### Added
+
+- Added logs to barcode plugin (#34)
+## 1.16.3 (2022-05-11)
+
+#### Fixed
+
+- Fix barcode plugin not working with custom prefix (#32)
+
+## 1.16.2 (2022-02-21)
+
+### Updated
+- Update ini (#28)
+- Update tar (#27)
+
+## 1.16.0 (2022-02-09)
+
+#### Fixed
+
+- Fix scroll event data top and left properties in non-quirks mode (#26)
+
+## 1.15.1 (2022-01-20)
+
+#### Updated
+- Update `path-parse` (#22)
+- Update `hosted-git-info` (#15)
+
+## 1.15.0 (2022-01-18)
+
+#### Added
+
+- New barcode scanner plugin (#23) 
 ## 1.14.2 (2021-08-10)
 
 #### Fixed

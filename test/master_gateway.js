@@ -77,6 +77,32 @@ describe('Master gateway instantiation', function() {
         assert.equal(instance.slaves.hasOwnProperty('dummy'), false);
     });
 
+    it('Should prevent another loaded callback if a slave is already loaded', function() {
+        instance.addSlave({
+            frameId : 'dummy',
+            slaveId : 'dummy',
+        });
+        var slaveData = {
+            frameId : 'dummy',
+            loaded: function () {},
+        };
+        instance.slaveLoaded({}, slaveData);
+        var value = instance.slaveLoaded({}, slaveData);
+        assert.equal(value, false);
+    });
+
+    it('Should prevent another loaded callback if loaded callback is not provided', function() {
+        instance.addSlave({
+            frameId : 'dummy',
+            slaveId : 'dummy',
+        });
+        var slaveData = {
+            frameId : 'dummy',
+        };
+        var value = instance.slaveLoaded({}, slaveData);
+        assert.equal(value, false);
+    });
+
     it('Should return instance', function() {
         instance = Gateway({
             allowedOrigins : ['http://www.nsoft.ba'],
@@ -99,7 +125,7 @@ describe('Master gateway instantiation', function() {
 
     it('Send msg to all slaves should fail', function() {
         var result;
-        instance.removeSlave('product');
+        instance.removeSlave('dummy');
         result = instance.sendToAll('Test msg', '*');
 
         assert.equal(result, false);
