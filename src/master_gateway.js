@@ -202,7 +202,7 @@ var masterGateway = {
         if (this[actionName]) {
             this[actionName](event, slaveData);
         } else if(whitelistedEvents.indexOf(actionName) !== -1) {
-            logger.out('info', '[GG] Master:', 'Slave.' + slaveId + ':', 'Received scanned code.', event.data);
+            logger.out('info', '[GG] Master:', 'Slave.' + slaveId + ':', 'Received whitelisted event: ' + actionName, event.data);
             pubSub.publish(event.data.action, event.data);
         } else {
             logger.out('warn', '[GG] Master:', 'Actions with domain `Master` or `Slave` are protected!');
