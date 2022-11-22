@@ -194,7 +194,7 @@ var masterGateway = {
         var slaveId = event.data.slaveId || event.data.productId,
             slaveData,
             actionName = event.data.action.replace('.', ''),
-            whitelistedEvents = ['slaveScanFinished'];
+            whitelistedEvents = ['slaveScanFinished', 'slaveLoaded'];
         
         slaveData = this.slaves[slaveId];
         //Lowercase the first letter
