@@ -35,7 +35,7 @@
     "chai": "~4.3.4",
     "chai-spies": "~1.0.0",
     "clean-webpack-plugin": "^0.1.16",
-    "eslint": "^4.3.0",
+    "eslint": "^8.28.0",
     "husky": "^0.14.3",
     "jsdom": "~19.0.0",
     "jsdom-global": "~3.0.2",
