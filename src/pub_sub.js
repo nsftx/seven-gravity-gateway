@@ -69,7 +69,7 @@ var pubSub = {
     },
 
     findAction : function(actionName) {
-        var actionFound = this.topics.hasOwnProperty(actionName);
+        var actionFound = Object.prototype.hasOwnProperty.call(this.topics, actionName);
 
         if(actionFound) {
             return this.topics[actionName];
@@ -81,8 +81,8 @@ var pubSub = {
     },
 
     isSubscribed : function(actionName) {
-        return this.topics.hasOwnProperty('*') || 
-            !!(this.topics.hasOwnProperty(actionName) && this.topics[actionName].length);
+        return Object.prototype.hasOwnProperty.call(this.topics, '*') || 
+            !!(Object.prototype.hasOwnProperty.call(this.topics, actionName) && this.topics[actionName].length);
     },
 
     checkWildcardActions : function(actionName) {
