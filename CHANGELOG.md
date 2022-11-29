@@ -1,3 +1,7 @@
+## 2.0.0 (2022-09-13)
+#### Fixed
+
+- **Breaking:** Prevent executing loaded callback multiple times. This is breaking only for master implementation in case when master didn't call `removeSlave` on iframe element removal. (#39)
 ## 1.16.7 (2022-06-25)
 #### Fixed
 
