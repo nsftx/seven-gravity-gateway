@@ -63,7 +63,7 @@ var masterGateway = {
 
         if (slaves) {
             for (var slave in slaves) {
-                if (slaves.hasOwnProperty(slave)) {
+                if (Object.prototype.hasOwnProperty.call(slaves, slave)) {
                     this.addSlave(slaves[slave]);
                 }
             }
