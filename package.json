@@ -1,5 +1,5 @@
 {
-  "name": "@nsoft/seven-gravity-gateway",
+  "name": "@nsftx/seven-gravity-gateway",
   "private": false,
   "version": "2.0.2",
   "description": "Seven Gravity Gateway",
@@ -19,6 +19,9 @@
     "type": "git",
     "url": "git@github.com:nsftx/seven-gravity-gateway.git"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "keywords": [
     "nsoft",
     "seven",
@@ -32,17 +35,17 @@
   ],
   "license": "UNLICENSED",
   "devDependencies": {
-    "chai": "~4.3.4",
+    "chai": "~4.3.7",
     "chai-spies": "~1.0.0",
     "clean-webpack-plugin": "^0.1.16",
-    "eslint": "^8.28.0",
+    "eslint": "^8.32.0",
     "husky": "^0.14.3",
     "jsdom": "~19.0.0",
     "jsdom-global": "~3.0.2",
-    "mocha": "^9.1.3",
+    "mocha": "~9.1.3",
     "nyc": "^15.1.0",
     "sinon": "^12.0.1",
-    "uglifyjs-webpack-plugin": "^0.4.6",
+    "uglifyjs-webpack-plugin": "~1.3.0",
     "webpack": "^3.12.0"
   }
 }

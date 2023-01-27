@@ -35,8 +35,7 @@ module.exports = [
         },
         plugins: [
             new Uglify({
-                include: /\.js$/i,
-                minimize: true
+                include: /\.js$/i
             })
         ],
         output: {

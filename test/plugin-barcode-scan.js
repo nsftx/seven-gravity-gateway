@@ -112,7 +112,7 @@ describe('Barcode scan', function() {
         }, 100);
     });
 
-    it('should not stop propagatin after scan is finished', function(done) {
+    it('should not stop propagation after scan is finished', function(done) {
         var spy = sinon.spy(slaveInstance, 'emit');
         var keys = ['Ctrl', 'b', { 'key': ' ', 'code': 'Space' }, '8', 'x', '2', 'l', 'h', '2', 'g', '0', '2'];
         var result = '8x2lh2g02';

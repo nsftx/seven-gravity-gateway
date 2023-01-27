@@ -4,7 +4,7 @@ This component serves as communication layer between parent and child frames. Ga
 
 ## Installation
 
-`npm install @nsoft/seven-gravity-gateway --save`
+`npm install @nsftx/seven-gravity-gateway --save`
 
 ## Usage
 
@@ -19,7 +19,7 @@ var Gateway = window.gravity.gateway.master;
 ```
 or
 ```javascript
-import Gateway from '@nsoft/seven-gravity-gateway/master';
+import Gateway from '@nsftx/seven-gravity-gateway/master';
 ```
 
 **Slave gateway:**
@@ -29,13 +29,13 @@ var Gateway = window.gravity.gateway.slave;
 ```
 or
 ```javascript
-import Gateway from '@nsoft/seven-gravity-gateway/slave';
+import Gateway from '@nsftx/seven-gravity-gateway/slave';
 ```
 
 
 To load **both modules**:
 ```javascript
-import Gateway from '@nsoft/seven-gravity-gateway';
+import Gateway from '@nsftx/seven-gravity-gateway';
 ```
 
 For a detailed explanation about how GG works, check [Wiki](https://github.com/nsftx/seven-gravity-gateway/wiki).
