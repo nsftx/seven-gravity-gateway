@@ -1,5 +1,5 @@
 {
-  "name": "@nsoft/seven-gravity-gateway",
+  "name": "@nsftx/seven-gravity-gateway",
   "private": false,
   "version": "2.0.2",
   "description": "Seven Gravity Gateway",
@@ -18,6 +18,9 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:nsftx/seven-gravity-gateway.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "keywords": [
     "nsoft",
