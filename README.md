@@ -4,6 +4,14 @@ This component serves as communication layer between parent and child frames. Ga
 
 ## Installation
 
+Our packages are published to [GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#installing-packages-from-other-organizations). You need to add the entry to global or project based `.npmrc` file so that all requests to install our packages will go through GitHub Packages. 
+
+```
+@nsftx:registry=https://npm.pkg.github.com
+```
+
+After that, install package
+
 `npm install @nsftx/seven-gravity-gateway --save`
 
 ## Usage
