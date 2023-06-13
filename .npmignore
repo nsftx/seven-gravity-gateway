@@ -1,7 +1,6 @@
 .idea/*
 .vscode/*
 node_modules/*
-src
 test
 npm-debug.log
 sonar-project.properties
