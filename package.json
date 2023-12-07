@@ -46,6 +46,6 @@
     "nyc": "^15.1.0",
     "sinon": "^12.0.1",
     "uglifyjs-webpack-plugin": "~1.3.0",
-    "webpack": "^3.12.0"
+    "webpack": "^5.89.0"
   }
 }
