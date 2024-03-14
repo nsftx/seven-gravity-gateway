@@ -1,9 +1,18 @@
 var preventKeysList = [];
 
+function shouldPreventKeyDefaultBehavior(key) {
+    if (!preventKeysList.length) return false;
+
+    return !!preventKeysList.find(function(preventKey) {
+        return preventKey.key === key;
+    });
+}
+
 function Retail() {}
 
 Retail.prototype.setUpOnce = function() {
-    window.document.addEventListener('keydown', function() {
+    window.document.addEventListener('keydown', function(e) {
+        shouldPreventKeyDefaultBehavior(e);
     });
 };
 
