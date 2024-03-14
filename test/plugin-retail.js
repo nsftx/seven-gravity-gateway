@@ -16,7 +16,7 @@ describe('Retail', function() {
         sinon.restore();
     });
 
-    it('on init should attach keydonw listener on document', function() {
+    it('should attach document keydown listener on init', function() {
         var spy = sinon.spy(window.document, 'addEventListener');
         retailPlugin.setUpOnce(slaveInstance);
         assert.equal(spy.called, true);
