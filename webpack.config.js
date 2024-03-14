@@ -13,6 +13,7 @@ module.exports = [
             'slave': './slave.js',
             'plugin-storage': './plugin-storage.js',
             'plugin-scan': './plugin-barcode-scan.js',
+            'plugin-retail': './plugin-retail.js'
         },
         plugins: [
             new Clean(['dist']),
@@ -31,7 +32,8 @@ module.exports = [
             'master': './master.js',
             'slave': './slave.js',
             'plugin-storage': './plugin-storage.js',
-            'plugin-scan': './plugin-barcode-scan.js'
+            'plugin-scan': './plugin-barcode-scan.js',
+            'plugin-retail': './plugin-retail.js'
         },
         plugins: [
             new Uglify({
