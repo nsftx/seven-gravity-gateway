@@ -18,7 +18,7 @@ function shouldPreventKeyDefaultBehavior(key) {
 
 function Retail() {}
 
-Retail.prototype.setUpOnce = function() {
+Retail.prototype.setUpOnce = function(slave) {
     window.document.addEventListener('keydown', function(e) {
         if (shouldPreventKeyDefaultBehavior(e.key)) {
             e.preventDefault();
@@ -29,7 +29,7 @@ Retail.prototype.setUpOnce = function() {
     });
 
     Object.keys(subPlugins).forEach(function(key) {
-        subPlugins[key].setUpOnce();
+        subPlugins[key].setUpOnce(slave);
     });
 };
 
