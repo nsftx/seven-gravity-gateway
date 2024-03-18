@@ -1,4 +1,10 @@
 var logger = require('../utils/utils').logger;
+var Scan = require('./barcode-scan');
+
+// Register all sub plugins for retail channel
+var subPlugins = {
+    'scan': new Scan()
+};
 
 var preventKeysList = [];
 
@@ -20,6 +26,10 @@ Retail.prototype.setUpOnce = function() {
                 key: e.key
             });
         }
+    });
+
+    Object.keys(subPlugins).forEach(function(key) {
+        subPlugins[key].setUpOnce();
     });
 };
 
