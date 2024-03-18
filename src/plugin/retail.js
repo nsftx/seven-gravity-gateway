@@ -37,6 +37,10 @@ Retail.prototype.onLoad = function(slave, loadData) {
     loadData.data.settings.preventKeys.forEach(function(key) {
         preventKeysList.push(key);
     });
+
+    Object.keys(subPlugins).forEach(function(key) {
+        subPlugins[key].onLoad(slave, loadData);
+    });
 };
 
 module.exports = Retail;
