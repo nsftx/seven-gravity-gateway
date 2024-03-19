@@ -1,4 +1,10 @@
 var logger = require('../utils/utils').logger;
+var Scan = require('./barcode-scan');
+
+// Register all sub plugins for retail channel
+var subPlugins = {
+    'scan': new Scan()
+};
 
 var preventKeysList = [];
 
@@ -12,7 +18,7 @@ function shouldPreventKeyDefaultBehavior(key) {
 
 function Retail() {}
 
-Retail.prototype.setUpOnce = function() {
+Retail.prototype.setUpOnce = function(slave) {
     window.document.addEventListener('keydown', function(e) {
         if (shouldPreventKeyDefaultBehavior(e.key)) {
             e.preventDefault();
@@ -21,11 +27,19 @@ Retail.prototype.setUpOnce = function() {
             });
         }
     });
+
+    Object.keys(subPlugins).forEach(function(key) {
+        subPlugins[key].setUpOnce(slave);
+    });
 };
 
 Retail.prototype.onLoad = function(slave, loadData) {
     loadData.data.settings.preventKeys.forEach(function(key) {
         preventKeysList.push(key);
+    });
+
+    Object.keys(subPlugins).forEach(function(key) {
+        subPlugins[key].onLoad(slave, loadData);
     });
 };
 
