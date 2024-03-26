@@ -34,11 +34,7 @@ Retail.prototype.setUpOnce = function(slave) {
 };
 
 Retail.prototype.onLoad = function(slave, loadData) {
-    if (loadData.data.settings.hasOwnProperty('preventKeys')) {
-        loadData.data.settings.preventKeys.forEach(function(key) {
-            preventKeysList.push(key);
-        });
-    }
+    preventKeysList = loadData.data.settings.preventKeys || [];
 
     Object.keys(subPlugins).forEach(function(key) {
         subPlugins[key].onLoad(slave, loadData);
