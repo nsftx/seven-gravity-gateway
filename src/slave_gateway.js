@@ -84,6 +84,7 @@ var slaveGateway = {
     startSlaveInitialization : function() {
         this.sendMessage({
             action: 'Slave.Init',
+            autoResize: this.autoResize,
             data: this.config.data,
             eventPropagation : this.config.eventPropagation,
             eventListeners : this.config.eventListeners,
