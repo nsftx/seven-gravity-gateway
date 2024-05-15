@@ -50,6 +50,8 @@ EventHandler.prototype = {
             this.handleScrollEvent(e);
         } else if(eventType === 'keyup' || eventType === 'keydown' || eventType === 'keypress') {
             this.handleKeyboardEvent(e);
+        } else if (eventType === 'touchstart' || eventType === 'touchend'){
+            this.handleTouchEvent(e);
         } else {
             logger.out('warning', 'Unable to dispatch event! Event ' + eventType + ' is not supported by gateway.');
         }
@@ -96,6 +98,14 @@ EventHandler.prototype = {
         } else {
             logger.out('error', 'Keyboard subsription format is invalid.');
         }
+    },
+
+    handleTouchEvent : function(e) {
+        var data = {
+            action : this.eventName,
+            event : e.type,
+        };
+        this.eventCallback(data);
     },
 
     getModifierKey : function(keyBinding) {
