@@ -238,7 +238,10 @@ var masterGateway = {
             logger.out('info', '[GG] Master:', 'Master is outdated, please update to latest version - ' + event.data.VERSION);
         }
 
-        if(typeof slaveData.autoResize === 'undefined' || slaveData.autoResize !== false) {
+        var shouldAutoResizeFromParent = typeof slaveData.autoResize === 'undefined' || slaveData.autoResize !== false;
+        var shouldSlaveAutoResize = event.data.autoResize || (typeof event.data.autoResize === 'undefined' && shouldAutoResizeFromParent);
+        
+        if(shouldSlaveAutoResize) {
             //On every init reset the frame sizes
             contentHandler.resetFrameSize(slaveData.frameId);
         }
@@ -250,6 +253,8 @@ var masterGateway = {
             //Curry the sendMessage function with frameId argument in this special case
             this.eventHandler = eventHandler(event.data.eventListeners, this.sendMessage.bind(this, slaveData.frameId), 'Master.Event');
         }
+
+        slaveData.autoResize = shouldSlaveAutoResize;
         this.slaveLoad(slaveData);
     },
 

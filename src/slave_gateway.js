@@ -29,6 +29,8 @@ var slaveGateway = {
 
     config : null,
 
+    autoResize: null,
+
     initialized : false,
 
     load : null,
@@ -42,11 +44,12 @@ var slaveGateway = {
     muteTimeout: null,
 
     calculateFixedAndAbsoluteElements: false,
-
+    
     init: function(config){
         this.initialized = true;
         this.config = config;
         this.slaveId = config.slaveId || config.productId;
+        this.autoResize = config.autoResize;
         this.load = config.load || null;
         this.calculateFixedAndAbsoluteElements = config.calculateFixedAndAbsoluteElements || false;
         this.setAllowedDomains();
@@ -81,6 +84,7 @@ var slaveGateway = {
     startSlaveInitialization : function() {
         this.sendMessage({
             action: 'Slave.Init',
+            autoResize: this.autoResize,
             data: this.config.data,
             eventPropagation : this.config.eventPropagation,
             eventListeners : this.config.eventListeners,
@@ -230,7 +234,8 @@ var slaveGateway = {
     slaveLoad : function(event) {
         var self = this;
         logger.out('info', '[GG] Slave.' +  this.slaveId + ':', 'Starting to load.', event.data);
-        if (event.data.autoResize) {
+        
+        if (this.autoResize || (typeof this.autoResize === 'undefined' && event.data.autoResize)) {
             //Pass the event callback, and event name
             contentHandler.init(this.sendMessage.bind(this), 'Slave.Resize', {
                 calculateFixedAndAbsoluteElements: self.calculateFixedAndAbsoluteElements,
