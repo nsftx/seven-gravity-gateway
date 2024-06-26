@@ -390,8 +390,10 @@ var masterGateway = {
     },
 
     reset: function () {
+        var self = this;
+
         Object.keys(this.slaves).forEach(function (slaveId) {
-            this.removeSlave(slaveId);
+            self.removeSlave(slaveId);
         });
 
         this.clearSubscriptions();
