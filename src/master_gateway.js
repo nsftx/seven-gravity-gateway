@@ -54,7 +54,7 @@ var masterGateway = {
     msgSender: 'Master',
 
     eventHandler: null,
-    
+
     init: function (config) {
         var slaves = config.slaves || config.products;
         this.initialized = true;
@@ -387,6 +387,16 @@ var masterGateway = {
         for(var key in this.slaves) {
             self.sendMessage(this.slaves[key].frameId, data, origin);
         }
+    },
+
+    reset: function () {
+        Object.keys(this.slaves).forEach(function (slaveId) {
+            this.removeSlave(slaveId);
+        });
+
+        this.clearSubscriptions();
+
+        window.removeEventListener('message', this.handleMessage.bind(this));
     },
 
     _createCallbackSubscription : function(event, def, idx) {
