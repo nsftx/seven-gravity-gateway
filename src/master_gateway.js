@@ -41,6 +41,8 @@ function validateInitialization(config) {
     }
 }
 
+var msgListenerReference = null;
+
 var masterGateway = {
 
     initialized: false,
@@ -54,6 +56,7 @@ var masterGateway = {
     msgSender: 'Master',
 
     eventHandler: null,
+
 
     init: function (config) {
         var slaves = config.slaves || config.products;
@@ -70,7 +73,8 @@ var masterGateway = {
         }
         this.setAllowedDomains();
         //Set message handler
-        window.addEventListener('message', this.handleMessage.bind(this));
+        msgListenerReference = this.handleMessage.bind(this);
+        window.addEventListener('message', msgListenerReference);
     },
 
     addSlave: function(config) {
@@ -398,7 +402,7 @@ var masterGateway = {
 
         this.clearSubscriptions();
 
-        window.removeEventListener('message', this.handleMessage.bind(this));
+        window.removeEventListener('message', msgListenerReference);
     },
 
     _createCallbackSubscription : function(event, def, idx) {
