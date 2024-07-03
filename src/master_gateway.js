@@ -171,7 +171,8 @@ var masterGateway = {
             // Check if there is existing subscription on event(action + uuid)
             if (self.isSubscribed(event.data.action)) {
                 resolveOrReject = function(flag, returnData){
-                    self.sendMessage(slaveId, {
+
+                    self.sendMessage(self.slaves[slaveId].frameId, {
                         data: returnData || { ack: true },
                         promiseResult: flag,
                         action: event.data.action + '_' + event.data.uuid,
@@ -360,10 +361,10 @@ var masterGateway = {
                 clearTimeout(rejectTimeout);
                 rejectTimeout = null;
                 if (response.promiseResult === 'resolve') {
-                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise resolved for event ' + event);
+                    logger.out('info', '[GG] Slave.' +  self.slaveId + ' Promise resolved for event ' + event);
                     resolve(response.data);
                 } else {
-                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise rejected for event ' + event);
+                    logger.out('info', '[GG] Slave.' +  self.slaveId + ' Promise rejected for event ' + event);
                     reject(response.data);
                 }
                
@@ -373,7 +374,7 @@ var masterGateway = {
                 rejectTimeout = setTimeout(function() {
                     subscription.remove();
                     reject();
-                    logger.out('info', '[GG] Slave.' +  self.slaveId + 'Promise rejected after timeout for event ' + event);
+                    logger.out('info', '[GG] Slave.' +  self.slaveId + ' Promise rejected after timeout for event ' + event);
                 }, rejectDuration);
             }
 
