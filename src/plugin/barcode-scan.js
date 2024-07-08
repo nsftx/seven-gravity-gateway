@@ -86,7 +86,7 @@ function processKeyEvent(e) {
         && (previousKey.event && (currentTime - previousKey.receivedAt) < (treshold * 2))
         && whitelistedKeys.test(previousKey.event.key)
     ) {
-        logger.out('debug', '[GGP] Plugin Barcode: Adding previous key.',
+        logger.out('debug', '[GGP] Plugin Barcode: Append previous key.',
             previousKey.event.code,
             previousKey.event.key
         );
