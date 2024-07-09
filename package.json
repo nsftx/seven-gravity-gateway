@@ -4,6 +4,10 @@
   "version": "3.0.1",
   "description": "Seven Gravity Gateway",
   "homepage": "https://github.com/nsftx/seven-gravity-gateway",
+  "engines": {
+    "node": ">=18",
+    "npm": ">=10"
+  },
   "scripts": {
     "prepublish": "npm run build",
     "build": "webpack",
