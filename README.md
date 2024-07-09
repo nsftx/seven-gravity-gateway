@@ -66,7 +66,7 @@ Any contributions you make are **greatly appreciated**.
 
 In order to release next version of the library pull request is required. Use following steps for release.
 
-- Merge approved pull requests that should be in next version to master
+- Merge approved pull requests that should be in next version to `master` or `next`
 - Create `version-$nextVersion` branch from master or next
 - run `npm version $versionType` for stable release or for next `npm version prerelease --preid=beta`
 - Push branch & tag to remote
