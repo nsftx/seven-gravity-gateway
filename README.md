@@ -56,8 +56,19 @@ For a detailed explanation about how GG works, check [Wiki](https://github.com/n
 
 Any contributions you make are **greatly appreciated**.
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+2. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+3. Push to the Branch (`git push origin feature/AmazingFeature`)
+4. Open a Pull Request against `next`
+5. Once approved, Open a new Pull Request against `master`
+
+## Release procedure
+
+In order to release next version of the library pull request is required. Use following steps for release.
+
+- Merge approved pull requests that should be in next version to `master` or `next`
+- Create `version-$nextVersion` branch from master or next
+- run `npm version $versionType` for stable release or for next `npm version prerelease --preid=beta`
+- Push branch & tag to remote
+- Create pull request using `release` template https://github.com/nsftx/seven-components/pull/new?template=release.md
+- After pull request is merged create a new Release document https://github.com/nsftx/seven-components/releases/new. GitHub will trigger action (`.github/workflows/release.yml`) and it will publish package
