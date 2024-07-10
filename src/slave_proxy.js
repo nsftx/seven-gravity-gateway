@@ -19,6 +19,7 @@ var SlaveWorker = {
             return false;
         }
         logger.debug = config.debug || false;
+        logger.igniteDebugTerminology = config.igniteDebugTerminology || false;
         this.publish = publish;
         this.sendMessage = sendMsg;
 
