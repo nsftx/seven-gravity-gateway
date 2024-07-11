@@ -1,7 +1,25 @@
 var logger = {
     debug : false, //Verbosity setting
+    igniteDebugTerminology: false,
 
     out : function(){
+        if (this.igniteDebugTerminology) {
+            if (typeof arguments[1] === 'string') {
+                arguments[1] = arguments[1]
+                    .replace('[GG]', '[IM]')
+                    .replace('Master', 'Parent')
+                    .replace('Slave', 'Child');
+            }
+            
+            if (typeof arguments[2] === 'string') {
+                arguments[2] = arguments[2]
+                    .replace('Slave', 'Child')
+                    .replace('slave', 'child')
+                    .replace('Master', 'Parent')
+                    .replace('master', 'parent');
+            }
+        }
+
         //Convert to array
         var args = Array.prototype.slice.call(arguments);
         //First argument is notification type (critical, error, log, warn, info)

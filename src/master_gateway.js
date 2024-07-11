@@ -435,6 +435,7 @@ masterGateway.request = masterGateway.sendMessageAsync;
 module.exports = function (config) {
     if (config && config.debug === true) {
         logger.debug = true;
+        logger.igniteDebugTerminology = config.igniteDebugTerminology || false;
     }
 
     if (!masterGateway.initialized && validateInitialization(config)) {
