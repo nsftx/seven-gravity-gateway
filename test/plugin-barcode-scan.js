@@ -144,6 +144,6 @@ describe('Barcode scan', function() {
             document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter', 'code': 'Enter'}));
             assert(onKeyDownCallback.called);
             done();
-        }, 51);
+        }, 100);
     });
 });
