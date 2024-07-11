@@ -3,7 +3,6 @@ var logger = {
     igniteDebugTerminology: false,
 
     out : function(){
-        //Convert to array
         if (this.igniteDebugTerminology) {
             if (typeof arguments[1] === 'string') {
                 arguments[1] = arguments[1]
@@ -20,7 +19,8 @@ var logger = {
                     .replace('master', 'parent');
             }
         }
-        
+
+        //Convert to array
         var args = Array.prototype.slice.call(arguments);
         //First argument is notification type (critical, error, log, warn, info)
         var type = args.splice(0,1);
