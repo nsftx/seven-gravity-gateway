@@ -420,6 +420,7 @@ slaveGateway.request = slaveGateway.sendMessageAsync;
 module.exports = function(config) {
     if(config && config.debug === true) {
         logger.debug = true;
+        logger.igniteDebugTerminology = config.igniteDebugTerminology || false;
     }
 
     if(!slaveGateway.initialized && validateInitialization(config)) {
