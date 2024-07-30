@@ -4,7 +4,6 @@ var assert = require('assert'),
     BarcodeScan = require('../plugin-barcode-scan'),
     barcodeScanPlugin = new BarcodeScan();
 
-
 describe('Barcode scan', function() {
     var slaveInstance;
 
@@ -140,10 +139,142 @@ describe('Barcode scan', function() {
                 code: result
             }
         })));
+
+        document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter', 'code': 'Enter'}));
         setTimeout(function() {
             document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter', 'code': 'Enter'}));
             assert(onKeyDownCallback.called);
             done();
         }, 100);
+    });
+
+    it('should move focus only after two chars are picked up in time based scan', function() {
+        const doc = window.document;
+        var keys = ['8', 'x'];
+        const input = doc.createElement("input");
+        input.setAttribute('id', 'focus-scan-barcode');
+        doc.body.appendChild(input);
+        input.focus();
+
+        keys.forEach(function(c) {
+            var key;
+            var code;
+            if( Object.prototype.toString.call(c) === '[object Object]' ) {
+                key = c.key;
+                code = c.code;
+            } else {
+                key = c;
+                code = `Key${c.toUpperCase()}`;
+            }
+            var event = new KeyboardEvent('keydown', { 'key': key, 'code': code });
+            doc.dispatchEvent(event);
+        });
+        assert.equal(doc.activeElement.id, 'focus-scan-barcode');
+        doc.dispatchEvent(new KeyboardEvent('keydown', { 'key': 'r', 'code': 'KeyR' }));
+        assert.notEqual(doc.activeElement.id, 'focus-scan-barcode');
+        document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter', 'code': 'Enter'}));
+    });
+
+    it('should prevent default and stop propagation only after two chars are picked up in time based scan', function() {
+        const doc = window.document;
+        var keys = ['8', 'x'];
+        const input = doc.createElement("input");
+        input.setAttribute('id', 'focus-scan-barcode');
+        doc.body.appendChild(input);
+        input.focus();
+
+        keys.forEach(function(c) {
+            var key;
+            var code;
+            if( Object.prototype.toString.call(c) === '[object Object]' ) {
+                key = c.key;
+                code = c.code;
+            } else {
+                key = c;
+                code = `Key${c.toUpperCase()}`;
+            }
+            var event = new KeyboardEvent('keydown', { 'key': key, 'code': code });
+            var spyPrevent = sinon.spy(event, 'preventDefault');
+            var spyImm = sinon.spy(event, 'stopImmediatePropagation');
+            var spyStopProp = sinon.spy(event, 'stopPropagation');
+            doc.dispatchEvent(event);
+            assert.notEqual(spyPrevent.called, true);
+            assert.notEqual(spyImm.called, true);
+            assert.notEqual(spyStopProp.called, true);
+
+        });
+        var thirdKeydown = new KeyboardEvent('keydown', { 'key': 'r', 'code': 'KeyR' });
+        var spyStopProp = sinon.spy(thirdKeydown, 'stopPropagation');
+        doc.dispatchEvent(thirdKeydown);
+        assert(spyStopProp.called);
+        document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter', 'code': 'Enter'}));
+    });
+
+    it('should move focus ouf of input if space prefix detected', function() {
+        const doc = window.document;
+        var keys = [{ 'key': ' ', 'code': 'Space' }, '8', 'x'];
+        const input = doc.createElement("input");
+        input.setAttribute('id', 'focus-scan-barcode');
+        doc.body.appendChild(input);
+        input.focus();
+ 
+        keys.forEach(function(c, index) {
+            var key;
+            var code;
+            if( Object.prototype.toString.call(c) === '[object Object]' ) {
+                key = c.key;
+                code = c.code;
+            } else {
+                key = c;
+                code = `Key${c.toUpperCase()}`;
+            }
+            var event = new KeyboardEvent('keydown', { 'key': key, 'code': code });
+            if (index === 0) {
+                assert.equal(doc.activeElement.id, 'focus-scan-barcode');
+            }
+
+            doc.dispatchEvent(event);
+
+            if (index === 0) {
+                assert.notEqual(doc.activeElement.id, 'focus-scan-barcode');
+            }
+        });
+        document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter', 'code': 'Enter'}));
+    });
+
+    it('should prevent default and stop propagation if space prefix detected', function() {
+        const doc = window.document;
+        var keys = [{ 'key': ' ', 'code': 'Space' }, '8', 'x'];
+        const input = doc.createElement("input");
+        input.setAttribute('id', 'focus-scan-barcode');
+        doc.body.appendChild(input);
+        input.focus();
+ 
+        keys.forEach(function(c, index) {
+            var key;
+            var code;
+            if( Object.prototype.toString.call(c) === '[object Object]' ) {
+                key = c.key;
+                code = c.code;
+            } else {
+                key = c;
+                code = `Key${c.toUpperCase()}`;
+            }
+            var event = new KeyboardEvent('keydown', { 'key': key, 'code': code });
+            if (index === 1) {
+                var spyPrevent = sinon.spy(event, 'preventDefault');
+                var spyImm = sinon.spy(event, 'stopImmediatePropagation');
+                var spyStopProp = sinon.spy(event, 'stopPropagation');
+            }
+
+            doc.dispatchEvent(event);
+
+            if (index === 1) {
+                assert(spyPrevent.called);
+                assert(spyImm.called);
+                assert(spyStopProp.called);
+            }
+        });
+        document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter', 'code': 'Enter'}));
     });
 });

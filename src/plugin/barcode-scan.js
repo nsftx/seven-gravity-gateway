@@ -22,6 +22,10 @@ var difference = 0;
 var inScanMode = false;
 var secureTimerOff = null;
 
+function isScanModeActive() {
+    return inScanMode || scanResult.code.length >= 2;
+}
+
 function processKeyEvent(e) {
     var whitelistedKeys = new RegExp(config.regex.pattern, config.regex.flags); // Array of key codes whose values wont't be concat with ticketId (enter, shift, space, arrow down)
     var isPrefixTriggered = isPrefixBased(e);
@@ -64,12 +68,13 @@ function processKeyEvent(e) {
         );
         return scanResult;
     }
+
     logger.out('debug', '[GGP] Plugin Barcode: Possible scan mode.');
-    // in case when we recive space,
-    // we want to strip any previous char,
-    // this will happen if we have scanner with hardcoded prefix (e.g. ctrl+b)
+
     if (isPrefixTriggered) {
-        logger.out('debug', '[GGP] Plugin Barcode: Space triggered, reset final code.');
+        logger.out('debug', '[GGP] Plugin Barcode: Space triggered and scan mode marked as started.');
+        // in case when we recive space we want to strip any previous char,
+        // this will happen if we have scanner with hardcoded prefix (e.g. ctrl+b)
         scanResult.code = '';
         inScanMode = true;
         secureTimerOff = setTimeout(function(){
@@ -95,13 +100,20 @@ function processKeyEvent(e) {
         previousKey.receivedAt = 0;
     }
 
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    e.stopPropagation();
+    // prevent native keydown behavior if we detected space
+    // or we are in time based scan (at least two chars are added to final result)
+    if (isScanModeActive()) {
+        logger.out('debug', '[GGP] Plugin Barcode: Prevent keydown default behavior.');
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+    }
 
     // we need moove focus out of any input to body so we don't enter 
-    // codes from scaner but we don't know if first char is from scan so don't move focus when first code is entered
-    if (scanResult.code.length !== 0 && document.activeElement && document.activeElement.tagName.toLocaleLowerCase() !== 'body') {
+    // codes from scaner (e.g we could trigger enter on payin)
+    // but we don't know if first char is from scan so don't move focus when first code is entered
+    if (isScanModeActive() &&
+        document.activeElement && document.activeElement.tagName.toLocaleLowerCase() !== 'body') {
         logger.out('debug', '[GGP] Plugin Barcode: Blur from active element.');
         document.activeElement.blur();
     }
