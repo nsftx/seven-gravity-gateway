@@ -132,6 +132,8 @@ var slaveGateway = {
 
         if (!(event.data && event.data.action)) {
             logger.out('critical', '[GG] Master: Message action missing', event.data);
+
+            return false;
         }
 
         slavePattern = new RegExp('^Slave\\.', 'g');
