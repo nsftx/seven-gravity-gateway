@@ -130,6 +130,10 @@ var slaveGateway = {
             return false;
         }
 
+        if (!(event.data && event.data.action)) {
+            logger.out('critical', '[GG] Master: Message action missing', event.data);
+        }
+
         slavePattern = new RegExp('^Slave\\.', 'g');
         masterPattern = new RegExp('^Master\\.', 'g');
         // Check if message is reserved system message (Master and Slave messages)
