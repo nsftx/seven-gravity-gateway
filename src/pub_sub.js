@@ -71,9 +71,9 @@ var pubSub = {
     findAction : function(actionName) {
         var actionFound = Object.prototype.hasOwnProperty.call(this.topics, actionName);
 
-        if(actionFound) {
+        if (actionFound) {
             return this.topics[actionName];
-        } else if (actionName !== '*') {
+        } else if (actionName && actionName !== '*') {
             return this.checkWildcardActions(actionName);
         } else {
             return false;
