@@ -1,7 +1,7 @@
 {
   "name": "@nsftx/seven-gravity-gateway",
   "private": false,
-  "version": "3.0.3-beta.1",
+  "version": "3.0.4",
   "description": "Seven Gravity Gateway",
   "homepage": "https://github.com/nsftx/seven-gravity-gateway",
   "engines": {

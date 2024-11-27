@@ -135,6 +135,14 @@ describe('Publish funcionality', function() {
         var result = pubSub.publish('stake.update');
         assert.equal(result, false);
     });
+
+    it('Publish: Should fail - Action not defined or null', function () {
+        var resultForUndefined = pubSub.publish(undefined);
+        var resultForNull = pubSub.publish(null);
+
+        assert.equal(resultForUndefined, false);
+        assert.equal(resultForNull, false);
+    });
 });
 
 describe('Subscription and callback execute', function() {

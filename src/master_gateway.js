@@ -145,6 +145,12 @@ var masterGateway = {
             return false;
         }
 
+        if (!(event.data && event.data.action)) {
+            logger.out('critical', '[GG] Master: Message action missing', event.data);
+
+            return false;
+        }
+
         masterPattern = new RegExp('^Master\\.', 'g');
         slavePattern = new RegExp('^Slave\\.', 'g');
 
